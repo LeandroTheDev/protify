@@ -1,22 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:protify/pages/homepage.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
-  final ScreenUtil screenUtil = ScreenUtil();
-  WindowOptions windowOptions = WindowOptions(
-    size: Size(screenUtil.screenWidth, screenUtil.screenHeight),
-    center: true,
-    backgroundColor: Colors.transparent,
-    // titleBarStyle: TitleBarStyle.hidden,
-  );
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.show();
-    await windowManager.focus();
-  });
   runApp(const Protify());
 }
 
@@ -27,12 +15,16 @@ class Protify extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Protify',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 78, 77, 77)),
-        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          primary: const Color.fromARGB(255, 172, 172, 172),
+          seedColor: const Color.fromARGB(255, 189, 189, 189),
+        ),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 95, 95, 95),
       ),
-      home: const HomePage(),
+      home: HomePage(),
     );
   }
 }
