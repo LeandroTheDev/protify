@@ -1,8 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SavedGames {
-  ///Save datas of type: string, bool, int and double
-  void saveData(String dataName, dynamic dataValue) async {
+class SaveDatas {
+  /// Save datas of type: string, bool, int and double
+  static void saveData(String dataName, dynamic dataValue) async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
 
     if (dataValue.runtimeType == String) {
@@ -18,8 +18,8 @@ class SavedGames {
     }
   }
 
-  ///Read data based in name and type, the types consist in: 'string', 'int', 'bool', 'double'
-  Future<dynamic> readData(String dataName, String dataType) async {
+  /// Read data based in name and type, the types consist in: 'string', 'int', 'bool', 'double'
+  static Future<dynamic> readData(String dataName, String dataType) async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     switch (dataType) {
       case "string":
@@ -34,8 +34,8 @@ class SavedGames {
     throw "Invalid Data Type";
   }
 
-  ///Remove a data based in data name
-  void removeData(String dataName) async {
+  /// Remove a data based in data name
+  static void removeData(String dataName) async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.remove(dataName);
   }

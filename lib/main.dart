@@ -5,6 +5,16 @@ import 'package:window_manager/window_manager.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
+  WindowOptions windowOptions = const WindowOptions(
+    center: true,
+    backgroundColor: Colors.transparent,
+    minimumSize: Size(126, 126),
+    titleBarStyle: TitleBarStyle.normal,
+  );
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
   runApp(const Protify());
 }
 
