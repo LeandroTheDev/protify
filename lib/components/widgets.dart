@@ -282,7 +282,9 @@ class _WidgetsGameLogState extends State<WidgetsGameLog> {
       //Waiting for process
       var exitCode = await process.exitCode;
       //Process Finished
-      setState(() => gameLog.add('Command Finished: $exitCode'));
+      if (exitCode == 0) setState(() => gameLog.add('[Info] Success Launching Game'));
+      else setState(() => gameLog.add('[Alert] Process Finished: $exitCode'));
+      
     }
     //Fatal Error Treatment
     catch (e) {
@@ -295,30 +297,37 @@ class _WidgetsGameLogState extends State<WidgetsGameLog> {
     if (!running) startCommand();
     return Container(
       height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
       child: Column(
         children: [
           //Button
           SizedBox(
-            height: MediaQuery.of(context).size.height - 30,
+            height: MediaQuery.of(context).size.height - 40,
             width: double.infinity,
-            child: ListView.builder(
+            child: Padding(
+              padding: EdgeInsets.only(top: 25, left: 5, right: 5),
+              child: ListView.builder(
               itemCount: gameLog.length,
               itemBuilder: (context, index) => Text(
                 gameLog[index],
                 style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
               ),
             ),
+            ),
           ),
           //Button
           SizedBox(
-            width: double.infinity,
+            width: MediaQuery.of(context).size.width / 2,
             height: 30,
             child: ElevatedButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
-                "Force Close",
+                "Close Log",
               ),
             ),
+          ),
+          SizedBox(
+            height: 10,
           ),
         ],
       ),
