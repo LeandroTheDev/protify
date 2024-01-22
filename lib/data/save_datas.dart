@@ -2,7 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SaveDatas {
   /// Save datas of type: string, bool, int and double
-  static void saveData(String dataName, dynamic dataValue) async {
+  static Future saveData(String dataName, dynamic dataValue) async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
 
     if (dataValue.runtimeType == String) {

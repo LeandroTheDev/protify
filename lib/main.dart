@@ -6,6 +6,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(
+    size: Size(800, 600),
     center: true,
     backgroundColor: Colors.transparent,
     minimumSize: Size(126, 126),
@@ -28,9 +29,13 @@ class Protify extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Protify',
       theme: ThemeData(
+        primaryColor: Color.fromARGB(255, 116, 116, 116),
+        secondaryHeaderColor: Color.fromARGB(255, 209, 209, 209),
         colorScheme: ColorScheme.fromSeed(
-          primary: const Color.fromARGB(255, 172, 172, 172),
-          seedColor: const Color.fromARGB(255, 189, 189, 189),
+          primary: Color.fromARGB(255, 117, 117, 117),
+          secondary: Color.fromARGB(255, 209, 209, 209),
+          tertiary: Color.fromARGB(255, 65, 61, 61),
+          seedColor: Color.fromARGB(255, 209, 209, 209),
         ),
         scaffoldBackgroundColor: const Color.fromARGB(255, 95, 95, 95),
       ),

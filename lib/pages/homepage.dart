@@ -1,8 +1,8 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:protify/components/models.dart';
 import 'package:protify/data/user_preferences.dart';
 
 // ignore: must_be_immutable
@@ -14,32 +14,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool alreadyRendered = false;
-  // Dummy Data
-  final games = [
-    {
-      "Title": "Minecraft",
-      "Image": "",
-      "LaunchCommand": "java",
-      "LaunchDirectory": "/home/Bobs/Games/Minecraft/sklauncher.java",
-      "PrefixFolder": null,
-      "ProtonDirectory": null,
-      "Ignore": ["javaInstall"],
-    },
-    {
-      "Title": "The Enchanted Cave 2",
-      "Image": "",
-      "LaunchCommand": "proton",
-      "LaunchDirectory":
-          "/home/Bobs/User/Games/The Enchanted Cave 2/Enchanted Cave 2.exe",
-      "PrefixFolder": null,
-      "ProtonDirectory":
-          "/home/Bobs/User/Templates/protify-release/protons/Proton 8.0/",
-      "Ignore": ["javaInstall"],
-    }
-  ];
+  List games = [];
+  Offset mousePosition = Offset(0, 0);
+  OverlayEntry? overlayEntry;
+
   @override
   Widget build(BuildContext context) {
+    // Load Games
+    UserPreferences.getGames().then((value) => setState(() => games = value));
+
     int getGridGamesCrossAxisCount(windowSize, gameCount) {
       if (windowSize.width <= 200) {
         return 2;
@@ -65,8 +48,7 @@ class _HomePageState extends State<HomePage> {
       }
 
       // Game Prefix Folder
-      currentDirectory =
-          join(currentDirectory, games[index]["Title"] as String);
+      currentDirectory = join(currentDirectory, games[index]["Title"] as String);
       // Check if not exist
       if (!Directory(currentDirectory).existsSync()) {
         // Create
@@ -78,73 +60,135 @@ class _HomePageState extends State<HomePage> {
       // Creating the prefix folder if not exist
       checkPrefixExistence(index);
 
-      //Command Variables
-      const String steamCompatibility =
-          "export STEAM_COMPAT_CLIENT_INSTALL_PATH=\"~/.local/share/Steam\"";
-      final String protonDirectory = games[index]["ProtonDirectory"] as String;
-      final String protonWineDirectory =
-          "$current/protons/Proton 8.0/dist/bin/wine64";
-      final String protonExecutable = "$current/protons/Proton 8.0/proton";
-      final String gameDirectory = games[index]["LaunchDirectory"] as String;
-
-      final String command =
-          '$steamCompatibility && STEAM_COMPAT_DATA_PATH="$protonDirectory" "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$gameDirectory"';
-
-      try {
-        var process = await Process.start('/bin/bash', ['-c', command]);
-
-        // Redirecionar a saída padrão e a saída de erro para o console do Dart
-        process.stdout.transform(utf8.decoder).listen((data) {
-          print('[Info]: $data');
-        });
-
-        process.stderr.transform(utf8.decoder).listen((data) {
-          print('[Error]: $data');
-        });
-
-        var exitCode = await process.exitCode;
-        print('Command Finished: $exitCode');
-      } catch (e) {
-        print('Error: $e');
-      }
+      // Call the functions for starting the game
+      Models.startGame(context: context, game: games[index]);
     }
 
-    UserPreferences.getUserGames();
+    hideGameInfo() {
+      //Remove game info
+      overlayEntry?.remove();
+      overlayEntry = null;
+    }
+
+    showGameInfo(int index, Offset mousePosition) {
+      //Create the gameInfo widget
+      overlayEntry = OverlayEntry(
+        builder: (context) => Positioned(
+          left: mousePosition.dx,
+          top: mousePosition.dy,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              padding: EdgeInsets.all(8.0),
+              color: Colors.red,
+              child: GestureDetector(
+                onTap: () => {
+                  // Close the overlay
+                  hideGameInfo(),
+                  // Remove the game
+                  UserPreferences.removeGame(index, games).then((value) => setState(() => games = value)),
+                },
+                child: Text(
+                  'Remove Game',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      //Inserting into context
+      Overlay.of(context).insert(overlayEntry!);
+    }
 
     final windowSize = MediaQuery.of(context).size;
-    return Scaffold(
-      body: Stack(
-        children: [
-          GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount:
-                  getGridGamesCrossAxisCount(windowSize, games.length),
-              crossAxisSpacing: 0, // Horizontal Spacing
-              childAspectRatio: 0.5,
+    return GestureDetector(
+      onTap: () => hideGameInfo(),
+      child: Scaffold(
+        body: Row(
+          children: [
+            //Library
+            SizedBox(
+              height: windowSize.height,
+              width: windowSize.width * 0.3,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: games.length,
+                itemBuilder: (context, index) => Models.gameContainer(
+                  context: context,
+                  index: index,
+                  gameTitle: games[index]["Title"] as String,
+                ),
+              ),
             ),
-            itemCount: games.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: GestureDetector(
-                  onTap: () => startGame(index),
-                  child: Container(
-                    color: Colors.blue,
-                    child: Center(
-                      child: Text(
-                        games[index]["Title"].toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18.0,
+
+            //Divider
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Container(
+                color: Theme.of(context).primaryColor,
+                width: 2,
+                height: windowSize.height,
+              ),
+            ),
+
+            //Grid Games
+            games.length > 0
+                ? Column(
+                    children: [
+                      //Grid
+                      SizedBox(
+                        height: windowSize.height - 40,
+                        width: windowSize.width * 0.7 - 10,
+                        child: MouseRegion(
+                          onHover: (event) => mousePosition = event.position,
+                          child: GridView.builder(
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: getGridGamesCrossAxisCount(windowSize, games.length),
+                              crossAxisSpacing: 0,
+                              childAspectRatio: 0.5,
+                            ),
+                            shrinkWrap: true,
+                            itemCount: games.length,
+                            itemBuilder: (context, index) => Models.gameCard(
+                              context: context,
+                              startGame: startGame,
+                              index: index,
+                              gameTitle: games[index]["Title"] as String,
+                              mousePosition: mousePosition,
+                              showHideGameInfo: overlayEntry == null ? showGameInfo : hideGameInfo,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
+
+                      //Add Game button
+                      SizedBox(
+                        height: 30,
+                        child: ElevatedButton(onPressed: () => Models.addGameModal(context: context), child: Text("Add Game")),
+                      ),
+                    ],
+                  )
+                : Center(
+                    child: SizedBox(
+                        width: windowSize.width * 0.7 - 10,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Your library is empty try adding a game to it",
+                              style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 10),
+                            //Add Game button
+                            SizedBox(
+                              height: 30,
+                              child: ElevatedButton(onPressed: () => Models.addGameModal(context: context), child: Text("Add First Game")),
+                            )
+                          ],
+                        ))),
+          ],
+        ),
       ),
     );
   }

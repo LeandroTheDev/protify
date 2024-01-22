@@ -1,5 +1,5 @@
 name: protify
-description: A new Flutter project.
+description: GUI Friendly for opening games in Linux
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -34,6 +34,8 @@ dependencies:
   shared_preferences: ^2.2.2 # Saving Datas
   path: ^1.8.3 # Folder Managment
   process_run: ^0.14.1+3 # Command Line
+  filesystem_picker: ^4.1.0 # Folder Picker
+  flutter_hooks: ^0.20.4 # Mouse Events
 
 
   # The following adds the Cupertino Icons font to your application.
