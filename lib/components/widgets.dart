@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -40,249 +41,52 @@ class Widgets {
       },
     );
   }
-}
 
-class WidgetsAddGameModal extends StatefulWidget {
-  const WidgetsAddGameModal({super.key});
+  /// Simple show a alert dialog to the user
+  static Future<bool> showQuestion(
+    BuildContext context, {
+    String title = "",
+    String content = "",
+    String buttonTitle = "Yes",
+    String buttonTitle2 = "No",
+  }) {
+    Completer<bool> completer = Completer<bool>();
 
-  @override
-  State<WidgetsAddGameModal> createState() => _WidgetsAddGameModalState();
-}
-
-class _WidgetsAddGameModalState extends State<WidgetsAddGameModal> {
-  TextEditingController gameName = TextEditingController();
-  TextEditingController gameLaunchCommand = TextEditingController();
-  TextEditingController gameArgumentsCommand = TextEditingController();
-  String gameProton = "none";
-  String gameDirectory = "";
-  String gamePrefix = "";
-  bool gameSteamCompatibility = false;
-
-  confirmation(context) async {
-    //Receiving old data
-    List games = await UserPreferences.getGames();
-    //Adding new game
-    games.add({
-      "Title": gameName.text,
-      "Image": "",
-      "LaunchCommand": gameLaunchCommand.text == "" ? null : gameLaunchCommand.text,
-      "ArgumentsCommand": gameArgumentsCommand.text == "" ? null : gameArgumentsCommand.text,
-      "LaunchDirectory": gameDirectory,
-      "PrefixFolder": gamePrefix == "" ? join(current, "prefixes", gameName.text) : gamePrefix,
-      "ProtonDirectory": gameProton == "none" ? null : join(current, "protons", gameProton),
-      "Category": "My Games",
-      "Ignore": [],
-      "EnableSteamCompatibility": gameSteamCompatibility,
-    });
-    //Saving data
-    SaveDatas.saveData("games", jsonEncode(games));
-    Navigator.pop(context);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 8.0,
-          right: 8.0,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //Back Button
-              IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    color: Theme.of(context).secondaryHeaderColor,
-                  )),
-              //Spacer
-              SizedBox(height: 5),
-              //Game Name
-              SizedBox(
-                height: 60,
-                child: TextField(
-                  controller: gameName,
-                  decoration: InputDecoration(
-                    labelText: 'Name',
-                    labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary), // Cor da borda inferior quando o campo não está focado
-                    ),
-                  ),
-                  style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: AlertDialog(
+              backgroundColor: Theme.of(context).colorScheme.tertiary,
+              title: Text(title, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+              content: Text(content, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+              actions: [
+                //yes
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    completer.complete(true);
+                  },
+                  child: Text(buttonTitle, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
                 ),
-              ),
-              //Spacer
-              SizedBox(height: 35),
-              //Select Proton
-              Row(
-                children: [
-                  //Selected Proton Text
-                  Text(
-                    gameProton == "none" ? "No Proton" : gameProton,
-                    style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
-                  ),
-                  //Spacer
-                  SizedBox(width: 15),
-                  //Select Proton Button
-                  ElevatedButton(onPressed: () => Models.selectProton(context).then((selectedProton) => setState(() => gameProton = selectedProton)), child: Text("Select Proton")),
-                ],
-              ),
-              //Spacer
-              SizedBox(height: 25),
-              //Divider
-              Divider(color: Theme.of(context).colorScheme.tertiary),
-              //Spacer
-              SizedBox(height: 25),
-              //Launch Command
-              gameProton == "none"
-                  ? SizedBox(
-                      height: 60,
-                      child: TextField(
-                        controller: gameLaunchCommand,
-                        decoration: InputDecoration(
-                          labelText: 'Launch Command',
-                          labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary), // Cor da borda inferior quando o campo não está focado
-                          ),
-                        ),
-                        style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
-                      ),
-                    )
-                  : SizedBox(),
-              //Spacer
-              SizedBox(height: gameProton == "none" ? 25 : 0),
-              //Arguments Commands
-              SizedBox(
-                height: 60,
-                child: TextField(
-                  controller: gameArgumentsCommand,
-                  decoration: InputDecoration(
-                    labelText: 'Arguments Command',
-                    labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary), // Cor da borda inferior quando o campo não está focado
-                    ),
-                  ),
-                  style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
+                //no
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    completer.complete(false);
+                  },
+                  child: Text(buttonTitle2, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
                 ),
-              ),
-              //Spacer
-              SizedBox(height: 25),
-              //Select Game
-              Column(
-                children: [
-                  //Game File
-                  Text(gameDirectory == "" ? "No Game Selected" : basename(gameDirectory), style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
-                  //Spacer
-                  SizedBox(height: 5),
-                  //Button
-                  ElevatedButton(
-                    onPressed: () => FilesystemPicker.open(
-                      context: context,
-                      rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/home/"),
-                      fsType: FilesystemType.file,
-                      folderIconColor: Theme.of(context).secondaryHeaderColor,
-                    ).then((directory) => setState(() {
-                          gameDirectory = directory ?? "";
-                          //If name is empty automatically add the game name
-                          if (gameName.text == "") {
-                            gameName.text = basename(gameDirectory);
-                          }
-                        })),
-                    child: Text("Select Game"),
-                  ),
-                ],
-              ), //Select Game
-              //Spacer
-              SizedBox(height: 25),
-              //Select Prefix
-              Column(
-                children: [
-                  //Game File
-                  Text(gamePrefix == "" ? "Default Prefix" : gamePrefix, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
-                  //Spacer
-                  SizedBox(height: 5),
-                  //Button
-                  ElevatedButton(
-                    onPressed: () => FilesystemPicker.open(
-                      context: context,
-                      rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/home/"),
-                      fsType: FilesystemType.folder,
-                      folderIconColor: Theme.of(context).secondaryHeaderColor,
-                    ).then((directory) => setState(() => gamePrefix = directory ?? "")),
-                    child: Text("Select Prefix"),
-                  ),
-                ],
-              ),
-              //Spacer
-              SizedBox(height: 25),
-              //Steam Compatibility
-              Row(
-                children: [
-                  //Checkbox
-                  Checkbox(
-                    value: gameSteamCompatibility,
-                    onChanged: (value) => setState(() => gameSteamCompatibility = value!),
-                    //Fill Color
-                    fillColor: MaterialStateProperty.resolveWith(
-                      (states) {
-                        if (states.contains(MaterialState.selected)) {
-                          return Theme.of(context).colorScheme.secondary;
-                        }
-                        return null;
-                      },
-                    ),
-                    //Check Color
-                    checkColor: Theme.of(context).colorScheme.tertiary,
-                    //Border Color
-                    side: BorderSide(color: Theme.of(context).secondaryHeaderColor, width: 2.0),
-                  ),
-                  //Text
-                  Text("Enable Steam Compatibility", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
-                  //Info Button
-                  IconButton(
-                    icon: Icon(Icons.info),
-                    color: Theme.of(context).secondaryHeaderColor,
-                    onPressed: () => Widgets.showAlert(
-                      context,
-                      title: "Steam Compatibility",
-                      content: "Enables steam compatibility making the game open with STEAM_COMPAT_CLIENT_INSTALL_PATH to play online games in steam if you are using a legit install",
-                    ),
-                  ),
-                ],
-              ),
-              //Spacer
-              SizedBox(height: 25),
-              //Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => confirmation(context),
-                  child: Text("Confirm"),
-                ),
-              ),
-              //Spacer
-              SizedBox(height: 25),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
+
+    return completer.future;
   }
 }
 

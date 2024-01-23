@@ -6,37 +6,6 @@ import 'package:path/path.dart';
 import 'package:protify/components/widgets.dart';
 
 class Models {
-  /// Show a simple card for the game,
-  /// if mouse position is declarated the function showHideGameInfo needs to be declarated too
-  static Widget gameCard({
-    required BuildContext context,
-    required Function startGame,
-    required int index,
-    required String gameTitle,
-    mousePosition,
-    showHideGameInfo,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: GestureDetector(
-        onTap: () => startGame(index),
-        onSecondaryTap: mousePosition == null ? () => {} : () => showHideGameInfo(index, mousePosition),
-        child: Container(
-          color: Theme.of(context).primaryColor,
-          child: Center(
-            child: Text(
-              gameTitle,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontSize: 18.0,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   /// Show a simple container game
   static Widget gameContainer({
     required BuildContext context,
@@ -65,36 +34,6 @@ class Models {
           ),
         ),
       ),
-    );
-  }
-
-  /// Show the modal to add a game
-  static void addGameModal({
-    required BuildContext context,
-  }) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Theme.of(context).primaryColor,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return WidgetsAddGameModal();
-      },
-    );
-  }
-
-  /// Show the modal to edit the game
-  static void editGameModal({
-    required BuildContext context,
-    required int index,
-    required Map game,
-  }) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Theme.of(context).primaryColor,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return WidgetsEditGameModal(index: index, game: game);
-      },
     );
   }
 
