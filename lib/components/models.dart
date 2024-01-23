@@ -82,6 +82,22 @@ class Models {
     );
   }
 
+  /// Show the modal to edit the game
+  static void editGameModal({
+    required BuildContext context,
+    required int index,
+    required Map game,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).primaryColor,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return WidgetsEditGameModal(index: index, game: game);
+      },
+    );
+  }
+
   /// Start the game and show the logs
   static void startGame({
     required BuildContext context,

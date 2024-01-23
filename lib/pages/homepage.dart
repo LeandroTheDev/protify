@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
       Models.startGame(context: context, game: games[index]);
     }
 
-    hideGameInfo() {
+    hideGameInfo([index, mousePosition]) {
       //Remove game info
       overlayEntry?.remove();
       overlayEntry = null;
@@ -79,21 +79,61 @@ class _HomePageState extends State<HomePage> {
           child: Material(
             color: Colors.transparent,
             child: Container(
-              padding: EdgeInsets.all(8.0),
-              color: Colors.red,
-              child: GestureDetector(
-                onTap: () => {
-                  // Close the overlay
-                  hideGameInfo(),
-                  // Remove the game
-                  UserPreferences.removeGame(index, games).then((value) => setState(() => games = value)),
-                },
-                child: Text(
-                  'Remove Game',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
+                width: 70,
+                padding: EdgeInsets.all(8.0),
+                color: Theme.of(context).colorScheme.tertiary,
+                child: Column(
+                  children: [
+                    // Game Title
+                    SizedBox(
+                      width: 50,
+                      child: Text(
+                        games[index]["Title"],
+                        style: TextStyle(color: Colors.white),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    // Spacer
+                    SizedBox(height: 10),
+                    // Edit Game
+                    GestureDetector(
+                      onTap: () => {
+                        // Close the overlay
+                        hideGameInfo(),
+                        // Open edit game modal
+                        Models.editGameModal(context: context, index: index, game: games[index]),
+                      },
+                      child: SizedBox(
+                        width: 70,
+                        child: Text(
+                          'Edit',
+                          style: TextStyle(color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    // Spacer
+                    SizedBox(height: 10),
+                    // Remove Game
+                    GestureDetector(
+                      onTap: () => {
+                        // Close the overlay
+                        hideGameInfo(),
+                        // Remove the game
+                        UserPreferences.removeGame(index, games).then((value) => setState(() => games = value)),
+                      },
+                      child: SizedBox(
+                        width: 70,
+                        child: Text(
+                          'Remove',
+                          style: TextStyle(color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                )),
           ),
         ),
       );
@@ -165,28 +205,30 @@ class _HomePageState extends State<HomePage> {
                       //Add Game button
                       SizedBox(
                         height: 30,
-                        child: ElevatedButton(onPressed: () => Models.addGameModal(context: context), child: Text("Add Game")),
+                        child: ElevatedButton(onPressed: () => {hideGameInfo(), Models.addGameModal(context: context)}, child: Text("Add Game")),
                       ),
                     ],
                   )
                 : Center(
                     child: SizedBox(
-                        width: windowSize.width * 0.7 - 10,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Your library is empty try adding a game to it",
-                              style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 10),
-                            //Add Game button
-                            SizedBox(
-                              height: 30,
-                              child: ElevatedButton(onPressed: () => Models.addGameModal(context: context), child: Text("Add First Game")),
-                            )
-                          ],
-                        ))),
+                      width: windowSize.width * 0.7 - 10,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Your library is empty try adding a game to it",
+                            style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 10),
+                          //Add Game button
+                          SizedBox(
+                            height: 30,
+                            child: ElevatedButton(onPressed: () => Models.addGameModal(context: context), child: Text("Add First Game")),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),

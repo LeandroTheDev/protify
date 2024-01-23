@@ -6,6 +6,7 @@ This software is builded thinking in easily open your games and configure prefix
 [``Demonstration``](https://github.com/LeandroTheDev/protify/assets/106118473/890667c5-4fd9-430c-b834-fddf0520b645)
 
 ### First steps
+- Disclaimer: Using steam compatibility you need to have a steam installed in ~/.local/share/Steam
 - Download Steam from your favorite way
 - Download the proton you want to use throught the steam
 - Go to ``.local/share/Steam/steamapps/common/`` and copy your Proton
@@ -20,9 +21,11 @@ This software is builded thinking in easily open your games and configure prefix
 
 > ![image](https://github.com/LeandroTheDev/protify/assets/106118473/12c7cad8-8af2-402d-bb48-2b76eb7179f8)
 > 
-> Arguments is not obrigatory.
+> Launch/Arguments is not obrigatory.
 > 
 > Prefix is not obrigatory.
+>
+> Launch Commands comes before the executable and Arguments Commands comes after executable like this: "LaunchCommands MyGame.exe ArgumentsCommands"
 
 - Now click in the game card to launch the game, and a console will pop up showing the logs from terminal, after that the game will pop up and you will be able to play, you can close the launcher after game start.
 
