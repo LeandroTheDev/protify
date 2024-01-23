@@ -6,37 +6,6 @@ import 'package:path/path.dart';
 import 'package:protify/components/widgets.dart';
 
 class Models {
-  /// Show a simple container game
-  static Widget gameContainer({
-    required BuildContext context,
-    required int index,
-    String gameTitle = "",
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Container(
-        height: 40,
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Theme.of(context).secondaryHeaderColor,
-            width: 1.0,
-          ),
-        ),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: EdgeInsets.only(left: 5.0),
-            child: Text(
-              gameTitle,
-              textAlign: TextAlign.start,
-              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   /// Start the game and show the logs
   static void startGame({
     required BuildContext context,
@@ -61,7 +30,7 @@ class Models {
         builder: (BuildContext context) {
           protons.add("No Proton");
           return Center(
-            child: Container(
+            child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.5,
               child: AlertDialog(
                 backgroundColor: Theme.of(context).colorScheme.tertiary,
@@ -74,10 +43,11 @@ class Models {
                     itemBuilder: (context, index) => TextButton(
                       onPressed: () {
                         Navigator.of(context).pop();
-                        if (protons[index] == "No Proton")
+                        if (protons[index] == "No Proton") {
                           completer.complete("none");
-                        else
+                        } else {
                           completer.complete(protons[index]);
+                        }
                       },
                       child: Text(protons[index], style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
                     ),

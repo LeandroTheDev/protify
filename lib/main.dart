@@ -29,17 +29,17 @@ class Protify extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Protify',
       theme: ThemeData(
-        primaryColor: Color.fromARGB(255, 116, 116, 116),
-        secondaryHeaderColor: Color.fromARGB(255, 209, 209, 209),
+        primaryColor: const Color.fromARGB(255, 116, 116, 116),
+        secondaryHeaderColor: const Color.fromARGB(255, 209, 209, 209),
         colorScheme: ColorScheme.fromSeed(
-          primary: Color.fromARGB(255, 117, 117, 117),
-          secondary: Color.fromARGB(255, 209, 209, 209),
-          tertiary: Color.fromARGB(255, 65, 61, 61),
-          seedColor: Color.fromARGB(255, 209, 209, 209),
+          primary: const Color.fromARGB(255, 117, 117, 117),
+          secondary: const Color.fromARGB(255, 209, 209, 209),
+          tertiary: const Color.fromARGB(255, 65, 61, 61),
+          seedColor: const Color.fromARGB(255, 209, 209, 209),
         ),
         scaffoldBackgroundColor: const Color.fromARGB(255, 95, 95, 95),
       ),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }

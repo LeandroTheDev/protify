@@ -11,7 +11,7 @@ import 'package:protify/data/user_preferences.dart';
 
 // ignore: must_be_immutable
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List games = [];
-  Offset mousePosition = Offset(0, 0);
+  Offset mousePosition = const Offset(0, 0);
   OverlayEntry? gameInfo;
   int? selectedGameIndex;
 
@@ -30,265 +30,11 @@ class _HomePageState extends State<HomePage> {
 
     // To add just call the function to edit simple add the index in parameter
     addOrEditGameModal([index]) {
-      TextEditingController gameName = TextEditingController();
-      TextEditingController gameLaunchCommand = TextEditingController();
-      TextEditingController gameArgumentsCommand = TextEditingController();
-      String gameProton = "none";
-      String gameDirectory = "";
-      String gamePrefix = "";
-      bool gameSteamCompatibility = false;
-      confirmation() async {
-        //Receiving old data
-        List games = await UserPreferences.getGames();
-        //Adding new game
-        games.add({
-          "Title": gameName.text,
-          "Image": "",
-          "LaunchCommand": gameLaunchCommand.text == "" ? null : gameLaunchCommand.text,
-          "ArgumentsCommand": gameArgumentsCommand.text == "" ? null : gameArgumentsCommand.text,
-          "LaunchDirectory": gameDirectory,
-          "PrefixFolder": gamePrefix == "" ? join(current, "prefixes", gameName.text) : gamePrefix,
-          "ProtonDirectory": gameProton == "none" ? null : join(current, "protons", gameProton),
-          "Category": "My Games",
-          "Ignore": [],
-          "EnableSteamCompatibility": gameSteamCompatibility,
-        });
-        //Saving data
-        SaveDatas.saveData("games", jsonEncode(games));
-        Navigator.pop(context);
-      }
-
-      edit() async {
-        //Receiving old data
-        List games = await UserPreferences.getGames();
-        //Adding new game
-        games[index] = {
-          "Title": gameName.text,
-          "Image": "",
-          "LaunchCommand": gameLaunchCommand.text == "" ? null : gameLaunchCommand.text,
-          "ArgumentsCommand": gameArgumentsCommand.text == "" ? null : gameArgumentsCommand.text,
-          "LaunchDirectory": gameDirectory,
-          "PrefixFolder": gamePrefix == "" ? join(current, "prefixes", gameName.text) : gamePrefix,
-          "ProtonDirectory": gameProton == "none" ? null : join(current, "protons", gameProton),
-          "Category": "My Games",
-          "Ignore": [],
-          "EnableSteamCompatibility": gameSteamCompatibility,
-        };
-        //Saving data
-        SaveDatas.saveData("games", jsonEncode(games));
-        Navigator.pop(context);
-      }
-
       showModalBottomSheet(
         context: context,
         backgroundColor: Theme.of(context).primaryColor,
         isScrollControlled: true,
-        builder: (BuildContext context) {
-          return Container(
-            height: MediaQuery.of(context).size.height,
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: 8.0,
-                right: 8.0,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    //Back Button
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: Icon(
-                        Icons.arrow_back_ios,
-                        color: Theme.of(context).secondaryHeaderColor,
-                      ),
-                    ),
-                    //Spacer
-                    SizedBox(height: 5),
-                    //Game Name
-                    SizedBox(
-                      height: 60,
-                      child: TextField(
-                        controller: gameName,
-                        decoration: InputDecoration(
-                          labelText: 'Name',
-                          labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary), // Cor da borda inferior quando o campo não está focado
-                          ),
-                        ),
-                        style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
-                      ),
-                    ),
-                    //Spacer
-                    SizedBox(height: 35),
-                    //Select Proton
-                    Column(
-                      children: [
-                        //Game File
-                        Text(
-                          gameProton == "none" ? "No Proton" : gameProton,
-                          style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
-                        ),
-                        //Spacer
-                        SizedBox(height: 5),
-                        //Button
-                        //Select Proton Button
-                        ElevatedButton(onPressed: () => Models.selectProton(context).then((selectedProton) => setState(() => gameProton = selectedProton)), child: Text("Select Proton")),
-                      ],
-                    ),
-                    //Spacer
-                    SizedBox(height: 25),
-                    //Divider
-                    Divider(color: Theme.of(context).colorScheme.tertiary),
-                    //Spacer
-                    SizedBox(height: 25),
-                    //Launch Command
-                    gameProton == "none"
-                        ? SizedBox(
-                            height: 60,
-                            child: TextField(
-                              controller: gameLaunchCommand,
-                              decoration: InputDecoration(
-                                labelText: 'Launch Command',
-                                labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
-                                ),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary), // Cor da borda inferior quando o campo não está focado
-                                ),
-                              ),
-                              style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
-                            ),
-                          )
-                        : SizedBox(),
-                    //Spacer
-                    SizedBox(height: gameProton == "none" ? 25 : 0),
-                    //Arguments Commands
-                    SizedBox(
-                      height: 60,
-                      child: TextField(
-                        controller: gameArgumentsCommand,
-                        decoration: InputDecoration(
-                          labelText: 'Arguments Command',
-                          labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
-                          ),
-                          enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary), // Cor da borda inferior quando o campo não está focado
-                          ),
-                        ),
-                        style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
-                      ),
-                    ),
-                    //Spacer
-                    SizedBox(height: 25),
-                    //Select Game
-                    Column(
-                      children: [
-                        //Game File
-                        Text(gameDirectory == "" ? "No Game Selected" : basename(gameDirectory), style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
-                        //Spacer
-                        SizedBox(height: 5),
-                        //Button
-                        ElevatedButton(
-                          onPressed: () => FilesystemPicker.open(
-                            context: context,
-                            rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/home/"),
-                            fsType: FilesystemType.file,
-                            folderIconColor: Theme.of(context).secondaryHeaderColor,
-                          ).then((directory) => setState(() {
-                                gameDirectory = directory ?? "";
-                                //If name is empty automatically add the game name
-                                if (gameName.text == "") {
-                                  gameName.text = basename(gameDirectory);
-                                }
-                              })),
-                          child: Text("Select Game"),
-                        ),
-                      ],
-                    ),
-                    //Spacer
-                    SizedBox(height: 25),
-                    //Select Prefix
-                    Column(
-                      children: [
-                        //Game File
-                        Text(gamePrefix == "" ? "Default Prefix" : gamePrefix, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
-                        //Spacer
-                        SizedBox(height: 5),
-                        //Button
-                        ElevatedButton(
-                          onPressed: () => FilesystemPicker.open(
-                            context: context,
-                            rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/home/"),
-                            fsType: FilesystemType.folder,
-                            folderIconColor: Theme.of(context).secondaryHeaderColor,
-                          ).then((directory) => setState(() => gamePrefix = directory ?? "")),
-                          child: Text("Select Prefix"),
-                        ),
-                      ],
-                    ),
-                    //Spacer
-                    SizedBox(height: 25),
-                    //Steam Compatibility
-                    Row(
-                      children: [
-                        //Checkbox
-                        Checkbox(
-                          value: gameSteamCompatibility,
-                          onChanged: (value) => setState(() => gameSteamCompatibility = value!),
-                          //Fill Color
-                          fillColor: MaterialStateProperty.resolveWith(
-                            (states) {
-                              if (states.contains(MaterialState.selected)) {
-                                return Theme.of(context).colorScheme.secondary;
-                              }
-                              return null;
-                            },
-                          ),
-                          //Check Color
-                          checkColor: Theme.of(context).colorScheme.tertiary,
-                          //Border Color
-                          side: BorderSide(color: Theme.of(context).secondaryHeaderColor, width: 2.0),
-                        ),
-                        //Text
-                        Text("Enable Steam Compatibility", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
-                        //Info Button
-                        IconButton(
-                          icon: Icon(Icons.info),
-                          color: Theme.of(context).secondaryHeaderColor,
-                          onPressed: () => Widgets.showAlert(
-                            context,
-                            title: "Steam Compatibility",
-                            content: "Enables steam compatibility making the game open with STEAM_COMPAT_CLIENT_INSTALL_PATH to play online games in steam if you are using a legit install",
-                          ),
-                        ),
-                      ],
-                    ),
-                    //Spacer
-                    SizedBox(height: 25),
-                    //Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: index == null ? () => confirmation() : () => edit(),
-                        child: Text("Confirm"),
-                      ),
-                    ),
-                    //Spacer
-                    SizedBox(height: 25),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
+        builder: (BuildContext context) => AddOrEditGamesModal(index: index),
       );
     }
 
@@ -354,7 +100,7 @@ class _HomePageState extends State<HomePage> {
             color: Colors.transparent,
             child: Container(
                 width: 70,
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 color: Theme.of(context).colorScheme.tertiary,
                 child: Column(
                   children: [
@@ -363,13 +109,13 @@ class _HomePageState extends State<HomePage> {
                       width: 50,
                       child: Text(
                         games[index]["Title"],
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     // Spacer
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     // Edit Game
                     GestureDetector(
                       onTap: () => {
@@ -378,7 +124,7 @@ class _HomePageState extends State<HomePage> {
                         // Open edit game modal
                         addOrEditGameModal(index),
                       },
-                      child: SizedBox(
+                      child: const SizedBox(
                         width: 70,
                         child: Text(
                           'Edit',
@@ -388,7 +134,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     // Spacer
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     // Remove Game
                     GestureDetector(
                       onTap: () => {
@@ -397,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                         // Remove the game
                         UserPreferences.removeGame(index, games, context).then((value) => setState(() => games = value)),
                       },
-                      child: SizedBox(
+                      child: const SizedBox(
                         width: 70,
                         child: Text(
                           'Remove',
@@ -415,11 +161,47 @@ class _HomePageState extends State<HomePage> {
       Overlay.of(context).insert(gameInfo!);
     }
 
-    //Right side of the window
+    // Left side of the window
+    Widget leftSide() {
+      final windowSize = MediaQuery.of(context).size;
+      return SizedBox(
+        height: windowSize.height,
+        width: windowSize.width * 0.3,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: games.length,
+          itemBuilder: (context, index) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+            child: Container(
+              height: 35,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Theme.of(context).secondaryHeaderColor,
+                  width: 1.0,
+                ),
+              ),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 5.0),
+                  child: Text(
+                    games[index]["Title"],
+                    textAlign: TextAlign.start,
+                    style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Right side of the window
     Widget rightSide() {
       final windowSize = MediaQuery.of(context).size;
       //Selected game
-      if (selectedGameIndex.runtimeType == int)
+      if (selectedGameIndex.runtimeType == int) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -455,7 +237,7 @@ class _HomePageState extends State<HomePage> {
                 height: windowSize.height * 0.1 < 20 ? 20 : windowSize.height * 0.1,
                 child: ElevatedButton(
                   onPressed: () => startGame(selectedGameIndex!),
-                  child: FittedBox(
+                  child: const FittedBox(
                       child: Text(
                     "Play",
                     style: TextStyle(fontSize: 999),
@@ -465,8 +247,9 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         );
+      }
       //Show Game Grid
-      if (games.length > 0)
+      if (games.isNotEmpty) {
         return Column(
           children: [
             //Grid
@@ -509,12 +292,13 @@ class _HomePageState extends State<HomePage> {
             //Add Game button
             SizedBox(
               height: 30,
-              child: ElevatedButton(onPressed: () => {hideGameInfo(), addOrEditGameModal()}, child: Text("Add Game")),
+              child: ElevatedButton(onPressed: () => {hideGameInfo(), addOrEditGameModal()}, child: const Text("Add Game")),
             ),
           ],
         );
-      //Welcome message with 0 games
-      else
+      }
+      //No games message
+      else {
         return Center(
           child: SizedBox(
             width: windowSize.width * 0.7 - 10,
@@ -525,16 +309,17 @@ class _HomePageState extends State<HomePage> {
                   "Your library is empty try adding a game to it",
                   style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 //Add Game button
                 SizedBox(
                   height: 30,
-                  child: ElevatedButton(onPressed: () => addOrEditGameModal(), child: Text("Add First Game")),
+                  child: ElevatedButton(onPressed: () => addOrEditGameModal(), child: const Text("Add First Game")),
                 )
               ],
             ),
           ),
         );
+      }
     }
 
     final windowSize = MediaQuery.of(context).size;
@@ -544,23 +329,11 @@ class _HomePageState extends State<HomePage> {
         body: Row(
           children: [
             //Left Side
-            SizedBox(
-              height: windowSize.height,
-              width: windowSize.width * 0.3,
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: games.length,
-                itemBuilder: (context, index) => Models.gameContainer(
-                  context: context,
-                  index: index,
-                  gameTitle: games[index]["Title"] as String,
-                ),
-              ),
-            ),
+            leftSide(),
 
             //Divider
             Padding(
-              padding: const EdgeInsets.only(left: 8.0),
+              padding: const EdgeInsets.only(left: 1.0),
               child: Container(
                 color: Theme.of(context).primaryColor,
                 width: 2,
@@ -571,6 +344,305 @@ class _HomePageState extends State<HomePage> {
             //Right Side
             rightSide(),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class AddOrEditGamesModal extends StatefulWidget {
+  final int? index;
+  const AddOrEditGamesModal({super.key, required this.index});
+
+  @override
+  State<AddOrEditGamesModal> createState() => _AddOrEditGamesModalState();
+}
+
+class _AddOrEditGamesModalState extends State<AddOrEditGamesModal> {
+  bool loaded = false;
+  TextEditingController gameName = TextEditingController();
+  TextEditingController gameLaunchCommand = TextEditingController();
+  TextEditingController gameArgumentsCommand = TextEditingController();
+  String gameProton = "none";
+  String gameDirectory = "";
+  String gamePrefix = "";
+  bool gameSteamCompatibility = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final index = widget.index;
+    confirmation() {
+      //Receiving old data
+      UserPreferences.getGames().then((games) {
+        //Adding new game
+        games.add({
+          "Title": gameName.text,
+          "Image": "",
+          "LaunchCommand": gameLaunchCommand.text == "" ? null : gameLaunchCommand.text,
+          "ArgumentsCommand": gameArgumentsCommand.text == "" ? null : gameArgumentsCommand.text,
+          "LaunchDirectory": gameDirectory,
+          "PrefixFolder": gamePrefix == "" ? join(current, "prefixes", gameName.text) : gamePrefix,
+          "ProtonDirectory": gameProton == "none" ? null : join(current, "protons", gameProton),
+          "Category": "My Games",
+          "Ignore": [],
+          "EnableSteamCompatibility": gameSteamCompatibility,
+        });
+        //Saving data
+        SaveDatas.saveData("games", jsonEncode(games));
+        Navigator.pop(context);
+      }).catchError((error) {
+        Widgets.showAlert(context, title: "Error", content: "Cannot add game because of a retrieve game error: $error");
+      });
+    }
+
+    edit() {
+      //Receiving old data
+      UserPreferences.getGames().then((games) {
+        //Adding new game
+        games[index!] = {
+          "Title": gameName.text,
+          "Image": "",
+          "LaunchCommand": gameLaunchCommand.text == "" ? null : gameLaunchCommand.text,
+          "ArgumentsCommand": gameArgumentsCommand.text == "" ? null : gameArgumentsCommand.text,
+          "LaunchDirectory": gameDirectory,
+          "PrefixFolder": gamePrefix == "" ? join(current, "prefixes", gameName.text) : gamePrefix,
+          "ProtonDirectory": gameProton == "none" ? null : join(current, "protons", gameProton),
+          "Category": "My Games",
+          "Ignore": [],
+          "EnableSteamCompatibility": gameSteamCompatibility,
+        };
+        //Saving data
+        SaveDatas.saveData("games", jsonEncode(games));
+        Navigator.pop(context);
+      }).catchError((error) {
+        Widgets.showAlert(context, title: "Error", content: "Cannot edit game because of a retrieve game error: $error");
+      });
+    }
+
+    //Load Game Data if necessary
+    if (!loaded) {
+      loaded = true;
+      if (index != null) {
+        //Get games
+        UserPreferences.getGames().then((games) {
+          setState(() {
+            //Get game
+            final Map game = games[index];
+            //Update variables
+            gameName.text = game["Title"] ?? "";
+            gameLaunchCommand.text = game["LaunchCommand"] ?? "";
+            gameArgumentsCommand.text = game["ArgumentsCommands"] ?? "";
+            gameDirectory = game["LaunchDirectory"] ?? "";
+            gamePrefix = game["PrefixFolder"] ?? "";
+            gameProton = basename(game["ProtonDirectory"] ?? "none");
+            gameSteamCompatibility = game["EnableSteamCompatibility"] ?? false;
+          });
+        }).catchError((error) {
+          Widgets.showAlert(context, title: "Error", content: "Cannot load edit because of a retrieve game error: $error");
+        });
+      }
+    }
+
+    return SizedBox(
+      height: MediaQuery.of(context).size.height,
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: 8.0,
+          right: 8.0,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //Back Button
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: Theme.of(context).secondaryHeaderColor,
+                ),
+              ),
+              //Spacer
+              const SizedBox(height: 5),
+              //Game Name
+              SizedBox(
+                height: 60,
+                child: TextField(
+                  controller: gameName,
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary), // Cor da borda inferior quando o campo não está focado
+                    ),
+                  ),
+                  style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
+                ),
+              ),
+              //Spacer
+              const SizedBox(height: 35),
+              //Select Proton
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //Game File
+                  Text(
+                    gameProton == "none" ? "No Proton" : gameProton,
+                    style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+                  ),
+                  //Spacer
+                  const SizedBox(height: 5),
+                  //Button
+                  //Select Proton Button
+                  ElevatedButton(onPressed: () => Models.selectProton(context).then((selectedProton) => setState(() => gameProton = selectedProton)), child: const Text("Select Proton")),
+                ],
+              ),
+              //Spacer
+              const SizedBox(height: 25),
+              //Launch Command
+              gameProton == "none"
+                  ? SizedBox(
+                      height: 60,
+                      child: TextField(
+                        controller: gameLaunchCommand,
+                        decoration: InputDecoration(
+                          labelText: 'Launch Command',
+                          labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary), // Cor da borda inferior quando o campo não está focado
+                          ),
+                        ),
+                        style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
+                      ),
+                    )
+                  : const SizedBox(),
+              //Spacer
+              SizedBox(height: gameProton == "none" ? 25 : 0),
+              //Arguments Commands
+              SizedBox(
+                height: 60,
+                child: TextField(
+                  controller: gameArgumentsCommand,
+                  decoration: InputDecoration(
+                    labelText: 'Arguments Command',
+                    labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
+                    ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary), // Cor da borda inferior quando o campo não está focado
+                    ),
+                  ),
+                  style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
+                ),
+              ),
+              //Spacer
+              const SizedBox(height: 25),
+              //Select Game
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //Game File
+                  Text(gameDirectory == "" ? "No Game Selected" : basename(gameDirectory), style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                  //Spacer
+                  const SizedBox(height: 5),
+                  //Button
+                  ElevatedButton(
+                    onPressed: () => FilesystemPicker.open(
+                      context: context,
+                      rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/home/"),
+                      fsType: FilesystemType.file,
+                      folderIconColor: Theme.of(context).secondaryHeaderColor,
+                    ).then((directory) => setState(() {
+                          gameDirectory = directory ?? "";
+                          //If name is empty automatically add the game name
+                          if (gameName.text == "") {
+                            gameName.text = basename(gameDirectory);
+                          }
+                        })),
+                    child: const Text("Select Game"),
+                  ),
+                ],
+              ),
+              //Spacer
+              const SizedBox(height: 25),
+              //Select Prefix
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //Game File
+                  Text(gamePrefix == "" ? "Default Prefix" : gamePrefix, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                  //Spacer
+                  const SizedBox(height: 5),
+                  //Button
+                  ElevatedButton(
+                    onPressed: () => FilesystemPicker.open(
+                      context: context,
+                      rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/home/"),
+                      fsType: FilesystemType.folder,
+                      folderIconColor: Theme.of(context).secondaryHeaderColor,
+                    ).then((directory) => setState(() => gamePrefix = directory ?? "")),
+                    child: const Text("Select Prefix"),
+                  ),
+                ],
+              ),
+              //Spacer
+              const SizedBox(height: 25),
+              //Steam Compatibility
+              Row(
+                children: [
+                  //Checkbox
+                  Checkbox(
+                    value: gameSteamCompatibility,
+                    onChanged: (value) => setState(() => gameSteamCompatibility = value!),
+                    //Fill Color
+                    fillColor: MaterialStateProperty.resolveWith(
+                      (states) {
+                        if (states.contains(MaterialState.selected)) {
+                          return Theme.of(context).colorScheme.secondary;
+                        }
+                        return null;
+                      },
+                    ),
+                    //Check Color
+                    checkColor: Theme.of(context).colorScheme.tertiary,
+                    //Border Color
+                    side: BorderSide(color: Theme.of(context).secondaryHeaderColor, width: 2.0),
+                  ),
+                  //Text
+                  Text("Enable Steam Compatibility", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                  //Info Button
+                  IconButton(
+                    icon: const Icon(Icons.info),
+                    color: Theme.of(context).secondaryHeaderColor,
+                    onPressed: () => Widgets.showAlert(
+                      context,
+                      title: "Steam Compatibility",
+                      content: "Enables steam compatibility making the game open with STEAM_COMPAT_CLIENT_INSTALL_PATH to play online games in steam if you are using a legit install",
+                    ),
+                  ),
+                ],
+              ),
+              //Spacer
+              const SizedBox(height: 25),
+              //Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: index == null ? () => confirmation() : () => edit(),
+                  child: const Text("Confirm"),
+                ),
+              ),
+              //Spacer
+              const SizedBox(height: 25),
+            ],
+          ),
         ),
       ),
     );
