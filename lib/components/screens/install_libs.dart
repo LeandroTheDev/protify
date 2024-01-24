@@ -117,7 +117,7 @@ class _InstallLibsScreenState extends State<InstallLibsScreen> {
                       const SizedBox(height: 5),
                       //Select Proton Button
                       ElevatedButton(
-                        onPressed: () => Models.selectProton(context, showWine: true, hideProton: true).then(
+                        onPressed: () => Widgets.selectProton(context, showWine: true, hideProton: true).then(
                           (selectedProton) => setState(() => libraryProton = selectedProton),
                         ),
                         child: const Text("Select Proton/Wine"),

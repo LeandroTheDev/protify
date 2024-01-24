@@ -1,9 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:protify/components/widgets.dart';
 import 'package:protify/data/save_datas.dart';
+import 'package:path/path.dart';
+import 'package:provider/provider.dart';
 
-class UserPreferences {
+class UserPreferences with ChangeNotifier {
   /// Returns a list of all games saved in device
   static Future<List> getGames() async {
     final games = jsonDecode(await SaveDatas.readData("games", "string") ?? "[]");
@@ -23,4 +27,39 @@ class UserPreferences {
     await SaveDatas.saveData('games', jsonEncode(games));
     return games;
   }
+
+  /// Load all preferences into provider context
+  static Future loadPreference(BuildContext context) async {
+    final Map preferences = jsonDecode(await SaveDatas.readData("preferences", "string") ?? "{}");
+    final UserPreferences userPreference = Provider.of<UserPreferences>(context, listen: false);
+    // Check if preferences is empty
+    if (preferences.isEmpty) {
+      final username = Platform.isLinux ? split(current)[3] : null;
+      //Object Creation
+      final Map saveData = {
+        "Username": username,
+        "DefaultGameDirectory": Platform.isLinux ? join("/", "home" + username!) : "C:\\",
+        "RunBackground": true,
+      };
+      //Saving Preferences
+      await SaveDatas.saveData("preferences", jsonEncode(saveData));
+      //Updating Preferences
+      userPreference.changeUsername(saveData["Username"]);
+      userPreference.changeDefaultGameDirectory(saveData["DefaultGameDirectory"]);
+      return;
+    }
+    // Updating Providers
+    userPreference.changeUsername(preferences["Username"] ?? "");
+    userPreference.changeDefaultGameDirectory(preferences["DefaultGameDirectory"] ?? Platform.isLinux ? "/" : "C:\\");
+  }
+
+  //Username
+  String _username = "";
+  get username => _username;
+  void changeUsername(String value) => _username = value;
+
+  //Default Game Directory
+  String _defaultGameDirectory = "";
+  get defaultGameDirectory => _defaultGameDirectory;
+  void changeDefaultGameDirectory(String value) => _defaultGameDirectory = value;
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:protify/components/models.dart';
 import 'package:protify/components/screens/add_remove_game.dart';
+import 'package:protify/components/screens/preferences.dart';
 import 'package:protify/data/user_preferences.dart';
 
 // ignore: must_be_immutable
@@ -22,8 +23,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Load Games
-    UserPreferences.getGames().then((value) => setState(() => games = value));
+    UserPreferences.loadPreference(context); // Load Preferences
+    UserPreferences.getGames().then((value) => setState(() => games = value)); // Load Games
 
     // To add just call the function to edit simple add the index in parameter
     addOrEditGameModal([index]) {
@@ -167,32 +168,48 @@ class _HomePageState extends State<HomePage> {
       return SizedBox(
         height: windowSize.height,
         width: windowSize.width * 0.3,
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: games.length,
-          itemBuilder: (context, index) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-            child: Container(
-              height: 35,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Theme.of(context).secondaryHeaderColor,
-                  width: 1.0,
-                ),
-              ),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 5.0),
-                  child: Text(
-                    games[index]["Title"],
-                    textAlign: TextAlign.start,
-                    style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: games.length,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                child: Container(
+                  height: 35,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context).secondaryHeaderColor,
+                      width: 1.0,
+                    ),
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 5.0),
+                      child: Text(
+                        games[index]["Title"],
+                        textAlign: TextAlign.start,
+                        style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                width: windowSize.width * 0.3,
+                height: 30,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PreferencesScreen())),
+                  child: Text("Preferences"),
+                ),
+              ),
+            ),
+          ],
         ),
       );
     }

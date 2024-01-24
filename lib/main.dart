@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:protify/data/user_preferences.dart';
 import 'package:protify/pages/homepage.dart';
+import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
+  //Declaring the Window Options
   WindowOptions windowOptions = const WindowOptions(
     size: Size(800, 600),
     center: true,
@@ -12,11 +15,15 @@ void main() async {
     minimumSize: Size(226, 226),
     titleBarStyle: TitleBarStyle.normal,
   );
+  //Updating Window Option
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
     await windowManager.focus();
   });
-  runApp(const Protify());
+  runApp(MultiProvider(providers: [
+    //Declaring the Provider
+    ChangeNotifierProvider(create: (_) => UserPreferences()),
+  ], child: const Protify()));
 }
 
 class Protify extends StatelessWidget {

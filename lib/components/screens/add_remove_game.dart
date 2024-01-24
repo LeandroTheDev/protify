@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:protify/components/models.dart';
 import 'package:protify/components/widgets.dart';
 import 'package:protify/data/save_datas.dart';
 import 'package:protify/data/user_preferences.dart';
@@ -175,7 +174,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
                         const SizedBox(height: 5),
                         //Select Proton Button
                         ElevatedButton(
-                          onPressed: () => Models.selectProton(context).then((selectedProton) => setState(() => gameProton = selectedProton)),
+                          onPressed: () => Widgets.selectProton(context).then((selectedProton) => setState(() => gameProton = selectedProton)),
                           child: const Text("Select Proton"),
                         ),
                       ],

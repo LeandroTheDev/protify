@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -15,6 +16,9 @@ class GameLogScreen extends StatefulWidget {
 class GameLogScreenState extends State<GameLogScreen> {
   bool running = false;
   List gameLog = [];
+  Process? process;
+  StreamSubscription? stdOut;
+  StreamSubscription? stdErr;
   startCommand() async {
     running = true;
     final String command;
@@ -23,7 +27,7 @@ class GameLogScreenState extends State<GameLogScreen> {
       // Check Steam Compatibility
       String steamCompatibility = "";
       if (widget.game["EnableSteamCompatibility"]) {
-        steamCompatibility = 'export STEAM_COMPAT_CLIENT_INSTALL_PATH="~/.local/share/Steam" &&';
+        steamCompatibility = 'STEAM_COMPAT_CLIENT_INSTALL_PATH="~/.local/share/Steam"';
       }
       //Command Variables
       final String protonDirectory = widget.game["ProtonDirectory"] ?? "";
@@ -34,14 +38,14 @@ class GameLogScreenState extends State<GameLogScreen> {
       final String argumentsCommand = widget.game["ArgumentsCommand"] ?? "";
 
       //Proton full command
-      command = '$steamCompatibility WINEPREFIX="$gamePrefix" STEAM_COMPAT_DATA_PATH="$protonDirectory" "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$gameDirectory" $argumentsCommand';
+      command = '$steamCompatibility WINEPREFIX="$gamePrefix" STEAM_COMPAT_DATA_PATH="$gamePrefix" "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$gameDirectory" $argumentsCommand';
     }
     //Non proton game
     else {
       // Check Steam Compatibility
       String steamCompatibility = "";
       if (widget.game["EnableSteamCompatibility"]) {
-        steamCompatibility = 'export STEAM_COMPAT_CLIENT_INSTALL_PATH="~/.local/share/Steam" &&';
+        steamCompatibility = 'STEAM_COMPAT_CLIENT_INSTALL_PATH="~/.local/share/Steam"';
       }
       final String launchCommand;
       if (widget.game["ProtonDirectory"] == "wine") {
@@ -57,20 +61,20 @@ class GameLogScreenState extends State<GameLogScreen> {
     try {
       //Resetting game log
       gameLog = [];
-      var process = await Process.start('/bin/bash', ['-c', command]);
+      process = await Process.start('/bin/bash', ['-c', command]);
 
       //Receive infos
-      process.stdout.transform(utf8.decoder).listen((data) {
+      stdOut = process!.stdout.transform(utf8.decoder).listen((data) {
         setState(() => gameLog.add('[Info]: $data'));
       });
 
       //Receive Errors
-      process.stderr.transform(utf8.decoder).listen((data) {
+      stdErr = process!.stderr.transform(utf8.decoder).listen((data) {
         setState(() => gameLog.add('[Error]: $data'));
       });
 
       //Waiting for process
-      var exitCode = await process.exitCode;
+      final exitCode = await process!.exitCode;
       //Process Finished
       if (exitCode == 0) {
         setState(() => gameLog.add('[Info] Success Launching Game'));
@@ -92,7 +96,7 @@ class GameLogScreenState extends State<GameLogScreen> {
       width: MediaQuery.of(context).size.width,
       child: Column(
         children: [
-          //Button
+          //Log
           SizedBox(
             height: MediaQuery.of(context).size.height - 40,
             width: double.infinity,
@@ -108,14 +112,34 @@ class GameLogScreenState extends State<GameLogScreen> {
             ),
           ),
           //Button
-          SizedBox(
-            width: MediaQuery.of(context).size.width / 2,
-            height: 30,
-            child: ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text(
-                "Close Log",
-              ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Close Log
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 4,
+                  height: 30,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text(
+                      "Close Log",
+                    ),
+                  ),
+                ),
+                // Kill Process
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 4,
+                  height: 30,
+                  child: ElevatedButton(
+                    onPressed: () => process!.kill(ProcessSignal.sigkill),
+                    child: const Text(
+                      "Kill",
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(
@@ -124,5 +148,18 @@ class GameLogScreenState extends State<GameLogScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    //Check listeners and cancel
+    if (stdOut != null) {
+      stdOut!.cancel();
+    }
+    //Check listeners and cancel
+    if (stdErr != null) {
+      stdErr!.cancel();
+    }
   }
 }
