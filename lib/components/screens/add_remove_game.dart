@@ -32,7 +32,11 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
     final index = widget.index;
     //Add new game
-    confirmation() {
+    confirmation() async {
+      //Check validations
+      if (!await validate(context)) {
+        return;
+      }
       //Receiving old data
       UserPreferences.getGames().then((games) {
         //Adding new game
@@ -57,7 +61,11 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
     }
 
     //Edit actual game index
-    edit() {
+    edit() async {
+      //Validations
+      if (!await validate(context)) {
+        return;
+      }
       //Receiving old data
       UserPreferences.getGames().then((games) {
         //Adding new game
@@ -330,5 +338,19 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
         ),
       ),
     );
+  }
+
+  Future<bool> validate(BuildContext context) async {
+    if (gameName.text.length == 0) {
+      if (!await Widgets.showQuestion(context, title: "No Name", content: "You are trying to add a game without title are you sure?")) {
+        return false;
+      }
+    }
+    if (gameDirectory.length == 0) {
+      if (!await Widgets.showQuestion(context, title: "No Game", content: "You are about to add a game without a game are you sure?")) {
+        return false;
+      }
+    }
+    return true;
   }
 }

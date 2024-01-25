@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:protify/components/models.dart';
 import 'package:protify/components/screens/add_remove_game.dart';
+import 'package:protify/components/screens/install_dll.dart';
+import 'package:protify/components/screens/install_libs.dart';
 import 'package:protify/components/screens/preferences.dart';
 import 'package:protify/data/user_preferences.dart';
 
@@ -94,7 +96,28 @@ class _HomePageState extends State<HomePage> {
     }
 
     // Install libraries for the prefix
-    installLibs(int index) => Models.installLibs(context: context, index: index);
+    installLibs(int index) {
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Theme.of(context).primaryColor,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return InstallLibsScreen(index: index);
+        },
+      );
+    }
+
+    // Install libraries for the prefix
+    installDll(int index) {
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Theme.of(context).primaryColor,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return InstallDll(index: index);
+        },
+      );
+    }
 
     // Hide game infos
     hideGameInfo([index, mousePosition]) {
@@ -284,15 +307,15 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                    //Install Dependencie
+                    //Edit Button
                     SizedBox(
                       width: windowSize.width * 0.15 < 56 ? 56 : windowSize.width * 0.15,
                       height: windowSize.height * 0.07,
                       child: ElevatedButton(
-                        onPressed: () => installLibs(selectedGameIndex!),
+                        onPressed: () => addOrEditGameModal(selectedGameIndex!),
                         child: const FittedBox(
                           child: Text(
-                            "Libs",
+                            "Edit",
                             style: TextStyle(fontSize: 999),
                           ),
                         ),
@@ -302,6 +325,66 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
+            //Library
+            games[selectedGameIndex!]["ProtonDirectory"] != null
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      width: windowSize.width * 0.7 - 23,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          //Empty
+                          const SizedBox(),
+                          //Install Dependencie
+                          SizedBox(
+                            width: windowSize.width * 0.15 < 56 ? 56 : windowSize.width * 0.15,
+                            height: windowSize.height * 0.07,
+                            child: ElevatedButton(
+                              onPressed: () => installLibs(selectedGameIndex!),
+                              child: const FittedBox(
+                                child: Text(
+                                  "Libs",
+                                  style: TextStyle(fontSize: 999),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : const SizedBox(),
+            //Dlls
+            games[selectedGameIndex!]["ProtonDirectory"] != null
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      width: windowSize.width * 0.7 - 23,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          //Empty
+                          const SizedBox(),
+                          //Install DLLs
+                          SizedBox(
+                            width: windowSize.width * 0.15 < 56 ? 56 : windowSize.width * 0.15,
+                            height: windowSize.height * 0.07,
+                            child: ElevatedButton(
+                              onPressed: () => installDll(selectedGameIndex!),
+                              child: const FittedBox(
+                                child: Text(
+                                  "Dll",
+                                  style: TextStyle(fontSize: 999),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : const SizedBox(),
           ],
         );
       }
