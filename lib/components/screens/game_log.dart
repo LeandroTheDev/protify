@@ -52,7 +52,7 @@ class GameLogScreenState extends State<GameLogScreen> {
       }
       final String launchCommand;
       if (widget.game["ProtonDirectory"] == "wine") {
-        launchCommand = 'WINEPREFIX="${widget.game["PrefixFolder"]}" wine';
+        launchCommand = 'WINEPREFIX="${widget.game["PrefixFolder"]}/pfx" wine';
       } else {
         launchCommand = widget.game["LaunchCommand"] ?? "";
       }
