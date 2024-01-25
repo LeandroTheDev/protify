@@ -39,4 +39,10 @@ class SaveDatas {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.remove(dataName);
   }
+
+  /// Clean all data saved
+  static void clearData() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.clear();
+  }
 }

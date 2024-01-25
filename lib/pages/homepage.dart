@@ -16,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool loaded = false;
   List games = [];
   Offset mousePosition = const Offset(0, 0);
   OverlayEntry? gameInfo;
@@ -23,7 +24,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    UserPreferences.loadPreference(context); // Load Preferences
+    if (!loaded) {
+      loaded = true;
+      UserPreferences.loadPreference(context); // Load Preferences
+    }
     UserPreferences.getGames().then((value) => setState(() => games = value)); // Load Games
 
     // To add just call the function to edit simple add the index in parameter

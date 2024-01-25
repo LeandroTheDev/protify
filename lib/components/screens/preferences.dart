@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:protify/components/widgets.dart';
+import 'package:protify/data/save_datas.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
 
@@ -42,7 +44,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         //Spacer
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         //Username
                         Row(
                           children: [
@@ -80,7 +82,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                           ],
                         ),
                         //Spacer
-                        SizedBox(height: 30),
+                        const SizedBox(height: 30),
                         //Default Directory
                         ElevatedButton(
                           onPressed: () => FilesystemPicker.open(
@@ -90,6 +92,21 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             folderIconColor: Theme.of(context).secondaryHeaderColor,
                           ).then((directory) => userPreferences.changeDefaultGameDirectory(directory ?? defaultDirectory)),
                           child: const Text("Default Game Directory"),
+                        ),
+                        //Spacer
+                        const SizedBox(height: 30),
+                        //Clear data
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
+                          ),
+                          onPressed: () => Widgets.showQuestion(context, title: "Clear Data", content: "Are you sure you want to erase all saved datas?").then(
+                            (value) => value ? SaveDatas.clearData() : () {},
+                          ),
+                          child: const Text(
+                            "Clear Data",
+                            style: TextStyle(color: Colors.black),
+                          ),
                         ),
                       ],
                     ),

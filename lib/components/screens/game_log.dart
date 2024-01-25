@@ -38,7 +38,7 @@ class GameLogScreenState extends State<GameLogScreen> {
       final String argumentsCommand = widget.game["ArgumentsCommand"] ?? "";
 
       //Proton full command
-      command = '$steamCompatibility WINEPREFIX="$gamePrefix" STEAM_COMPAT_DATA_PATH="$gamePrefix" "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$gameDirectory" $argumentsCommand';
+      command = '$steamCompatibility WINEPREFIX="$gamePrefix/pfx" STEAM_COMPAT_DATA_PATH="$gamePrefix" "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$gameDirectory" $argumentsCommand';
     }
     //Non proton game
     else {

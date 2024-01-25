@@ -30,15 +30,16 @@ class UserPreferences with ChangeNotifier {
 
   /// Load all preferences into provider context
   static Future loadPreference(BuildContext context) async {
-    final Map preferences = jsonDecode(await SaveDatas.readData("preferences", "string") ?? "{}");
+    // ignore: use_build_context_synchronously
     final UserPreferences userPreference = Provider.of<UserPreferences>(context, listen: false);
+    final Map preferences = jsonDecode(await SaveDatas.readData("preferences", "string") ?? "{}");
     // Check if preferences is empty
     if (preferences.isEmpty) {
       final username = Platform.isLinux ? split(current)[3] : null;
       //Object Creation
       final Map saveData = {
         "Username": username,
-        "DefaultGameDirectory": Platform.isLinux ? join("/", "home" + username!) : "C:\\",
+        "DefaultGameDirectory": Platform.isLinux ? join("/", "home", username!) : "C:\\",
         "RunBackground": true,
       };
       //Saving Preferences
@@ -48,9 +49,11 @@ class UserPreferences with ChangeNotifier {
       userPreference.changeDefaultGameDirectory(saveData["DefaultGameDirectory"]);
       return;
     }
+    final defaultDirectory = Platform.isLinux ? "/" : "C:\\";
     // Updating Providers
     userPreference.changeUsername(preferences["Username"] ?? "");
-    userPreference.changeDefaultGameDirectory(preferences["DefaultGameDirectory"] ?? Platform.isLinux ? "/" : "C:\\");
+    print(preferences["DefaultGameDirectory"]);
+    userPreference.changeDefaultGameDirectory(preferences["DefaultGameDirectory"] ?? defaultDirectory);
   }
 
   //Username
@@ -61,5 +64,15 @@ class UserPreferences with ChangeNotifier {
   //Default Game Directory
   String _defaultGameDirectory = "";
   get defaultGameDirectory => _defaultGameDirectory;
-  void changeDefaultGameDirectory(String value) => _defaultGameDirectory = value;
+  void changeDefaultGameDirectory(String value) => {
+        _defaultGameDirectory = value,
+        //Reading preferences
+        SaveDatas.readData("preferences", "string").then(
+          //Saving DefaultGameDirectory Preference
+          (preferences) {
+            final updatedPreferences = jsonDecode(preferences);
+            SaveDatas.saveData("preferences", jsonEncode(updatedPreferences["DefaultGameDirectory"]));
+          },
+        ),
+      };
 }
