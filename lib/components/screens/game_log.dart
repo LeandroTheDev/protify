@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:protify/data/user_preferences.dart';
+import 'package:provider/provider.dart';
 
 class GameLogScreen extends StatefulWidget {
   final Map game;
@@ -19,15 +21,16 @@ class GameLogScreenState extends State<GameLogScreen> {
   Process? process;
   StreamSubscription? stdOut;
   StreamSubscription? stdErr;
-  startCommand() async {
+  startCommand(BuildContext context) async {
     running = true;
+    final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
     final String command;
     //Check if we are running a proton game
     if (widget.game["ProtonDirectory"] != null && widget.game["ProtonDirectory"] != "wine") {
       // Check Steam Compatibility
       String steamCompatibility = "";
       if (widget.game["EnableSteamCompatibility"]) {
-        steamCompatibility = 'STEAM_COMPAT_CLIENT_INSTALL_PATH="~/.local/share/Steam"';
+        steamCompatibility = 'STEAM_COMPAT_CLIENT_INSTALL_PATH="${preferences.steamCompatibilityDirectory}"';
       }
       //Command Variables
       final String protonDirectory = widget.game["ProtonDirectory"] ?? "";
@@ -45,7 +48,7 @@ class GameLogScreenState extends State<GameLogScreen> {
       // Check Steam Compatibility
       String steamCompatibility = "";
       if (widget.game["EnableSteamCompatibility"]) {
-        steamCompatibility = 'STEAM_COMPAT_CLIENT_INSTALL_PATH="~/.local/share/Steam"';
+        steamCompatibility = 'STEAM_COMPAT_CLIENT_INSTALL_PATH="${preferences.steamCompatibilityDirectory}"';
       }
       final String launchCommand;
       if (widget.game["ProtonDirectory"] == "wine") {
@@ -90,7 +93,9 @@ class GameLogScreenState extends State<GameLogScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (!running) startCommand();
+    if (!running) {
+      startCommand(context);
+    }
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,

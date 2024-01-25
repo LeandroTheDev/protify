@@ -7,6 +7,7 @@ import 'package:path/path.dart';
 import 'package:protify/components/widgets.dart';
 import 'package:protify/data/save_datas.dart';
 import 'package:protify/data/user_preferences.dart';
+import 'package:provider/provider.dart';
 
 class AddOrEditGameScreen extends StatefulWidget {
   final int? index;
@@ -28,6 +29,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
     final index = widget.index;
     //Add new game
     confirmation() {
@@ -235,7 +237,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
                         ElevatedButton(
                           onPressed: () => FilesystemPicker.open(
                             context: context,
-                            rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/home/"),
+                            rootDirectory: Directory(preferences.defaultGameDirectory),
                             fsType: FilesystemType.file,
                             folderIconColor: Theme.of(context).secondaryHeaderColor,
                           ).then((directory) => setState(() {
@@ -263,7 +265,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
                         ElevatedButton(
                           onPressed: () => FilesystemPicker.open(
                             context: context,
-                            rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/home/"),
+                            rootDirectory: Directory(preferences.defaultPrefixDirectory),
                             fsType: FilesystemType.folder,
                             folderIconColor: Theme.of(context).secondaryHeaderColor,
                           ).then((directory) => setState(() => gamePrefix = directory ?? "")),

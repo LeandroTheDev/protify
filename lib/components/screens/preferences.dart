@@ -15,12 +15,17 @@ class PreferencesScreen extends StatefulWidget {
 }
 
 class _PreferencesScreenState extends State<PreferencesScreen> {
-  final String defaultDirectory = Platform.isWindows ? "\\" : "/home/";
+  bool loaded = false;
   TextEditingController username = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final UserPreferences userPreferences = Provider.of<UserPreferences>(context, listen: false);
     final windowSize = MediaQuery.of(context).size;
+
+    if (!loaded) {
+      loaded = true;
+      username.text = userPreferences.username;
+    }
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -46,7 +51,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         //Spacer
                         const SizedBox(height: 5),
                         //Username
-                        Row(
+                        Column(
                           children: [
                             //Input
                             SizedBox(
@@ -61,12 +66,14 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                                     borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
                                   ),
                                   enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary), // Cor da borda inferior quando o campo não está focado
+                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
                                   ),
                                 ),
                                 style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
                               ),
                             ),
+                            //Spacer
+                            const SizedBox(height: 10),
                             //Confirm Button
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -83,15 +90,39 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         ),
                         //Spacer
                         const SizedBox(height: 30),
-                        //Default Directory
+                        //Default Game Directory
                         ElevatedButton(
                           onPressed: () => FilesystemPicker.open(
                             context: context,
                             rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
                             fsType: FilesystemType.folder,
                             folderIconColor: Theme.of(context).secondaryHeaderColor,
-                          ).then((directory) => userPreferences.changeDefaultGameDirectory(directory ?? defaultDirectory)),
+                          ).then((directory) => directory != null ? userPreferences.changeDefaultGameDirectory(directory) : () {}),
                           child: const Text("Default Game Directory"),
+                        ),
+                        //Spacer
+                        const SizedBox(height: 30),
+                        //Default Prefix Directory
+                        ElevatedButton(
+                          onPressed: () => FilesystemPicker.open(
+                            context: context,
+                            rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
+                            fsType: FilesystemType.folder,
+                            folderIconColor: Theme.of(context).secondaryHeaderColor,
+                          ).then((directory) => directory != null ? userPreferences.changeDefaultPrefixDirectory(directory) : () {}),
+                          child: const Text("Default Prefix Directory"),
+                        ),
+                        //Spacer
+                        const SizedBox(height: 30),
+                        //Steam Compatibility Directory
+                        ElevatedButton(
+                          onPressed: () => FilesystemPicker.open(
+                            context: context,
+                            rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
+                            fsType: FilesystemType.folder,
+                            folderIconColor: Theme.of(context).secondaryHeaderColor,
+                          ).then((directory) => directory != null ? userPreferences.changesteamCompatibilityDirectory(directory) : () {}),
+                          child: const Text("Steam Compatibility Directory"),
                         ),
                         //Spacer
                         const SizedBox(height: 30),
