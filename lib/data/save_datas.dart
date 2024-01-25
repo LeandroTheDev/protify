@@ -41,7 +41,7 @@ class SaveDatas {
   }
 
   /// Clean all data saved
-  static void clearData() async {
+  static Future clearData() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.clear();
   }

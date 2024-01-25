@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:protify/data/save_datas.dart';
+import 'package:protify/data/system.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:protify/pages/homepage.dart';
 import 'package:provider/provider.dart';
@@ -6,10 +10,11 @@ import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final preferences = jsonDecode(await SaveDatas.readData('preferences', 'string') ?? "{}");
   await windowManager.ensureInitialized();
   //Declaring the Window Options
-  WindowOptions windowOptions = const WindowOptions(
-    size: Size(800, 600),
+  WindowOptions windowOptions = WindowOptions(
+    size: Size(preferences["StartWindowWidth"] ?? 800.0, preferences["StartWindowHeight"] ?? 600.0),
     center: true,
     backgroundColor: Colors.transparent,
     minimumSize: Size(226, 226),
@@ -23,6 +28,7 @@ void main() async {
   runApp(MultiProvider(providers: [
     //Declaring the Provider
     ChangeNotifierProvider(create: (_) => UserPreferences()),
+    ChangeNotifierProvider(create: (_) => ProtifySystem()),
   ], child: const Protify()));
 }
 

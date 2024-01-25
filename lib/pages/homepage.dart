@@ -40,6 +40,15 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
+    preferencesScreen() {
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Theme.of(context).primaryColor,
+        isScrollControlled: true,
+        builder: (BuildContext context) => PreferencesScreen(),
+      );
+    }
+
     // Return the grid horizontal count
     int getGridGamesCrossAxisCount(windowSize, gameCount) {
       if (windowSize.width <= 400) {
@@ -208,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                 width: windowSize.width * 0.3,
                 height: 30,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PreferencesScreen())),
+                  onPressed: () => preferencesScreen(),
                   child: Text("Preferences"),
                 ),
               ),

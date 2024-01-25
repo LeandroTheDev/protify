@@ -48,6 +48,8 @@ class UserPreferences with ChangeNotifier {
         "DefaultGameDirectory": defaultGameDirectory,
         "DefaultPrefixDirectory": defaultPrefixDirectory,
         "SteamCompatibilityDirectory": steamCompatibilityDirectory,
+        "StartWindowHeight": 600.0,
+        "StartWindowWidth": 800.0,
       };
       //Saving Preferences
       await SaveDatas.saveData("preferences", jsonEncode(saveData));
@@ -55,14 +57,18 @@ class UserPreferences with ChangeNotifier {
       userPreference.changeUsername(saveData["Username"] ?? "Protify User");
       userPreference.changeDefaultGameDirectory(saveData["DefaultGameDirectory"]);
       userPreference.changeDefaultPrefixDirectory(saveData["DefaultPrefixDirectory"]);
-      userPreference.changesteamCompatibilityDirectory(saveData["SteamCompatibilityDirectory"]);
+      userPreference.changeSteamCompatibilityDirectory(saveData["SteamCompatibilityDirectory"]);
+      userPreference.changeStartWindowHeight(saveData["StartWindowHeight"]);
+      userPreference.changeStartWindowWidth(saveData["StartWindowWidth"]);
       return;
     }
     // Updating Providers
     userPreference.changeUsername(preferences["Username"] ?? "");
     userPreference.changeDefaultGameDirectory(preferences["DefaultGameDirectory"] ?? defaultGameDirectory);
     userPreference.changeDefaultPrefixDirectory(preferences["DefaultPrefixDirectory"] ?? defaultPrefixDirectory);
-    userPreference.changesteamCompatibilityDirectory(preferences["SteamCompatibilityDirectory"] ?? steamCompatibilityDirectory);
+    userPreference.changeSteamCompatibilityDirectory(preferences["SteamCompatibilityDirectory"] ?? steamCompatibilityDirectory);
+    userPreference.changeStartWindowHeight(preferences["StartWindowHeight"] ?? 600.0);
+    userPreference.changeStartWindowWidth(preferences["StartWindowWidth"] ?? 800.0);
   }
 
   /// Save a preference option in data storage
@@ -107,8 +113,28 @@ class UserPreferences with ChangeNotifier {
   //Default Steam Compatibility Directory
   String _steamCompatibilityDirectory = "";
   get steamCompatibilityDirectory => _steamCompatibilityDirectory;
-  void changesteamCompatibilityDirectory(String value) => {
+  void changeSteamCompatibilityDirectory(String value) => {
         _steamCompatibilityDirectory = value,
         savePreferencesInData(option: "SteamCompatibilityDirectory", value: value),
+      };
+
+  //Start Window Height
+  double _startWindowHeight = 600.0;
+  get startWindowHeight => _startWindowHeight;
+  void changeStartWindowHeight(double value) => {
+        //Minimum Height
+        if (value < 230) {value = 230},
+        _startWindowHeight = value,
+        savePreferencesInData(option: "StartWindowHeight", value: value),
+      };
+
+  //Start Window Width
+  double _startWindowWidth = 800.0;
+  get startWindowWidth => _startWindowWidth;
+  void changeStartWindowWidth(double value) => {
+        //Minimum Width
+        if (value < 230) {value = 230},
+        _startWindowWidth = value,
+        savePreferencesInData(option: "StartWindowWidth", value: value),
       };
 }
