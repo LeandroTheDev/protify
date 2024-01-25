@@ -16,12 +16,12 @@ class InstallDll extends StatefulWidget {
 
 class _InstallDllState extends State<InstallDll> {
   bool loaded = false;
-  late final game;
+  late final Map game;
   String dllDirectory = "";
   String dllPrefixFolder = "";
   String defaultdllPrefixFolder = "";
 
-  void confirm() async {
+  void confirm(BuildContext context) async {
     try {
       // Get dll as File
       File dllFile = File(dllDirectory);
@@ -29,16 +29,17 @@ class _InstallDllState extends State<InstallDll> {
       List<int> bytes = await dllFile.readAsBytes();
 
       // Getting installation Path
-      String installationPath = join(dllPrefixFolder, dllFile.uri.pathSegments.last);
+      String installationPath = join(dllPrefixFolder == "" ? defaultdllPrefixFolder : dllPrefixFolder, dllFile.uri.pathSegments.last);
 
       // Declaring Installation File
       File installationFile = File(installationPath);
       // Writing Bytes into Installation File
       await installationFile.writeAsBytes(bytes);
-
-      print('Arquivo transferido com sucesso para: $installationPath');
-    } catch (e) {
-      print('Erro durante a transferência do arquivo: $e');
+      // ignore: use_build_context_synchronously
+      Widgets.showAlert(context, title: "Sucess", content: "Sucess installing dll in: ${dllPrefixFolder == "" ? defaultdllPrefixFolder : dllPrefixFolder}");
+    } catch (error) {
+      // ignore: use_build_context_synchronously
+      Widgets.showAlert(context, title: "Fail", content: "Cannot install dll into prefix: $error");
     }
   }
 
@@ -51,7 +52,7 @@ class _InstallDllState extends State<InstallDll> {
       UserPreferences.getGames().then(
         (games) => setState(() {
           game = games[index];
-          defaultdllPrefixFolder = join(games[index]["PrefixFolder"], "pfx", "drive_c", "windows", "System32");
+          defaultdllPrefixFolder = join(games[index]["PrefixFolder"], "pfx", "drive_c", "windows", "system32");
         }),
       );
     }
@@ -116,7 +117,7 @@ class _InstallDllState extends State<InstallDll> {
                       ElevatedButton(
                         onPressed: () => FilesystemPicker.open(
                           context: context,
-                          rootDirectory: Platform.isWindows ? Directory("\\") : Directory("~/"),
+                          rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/home/"),
                           fsType: FilesystemType.file,
                           folderIconColor: Theme.of(context).secondaryHeaderColor,
                         ).then((directory) => setState(() => dllDirectory = directory ?? "")),
@@ -131,7 +132,7 @@ class _InstallDllState extends State<InstallDll> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       //Library Directory
-                      Text(dllDirectory == "" ? "Default Installation Folder" : basename(dllPrefixFolder), style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                      Text(dllPrefixFolder == "" ? "Default Installation Folder" : basename(dllPrefixFolder), style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
                       //Spacer
                       const SizedBox(height: 5),
                       //Button
@@ -158,7 +159,7 @@ class _InstallDllState extends State<InstallDll> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () => {},
+                      onPressed: () => confirm(context),
                       child: const Text("Install"),
                     ),
                   ),

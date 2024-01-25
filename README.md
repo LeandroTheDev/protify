@@ -1,5 +1,5 @@
 # Protify
-Tired of using Steam to open your favorite games? you hate the numbers in compatdata and getting lost evertime you need to change something in the prefix? heres the solution protify is a simply and light-weight software builded in flutter to make a minimalist launcher for opening you favorite games in linux using proton.
+Tired of using Steam to open your favorite games? you hate the numbers in compatdata and getting lost everytime you need to change something in the prefix? heres the solution protify is a simply and light-height software builded in flutter to make a minimalist launcher for opening you favorite games in linux using proton.
 
 This software is builded thinking in easily open your games and configure prefixes for you using the proton, and you can make a lot of tricks to run your games such adding arguments installing libraries, dlls and easily find the prefixes folder to make changes in there, the software comes with a easily gui to install libraries, dlls for prefixes.
 
@@ -16,9 +16,9 @@ This software is builded thinking in easily open your games and configure prefix
 - Add game images
 - Friends List
 
-[``Demonstration``](https://github.com/LeandroTheDev/protify/assets/106118473/890667c5-4fd9-430c-b834-fddf0520b645)
+https://github.com/LeandroTheDev/protify/assets/106118473/b177c297-b642-4af4-baef-d2f6b5c9ecb4
 
-[``Library Demonstration``](https://github.com/LeandroTheDev/protify/assets/106118473/51c81b4f-5a9d-46de-91a6-c3edef9a668c)
+https://github.com/LeandroTheDev/protify/assets/106118473/970d2a94-3671-4a52-8145-ae6bba9ff891
 
 ### First steps
 - Download protify from [releases](https://github.com/LeandroTheDev/protify/releases)

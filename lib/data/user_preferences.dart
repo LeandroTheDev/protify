@@ -35,10 +35,10 @@ class UserPreferences with ChangeNotifier {
     final Map preferences = jsonDecode(await SaveDatas.readData("preferences", "string") ?? "{}");
 
     //Default variables
-    final username = Platform.isLinux ? split(current)[3] : null;
-    final defaultGameDirectory = Platform.isLinux ? "~/" : "\\";
+    final username = Platform.isLinux ? split(current)[2] : null;
+    final defaultGameDirectory = Platform.isLinux ? "/home/$username" : "\\";
     final defaultPrefixDirectory = join(current, "prefixes");
-    final steamCompatibilityDirectory = "~/.local/share/Steam";
+    const steamCompatibilityDirectory = "~/.local/share/Steam";
 
     // Check if preferences is empty
     if (preferences.isEmpty) {

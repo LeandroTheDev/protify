@@ -17,7 +17,7 @@ void main() async {
     size: Size(preferences["StartWindowWidth"] ?? 800.0, preferences["StartWindowHeight"] ?? 600.0),
     center: true,
     backgroundColor: Colors.transparent,
-    minimumSize: Size(226, 226),
+    minimumSize: const Size(226, 226),
     titleBarStyle: TitleBarStyle.normal,
   );
   //Updating Window Option

@@ -46,7 +46,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
           "LaunchCommand": gameLaunchCommand.text == "" ? null : gameLaunchCommand.text,
           "ArgumentsCommand": gameArgumentsCommand.text == "" ? null : gameArgumentsCommand.text,
           "LaunchDirectory": gameDirectory,
-          "PrefixFolder": gamePrefix == "" ? join(current, "prefixes", gameName.text) : gamePrefix,
+          "PrefixFolder": gamePrefix == "" ? join(preferences.defaultPrefixDirectory, gameName.text) : gamePrefix,
           "ProtonDirectory": gameProton == "none" ? null : join(current, "protons", gameProton),
           "Category": "My Games",
           "Ignore": [],
@@ -341,12 +341,14 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
   }
 
   Future<bool> validate(BuildContext context) async {
-    if (gameName.text.length == 0) {
+    if (gameName.text.isEmpty) {
+      // ignore: use_build_context_synchronously
       if (!await Widgets.showQuestion(context, title: "No Name", content: "You are trying to add a game without title are you sure?")) {
         return false;
       }
     }
-    if (gameDirectory.length == 0) {
+    if (gameDirectory.isEmpty) {
+      // ignore: use_build_context_synchronously
       if (!await Widgets.showQuestion(context, title: "No Game", content: "You are about to add a game without a game are you sure?")) {
         return false;
       }

@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
         context: context,
         backgroundColor: Theme.of(context).primaryColor,
         isScrollControlled: true,
-        builder: (BuildContext context) => PreferencesScreen(),
+        builder: (BuildContext context) => const PreferencesScreen(),
       );
     }
 
@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
     // Create the prefix folder before the game initializes
     checkPrefixExistence(int index) {
       //No prefix if is not proton
-      if (games[index]["ProtonDirectory"] == null) return;
+      if (games[index]["ProtonDirectory"] == null || games[index]["PrefixFolder"] == null) return;
       String currentDirectory = Directory.current.path;
       // Prefixes Folder
       currentDirectory = join(currentDirectory, "prefixes");
@@ -78,7 +78,14 @@ class _HomePageState extends State<HomePage> {
       }
 
       // Game Prefix Folder
-      currentDirectory = join(currentDirectory, games[index]["Title"] as String);
+      currentDirectory = games[index]["PrefixFolder"] as String;
+      // Check if not exist
+      if (!Directory(currentDirectory).existsSync()) {
+        // Create
+        Directory(currentDirectory).createSync();
+      }
+      // Wine Prefix Folder
+      currentDirectory = join(currentDirectory, 'pfx');
       // Check if not exist
       if (!Directory(currentDirectory).existsSync()) {
         // Create
@@ -241,7 +248,7 @@ class _HomePageState extends State<HomePage> {
                 height: 30,
                 child: ElevatedButton(
                   onPressed: () => preferencesScreen(),
-                  child: Text("Preferences"),
+                  child: const Text("Preferences"),
                 ),
               ),
             ),

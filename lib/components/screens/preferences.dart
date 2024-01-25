@@ -105,7 +105,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             fsType: FilesystemType.folder,
                             folderIconColor: Theme.of(context).secondaryHeaderColor,
                           ).then((directory) => directory != null ? userPreferences.changeDefaultGameDirectory(directory) : () {}),
-                          child: const Text("Default Game Directory"),
+                          child: const Text("Default Game Search Directory"),
                         ),
                         //Spacer
                         const SizedBox(height: 30),
@@ -117,7 +117,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             fsType: FilesystemType.folder,
                             folderIconColor: Theme.of(context).secondaryHeaderColor,
                           ).then((directory) => directory != null ? userPreferences.changeDefaultPrefixDirectory(directory) : () {}),
-                          child: const Text("Default Prefix Directory"),
+                          child: const Text("Protify Prefix Directory"),
                         ),
                         //Spacer
                         const SizedBox(height: 30),
