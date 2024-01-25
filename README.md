@@ -24,7 +24,7 @@ This software is builded thinking in easily open your games and configure prefix
 - Download protify from [releases](https://github.com/LeandroTheDev/protify/releases)
 - Download the proton you want to use, normally in the steam
 - Place the proton in ``protify/protons`` folder
-- See the [Showcase]() for using the launcher
+- See the [showcase](https://github.com/LeandroTheDev/protify/blob/main/SHOWCASE.md) for using the launcher
 
 ### FAQ
 - Editing the name will change the prefix folder name?
