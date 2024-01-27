@@ -34,14 +34,21 @@ class GameLogScreenState extends State<GameLogScreen> {
       }
       //Command Variables
       final String protonDirectory = widget.game["ProtonDirectory"] ?? "";
-      final String protonWineDirectory = join(protonDirectory, "dist", "bin", "wine64");
+      final String protonWineDirectory;
+      //Check Compatibility for protons
+      if (Directory(join(protonDirectory, "dist")).existsSync()) {
+        protonWineDirectory = join(protonDirectory, "dist", "bin", "wine64");
+      } else {
+        protonWineDirectory = join(protonDirectory, "files", "bin", "wine64");
+      }
+
       final String protonExecutable = join(protonDirectory, "proton");
       final String gamePrefix = widget.game["PrefixFolder"];
       final String gameDirectory = widget.game["LaunchDirectory"] ?? "";
       final String argumentsCommand = widget.game["ArgumentsCommand"] ?? "";
 
       //Proton full command
-      command = '$steamCompatibility WINEPREFIX="$gamePrefix/pfx" STEAM_COMPAT_DATA_PATH="$gamePrefix" "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$gameDirectory" $argumentsCommand';
+      command = '$steamCompatibility WINEPREFIX="${preferences.defaultWineprefixDirectory}" STEAM_COMPAT_DATA_PATH="$gamePrefix" "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$gameDirectory" $argumentsCommand';
     }
     //Non proton game
     else {

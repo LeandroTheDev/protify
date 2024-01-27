@@ -47,6 +47,7 @@ class UserPreferences with ChangeNotifier {
         "Username": username,
         "DefaultGameDirectory": defaultGameDirectory,
         "DefaultPrefixDirectory": defaultPrefixDirectory,
+        "DefaultWineprefixDirectory": join(defaultPrefixDirectory, "Wine"),
         "SteamCompatibilityDirectory": steamCompatibilityDirectory,
         "StartWindowHeight": 600.0,
         "StartWindowWidth": 800.0,
@@ -57,6 +58,7 @@ class UserPreferences with ChangeNotifier {
       userPreference.changeUsername(saveData["Username"] ?? "Protify User");
       userPreference.changeDefaultGameDirectory(saveData["DefaultGameDirectory"]);
       userPreference.changeDefaultPrefixDirectory(saveData["DefaultPrefixDirectory"]);
+      userPreference.changeDefaultWineprefixDirectory(saveData["DefaultWineprefixDirectory"]);
       userPreference.changeSteamCompatibilityDirectory(saveData["SteamCompatibilityDirectory"]);
       userPreference.changeStartWindowHeight(saveData["StartWindowHeight"]);
       userPreference.changeStartWindowWidth(saveData["StartWindowWidth"]);
@@ -66,6 +68,7 @@ class UserPreferences with ChangeNotifier {
     userPreference.changeUsername(preferences["Username"] ?? "");
     userPreference.changeDefaultGameDirectory(preferences["DefaultGameDirectory"] ?? defaultGameDirectory);
     userPreference.changeDefaultPrefixDirectory(preferences["DefaultPrefixDirectory"] ?? defaultPrefixDirectory);
+    userPreference.changeDefaultWineprefixDirectory(preferences["DefaultWineprefixDirectory"] ?? join(defaultPrefixDirectory, "Wine"));
     userPreference.changeSteamCompatibilityDirectory(preferences["SteamCompatibilityDirectory"] ?? steamCompatibilityDirectory);
     userPreference.changeStartWindowHeight(preferences["StartWindowHeight"] ?? 600.0);
     userPreference.changeStartWindowWidth(preferences["StartWindowWidth"] ?? 800.0);
@@ -108,6 +111,13 @@ class UserPreferences with ChangeNotifier {
   void changeDefaultPrefixDirectory(String value) => {
         _defaultPrefixDirectory = value,
         savePreferencesInData(option: "DefaultPrefixDirectory", value: value),
+      };
+  //Default Prefix Directory
+  String _defaultWineprefixDirectory = "";
+  get defaultWineprefixDirectory => _defaultWineprefixDirectory;
+  void changeDefaultWineprefixDirectory(String value) => {
+        _defaultWineprefixDirectory = value,
+        savePreferencesInData(option: "DefaultWineprefixDirectory", value: value),
       };
 
   //Default Steam Compatibility Directory

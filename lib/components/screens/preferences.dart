@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:protify/components/widgets.dart';
 import 'package:protify/data/save_datas.dart';
 import 'package:protify/data/user_preferences.dart';
+import 'package:protify/pages/homepage.dart';
 import 'package:provider/provider.dart';
 
 class PreferencesScreen extends StatefulWidget {
@@ -121,6 +122,18 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         ),
                         //Spacer
                         const SizedBox(height: 30),
+                        //Wineprefix Directory
+                        ElevatedButton(
+                          onPressed: () => FilesystemPicker.open(
+                            context: context,
+                            rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
+                            fsType: FilesystemType.folder,
+                            folderIconColor: Theme.of(context).secondaryHeaderColor,
+                          ).then((directory) => directory != null ? userPreferences.changeDefaultPrefixDirectory(directory) : () {}),
+                          child: const Text("Wineprefix Directory"),
+                        ),
+                        //Spacer
+                        const SizedBox(height: 30),
                         //Steam Compatibility Directory
                         ElevatedButton(
                           onPressed: () => FilesystemPicker.open(
@@ -222,7 +235,19 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                           ),
                           onPressed: () => Widgets.showQuestion(context, title: "Clear Data", content: "Are you sure you want to erase all saved datas?").then(
                             //Clear data and reload data
-                            (value) => value ? SaveDatas.clearData().then((_) => UserPreferences.loadPreference(context)) : () {},
+                            (value) => value
+                                //Clearing data
+                                ? SaveDatas.clearData().then(
+                                    //Reloading data
+                                    (_) => UserPreferences.loadPreference(context).then(
+                                      //Reseting HomePage
+                                      (value) {
+                                        Navigator.pop(context);
+                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+                                      },
+                                    ),
+                                  )
+                                : () {},
                           ),
                           child: const Text(
                             "Clear Data",

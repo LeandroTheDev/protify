@@ -8,6 +8,7 @@ import 'package:protify/components/screens/install_dll.dart';
 import 'package:protify/components/screens/install_libs.dart';
 import 'package:protify/components/screens/preferences.dart';
 import 'package:protify/data/user_preferences.dart';
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class HomePage extends StatefulWidget {
@@ -23,15 +24,16 @@ class _HomePageState extends State<HomePage> {
   Offset mousePosition = const Offset(0, 0);
   OverlayEntry? gameInfo;
   int? selectedGameIndex;
+  late final UserPreferences preferences;
 
   @override
   Widget build(BuildContext context) {
     if (!loaded) {
       loaded = true;
+      preferences = Provider.of<UserPreferences>(context, listen: false);
       UserPreferences.loadPreference(context); // Load Preferences
+      UserPreferences.getGames().then((value) => setState(() => games = value)); // Load Games
     }
-    UserPreferences.getGames().then((value) => setState(() => games = value)); // Load Games
-
     // To add just call the function to edit simple add the index in parameter
     addOrEditGameModal([index]) {
       showModalBottomSheet(
@@ -39,7 +41,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).primaryColor,
         isScrollControlled: true,
         builder: (BuildContext context) => AddOrEditGameScreen(index: index),
-      );
+      ).then((value) => UserPreferences.getGames().then((value) => setState(() => games = value)));
     }
 
     preferencesScreen() {
@@ -69,23 +71,20 @@ class _HomePageState extends State<HomePage> {
       //No prefix if is not proton
       if (games[index]["ProtonDirectory"] == null || games[index]["PrefixFolder"] == null) return;
       String currentDirectory = Directory.current.path;
-      // Prefixes Folder
+      // Checking if prefix folder exist
       currentDirectory = join(currentDirectory, "prefixes");
-      // Check if not exist
       if (!Directory(currentDirectory).existsSync()) {
         // Create
         Directory(currentDirectory).createSync();
+      }
+      // Create the wine prefix
+      if (!Directory(preferences.defaultWineprefixDirectory).existsSync()) {
+        // Create
+        Directory(preferences.defaultWineprefixDirectory).createSync();
       }
 
       // Game Prefix Folder
       currentDirectory = games[index]["PrefixFolder"] as String;
-      // Check if not exist
-      if (!Directory(currentDirectory).existsSync()) {
-        // Create
-        Directory(currentDirectory).createSync();
-      }
-      // Wine Prefix Folder
-      currentDirectory = join(currentDirectory, 'pfx');
       // Check if not exist
       if (!Directory(currentDirectory).existsSync()) {
         // Create
@@ -416,7 +415,7 @@ class _HomePageState extends State<HomePage> {
                   itemBuilder: (context, index) => Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: GestureDetector(
-                      onTap: () => {selectedGameIndex = index, hideGameInfo()},
+                      onTap: () => setState(() => {selectedGameIndex = index, hideGameInfo()}),
                       onSecondaryTap: gameInfo == null ? () => showGameInfo(index, mousePosition) : () => hideGameInfo(),
                       child: Container(
                         color: Theme.of(context).primaryColor,
