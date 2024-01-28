@@ -16,11 +16,45 @@ class GameLogScreen extends StatefulWidget {
 }
 
 class GameLogScreenState extends State<GameLogScreen> {
+  final ScrollController scrollController = ScrollController();
   bool running = false;
   List gameLog = [];
+  List futureLog = [];
+  Timer? logShower;
   Process? process;
   StreamSubscription? stdOut;
   StreamSubscription? stdErr;
+
+  addLog(String log) {
+    futureLog.add(log);
+    //Check if timer is already created
+    if (logShower != null) return;
+    logShower = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      //Update gamelog
+      setState(() => gameLog.add(futureLog[0]));
+      //Add animation
+      Future.delayed(
+        const Duration(milliseconds: 100),
+        () => WidgetsBinding.instance.addPostFrameCallback(
+          (_) {
+            scrollController.animateTo(
+              scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 100),
+              curve: Curves.easeOut,
+            );
+          },
+        ),
+      );
+      //Remove the actuall futureLog
+      futureLog.removeAt(0);
+      //Check if timer is unecessary
+      if (futureLog.isEmpty) {
+        logShower!.cancel();
+        logShower = null;
+      }
+    });
+  }
+
   startCommand(BuildContext context) async {
     running = true;
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
@@ -59,7 +93,7 @@ class GameLogScreenState extends State<GameLogScreen> {
       }
       final String launchCommand;
       if (widget.game["ProtonDirectory"] == "wine") {
-        launchCommand = 'WINEPREFIX="${widget.game["PrefixFolder"]}/pfx" wine';
+        launchCommand = 'WINEPREFIX="${preferences.defaultWineprefixDirectory}" wine';
       } else {
         launchCommand = widget.game["LaunchCommand"] ?? "";
       }
@@ -74,27 +108,23 @@ class GameLogScreenState extends State<GameLogScreen> {
       process = await Process.start('/bin/bash', ['-c', command]);
 
       //Receive infos
-      stdOut = process!.stdout.transform(utf8.decoder).listen((data) {
-        setState(() => gameLog.add('[Info]: $data'));
-      });
+      stdOut = process!.stdout.transform(utf8.decoder).listen((data) => addLog('[Info]: $data'));
 
       //Receive Errors
-      stdErr = process!.stderr.transform(utf8.decoder).listen((data) {
-        setState(() => gameLog.add('[Error]: $data'));
-      });
+      stdErr = process!.stderr.transform(utf8.decoder).listen((data) => addLog('[Error]: $data'));
 
       //Waiting for process
       final exitCode = await process!.exitCode;
       //Process Finished
       if (exitCode == 0) {
-        setState(() => gameLog.add('[Info] Success Launching Game'));
+        addLog('[Info] Success Launching Game');
       } else {
-        setState(() => gameLog.add('[Alert] Process Finished: $exitCode'));
+        addLog('[Alert] Process Finished: $exitCode');
       }
     }
     //Fatal Error Treatment
     catch (e) {
-      setState(() => gameLog.add('Fatal error running game: $e'));
+      addLog('Fatal error running game: $e');
     }
   }
 
@@ -115,6 +145,7 @@ class GameLogScreenState extends State<GameLogScreen> {
             child: Padding(
               padding: const EdgeInsets.only(top: 25, left: 5, right: 5),
               child: ListView.builder(
+                controller: scrollController,
                 itemCount: gameLog.length,
                 itemBuilder: (context, index) => Text(
                   gameLog[index],

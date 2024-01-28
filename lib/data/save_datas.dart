@@ -45,4 +45,16 @@ class SaveDatas {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.clear();
   }
+
+  /// Clean all preferences saved
+  static Future clearPreferences() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.remove("preferences");
+  }
+
+  /// Clean all games saved
+  static Future clearGames() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.remove("games");
+  }
 }

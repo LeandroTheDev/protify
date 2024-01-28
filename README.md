@@ -1,5 +1,5 @@
 # Protify
-Tired of using Steam to open your favorite games? you hate the numbers in compatdata and getting lost everytime you need to change something in the prefix? heres the solution protify is a simply and light-height software builded in flutter to make a minimalist launcher for opening you favorite games in linux using proton.
+Tired of using Steam to open your favorite games? your cpu is too old and steam consumes a lot of cpu process? you hate the numbers in compatdata and getting lost everytime you need to change something in the prefix? heres the solution protify is a simply and light-height software builded in flutter to make a minimalist launcher for opening you favorite games in linux using proton.
 
 This software is builded thinking in easily open your games and configure prefixes for you using the proton, and you can make a lot of tricks to run your games such adding arguments installing libraries, dlls and easily find the prefixes folder to make changes in there, the software comes with a easily gui to install libraries, dlls for prefixes.
 
@@ -11,6 +11,7 @@ This software is builded thinking in easily open your games and configure prefix
 - Preferences page
 
 ### Future Features
+- Install .exe
 - Category
 - Playtime
 - Add game images
@@ -27,7 +28,7 @@ https://github.com/LeandroTheDev/protify/assets/106118473/970d2a94-3671-4a52-814
 - See the [showcase](https://github.com/LeandroTheDev/protify/blob/main/SHOWCASE.md) for using the launcher
 
 ### FAQ
-> Editing the name will change the prefix folder name?
+> Editing the game name will change the prefix folder?
 - No, the folder prefix is generated on add game page or editing in edit page
 > When i launch the game its crash and says c++ error
 - Download vcruntime in official microsoft sites, click in the game and use the libs button, select the vcruntime, proceed to installation.
@@ -38,6 +39,10 @@ https://github.com/LeandroTheDev/protify/assets/106118473/970d2a94-3671-4a52-814
 - Prefixes and protons is not included.
 > My steam is installed on a different location and i need to use steam compatibility how can i change?
 - In the preferences page click in ``Steam Compatibility Directory`` and select your steam folder
+> What happens if i remove the default prefix directory in my file manager and change it in preferences to another directory?
+- All games will need to be reconfigured, if not reconfigured the games will still find the old folder and recreate the prefixes there
+> Where is the best location to keep the protify in my device?
+- In your home directory anywhere you want, the protify will automatically setup everthing for you in the first launch, if you change the location remember to clear the data
 
 ### Building
-To build this project is very simple, you need is to download the [flutter](https://docs.flutter.dev/get-started/install) framework, then create a project using ``flutter create protify``, paste all the files from this project in there, build using the ``flutter build linux --release``, the release will be stored in ``build/linux/x64/release/bundle/``
+To build this project is very simple, all you need is to download the [flutter](https://docs.flutter.dev/get-started/install) framework and his dependencies to build, then create a project using ``flutter create protify``, paste all the files from this project in there, build using the ``flutter build linux --release``, the release will be stored in ``build/linux/x64/release/bundle/``

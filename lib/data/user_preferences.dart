@@ -35,9 +35,32 @@ class UserPreferences with ChangeNotifier {
     final Map preferences = jsonDecode(await SaveDatas.readData("preferences", "string") ?? "{}");
 
     //Default variables
-    final username = Platform.isLinux ? split(current)[2] : null;
+    final username = Platform.isLinux ? split(current)[2] : "Unknown";
+    final protifyDirectoryProcess = await Process.start('/bin/bash', ['-c', 'find "/home/$username/" -type f -name protify_finder.txt']);
+    final protifyDirectoryResult = await protifyDirectoryProcess.stdout.transform(utf8.decoder).toList();
+    String protifyDirectory;
+    if (protifyDirectoryResult.isNotEmpty) {
+      protifyDirectory = dirname(dirname(protifyDirectoryResult[0]));
+      //Check multiples protify_finder files
+      while (true) {
+        //Remove others protify_finders
+        if (protifyDirectory.contains('\n')) {
+          //+1 remove also the lane break
+          protifyDirectory = protifyDirectory.substring(protifyDirectory.indexOf('\n') + 1);
+        } else {
+          //Everthings ok
+          break;
+        }
+      }
+    } else {
+      // ignore: use_build_context_synchronously
+      Widgets.showAlert(context, title: "Error", content: "Cannot find the protify_finder.txt in protify/lib, check if exists, or if /home/$username exists");
+      protifyDirectory = "/home/$username/protify";
+    }
     final defaultGameDirectory = Platform.isLinux ? "/home/$username" : "\\";
-    final defaultPrefixDirectory = join(current, "prefixes");
+    final defaultPrefixDirectory = join(protifyDirectory, "prefixes");
+    final defaultWinePrefixDirectory = join(defaultPrefixDirectory, "Wine");
+    final defaultProtonDirectory = join(protifyDirectory, "protons");
     const steamCompatibilityDirectory = "~/.local/share/Steam";
 
     // Check if preferences is empty
@@ -45,30 +68,36 @@ class UserPreferences with ChangeNotifier {
       //Object Creation
       final Map saveData = {
         "Username": username,
+        "ProtifyDirectory": protifyDirectory,
         "DefaultGameDirectory": defaultGameDirectory,
         "DefaultPrefixDirectory": defaultPrefixDirectory,
-        "DefaultWineprefixDirectory": join(defaultPrefixDirectory, "Wine"),
+        "DefaultWinePrefixDirectory": defaultWinePrefixDirectory,
+        "DefaultProtonDirectory": defaultProtonDirectory,
         "SteamCompatibilityDirectory": steamCompatibilityDirectory,
         "StartWindowHeight": 600.0,
         "StartWindowWidth": 800.0,
       };
       //Saving Preferences
       await SaveDatas.saveData("preferences", jsonEncode(saveData));
-      //Updating Preferences
-      userPreference.changeUsername(saveData["Username"] ?? "Protify User");
+      //Updating Providers
+      userPreference.changeUsername(saveData["Username"]);
+      userPreference.changeProtifyDirectory(saveData["ProtifyDirectory"]);
       userPreference.changeDefaultGameDirectory(saveData["DefaultGameDirectory"]);
       userPreference.changeDefaultPrefixDirectory(saveData["DefaultPrefixDirectory"]);
-      userPreference.changeDefaultWineprefixDirectory(saveData["DefaultWineprefixDirectory"]);
+      userPreference.changeDefaultWineprefixDirectory(saveData["DefaultWinePrefixDirectory"]);
+      userPreference.changeDefaultProtonDirectory(saveData["DefaultProtonDirectory"]);
       userPreference.changeSteamCompatibilityDirectory(saveData["SteamCompatibilityDirectory"]);
       userPreference.changeStartWindowHeight(saveData["StartWindowHeight"]);
       userPreference.changeStartWindowWidth(saveData["StartWindowWidth"]);
       return;
     }
     // Updating Providers
-    userPreference.changeUsername(preferences["Username"] ?? "");
+    userPreference.changeUsername(preferences["Username"]);
+    userPreference.changeProtifyDirectory(preferences["ProtifyDirectory"] ?? protifyDirectory);
     userPreference.changeDefaultGameDirectory(preferences["DefaultGameDirectory"] ?? defaultGameDirectory);
     userPreference.changeDefaultPrefixDirectory(preferences["DefaultPrefixDirectory"] ?? defaultPrefixDirectory);
-    userPreference.changeDefaultWineprefixDirectory(preferences["DefaultWineprefixDirectory"] ?? join(defaultPrefixDirectory, "Wine"));
+    userPreference.changeDefaultWineprefixDirectory(preferences["DefaultWinePrefixDirectory"] ?? defaultWinePrefixDirectory);
+    userPreference.changeDefaultProtonDirectory(preferences["DefaultProtonDirectory"] ?? defaultProtonDirectory);
     userPreference.changeSteamCompatibilityDirectory(preferences["SteamCompatibilityDirectory"] ?? steamCompatibilityDirectory);
     userPreference.changeStartWindowHeight(preferences["StartWindowHeight"] ?? 600.0);
     userPreference.changeStartWindowWidth(preferences["StartWindowWidth"] ?? 800.0);
@@ -98,6 +127,14 @@ class UserPreferences with ChangeNotifier {
       };
 
   //Default Game Directory
+  String _protifyDirectory = "";
+  get protifyDirectory => _protifyDirectory;
+  void changeProtifyDirectory(String value) => {
+        _protifyDirectory = value,
+        savePreferencesInData(option: "ProtifyDirectory", value: value),
+      };
+
+  //Default Game Directory
   String _defaultGameDirectory = "";
   get defaultGameDirectory => _defaultGameDirectory;
   void changeDefaultGameDirectory(String value) => {
@@ -105,6 +142,13 @@ class UserPreferences with ChangeNotifier {
         savePreferencesInData(option: "DefaultGameDirectory", value: value),
       };
 
+  //Default Proton Directory
+  String _defaultProtonDirectory = "";
+  get defaultProtonDirectory => _defaultProtonDirectory;
+  void changeDefaultProtonDirectory(String value) => {
+        _defaultProtonDirectory = value,
+        savePreferencesInData(option: "DefaultProtonDirectory", value: value),
+      };
   //Default Prefix Directory
   String _defaultPrefixDirectory = "";
   get defaultPrefixDirectory => _defaultPrefixDirectory;

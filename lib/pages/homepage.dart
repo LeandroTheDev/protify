@@ -67,20 +67,19 @@ class _HomePageState extends State<HomePage> {
     }
 
     // Create the prefix folder before the game initializes
-    checkPrefixExistence(int index) {
+    checkPrefixExistence(int index) async {
       //No prefix if is not proton
       if (games[index]["ProtonDirectory"] == null || games[index]["PrefixFolder"] == null) return;
-      String currentDirectory = Directory.current.path;
+      String currentDirectory = dirname(games[index]["PrefixFolder"]);
       // Checking if prefix folder exist
-      currentDirectory = join(currentDirectory, "prefixes");
       if (!Directory(currentDirectory).existsSync()) {
         // Create
-        Directory(currentDirectory).createSync();
+        await Directory(currentDirectory).create();
       }
       // Create the wine prefix
       if (!Directory(preferences.defaultWineprefixDirectory).existsSync()) {
         // Create
-        Directory(preferences.defaultWineprefixDirectory).createSync();
+        await Directory(preferences.defaultWineprefixDirectory).create();
       }
 
       // Game Prefix Folder

@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
+import 'package:protify/data/user_preferences.dart';
+import 'package:provider/provider.dart';
 
 class Widgets {
   /// Simple show a alert dialog to the user
@@ -86,6 +87,7 @@ class Widgets {
 
   /// Show a dialog to select the protons located in the folder
   static Future<String> selectProton(BuildContext context, {bool showWine = false, bool hideProton = false}) async {
+    final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
     Future<String> chooseProton(List<String> protons) async {
       Completer<String> completer = Completer<String>();
       showDialog(
@@ -133,7 +135,7 @@ class Widgets {
       return completer.future;
     }
 
-    final directory = Directory(join(current, "protons"));
+    final directory = Directory(preferences.defaultProtonDirectory);
 
     List<String> protons = [];
     //Check if proton folder exist

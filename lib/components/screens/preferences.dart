@@ -98,51 +98,165 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         ),
                         //Spacer
                         const SizedBox(height: 30),
+                        //Protify Directory
+                        Row(
+                          children: [
+                            //Button
+                            ElevatedButton(
+                              onPressed: () => FilesystemPicker.open(
+                                context: context,
+                                rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
+                                fsType: FilesystemType.folder,
+                                folderIconColor: Theme.of(context).secondaryHeaderColor,
+                              ).then((directory) => directory != null ? userPreferences.changeProtifyDirectory(directory) : () {}),
+                              child: const Text("Protify Directory"),
+                            ),
+                            //Info Button
+                            IconButton(
+                              icon: const Icon(Icons.info),
+                              color: Theme.of(context).secondaryHeaderColor,
+                              onPressed: () => Widgets.showAlert(
+                                context,
+                                title: "Protify Directory",
+                                content: "Where the protify launcher is located",
+                              ),
+                            ),
+                          ],
+                        ),
+                        //Spacer
+                        const SizedBox(height: 30),
+                        //Default Proton Directory
+                        Row(
+                          children: [
+                            //Button
+                            ElevatedButton(
+                              onPressed: () => FilesystemPicker.open(
+                                context: context,
+                                rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
+                                fsType: FilesystemType.folder,
+                                folderIconColor: Theme.of(context).secondaryHeaderColor,
+                              ).then((directory) => directory != null ? userPreferences.changeDefaultProtonDirectory(directory) : () {}),
+                              child: const Text("Default Proton Directory"),
+                            ),
+                            //Info Button
+                            IconButton(
+                              icon: const Icon(Icons.info),
+                              color: Theme.of(context).secondaryHeaderColor,
+                              onPressed: () => Widgets.showAlert(
+                                context,
+                                title: "Proton Directory",
+                                content: "Where the protify will try to find the list of protons available",
+                              ),
+                            ),
+                          ],
+                        ),
+                        //Spacer
+                        const SizedBox(height: 30),
                         //Default Game Directory
-                        ElevatedButton(
-                          onPressed: () => FilesystemPicker.open(
-                            context: context,
-                            rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
-                            fsType: FilesystemType.folder,
-                            folderIconColor: Theme.of(context).secondaryHeaderColor,
-                          ).then((directory) => directory != null ? userPreferences.changeDefaultGameDirectory(directory) : () {}),
-                          child: const Text("Default Game Search Directory"),
+                        Row(
+                          children: [
+                            //Button
+                            ElevatedButton(
+                              onPressed: () => FilesystemPicker.open(
+                                context: context,
+                                rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
+                                fsType: FilesystemType.folder,
+                                folderIconColor: Theme.of(context).secondaryHeaderColor,
+                              ).then((directory) => directory != null ? userPreferences.changeDefaultGameDirectory(directory) : () {}),
+                              child: const Text("Default Game Search Directory"),
+                            ),
+                            //Info Button
+                            IconButton(
+                              icon: const Icon(Icons.info),
+                              color: Theme.of(context).secondaryHeaderColor,
+                              onPressed: () => Widgets.showAlert(
+                                context,
+                                title: "Search Game Directory",
+                                content: "The main folder for finding games in add game page",
+                              ),
+                            ),
+                          ],
                         ),
                         //Spacer
                         const SizedBox(height: 30),
                         //Default Prefix Directory
-                        ElevatedButton(
-                          onPressed: () => FilesystemPicker.open(
-                            context: context,
-                            rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
-                            fsType: FilesystemType.folder,
-                            folderIconColor: Theme.of(context).secondaryHeaderColor,
-                          ).then((directory) => directory != null ? userPreferences.changeDefaultPrefixDirectory(directory) : () {}),
-                          child: const Text("Protify Prefix Directory"),
+                        Row(
+                          children: [
+                            //Button
+                            ElevatedButton(
+                              onPressed: () => FilesystemPicker.open(
+                                context: context,
+                                rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
+                                fsType: FilesystemType.folder,
+                                folderIconColor: Theme.of(context).secondaryHeaderColor,
+                              ).then((directory) => directory != null ? userPreferences.changeDefaultPrefixDirectory(directory) : () {}),
+                              child: const Text("Default Prefix Directory"),
+                            ),
+                            //Info Button
+                            IconButton(
+                              icon: const Icon(Icons.info),
+                              color: Theme.of(context).secondaryHeaderColor,
+                              onPressed: () => Widgets.showAlert(
+                                context,
+                                title: "Default Prefix Directory",
+                                content: "Default prefixes will be stored in this folder",
+                              ),
+                            ),
+                          ],
                         ),
                         //Spacer
                         const SizedBox(height: 30),
                         //Wineprefix Directory
-                        ElevatedButton(
-                          onPressed: () => FilesystemPicker.open(
-                            context: context,
-                            rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
-                            fsType: FilesystemType.folder,
-                            folderIconColor: Theme.of(context).secondaryHeaderColor,
-                          ).then((directory) => directory != null ? userPreferences.changeDefaultPrefixDirectory(directory) : () {}),
-                          child: const Text("Wineprefix Directory"),
+                        Row(
+                          children: [
+                            //Button
+                            ElevatedButton(
+                              onPressed: () => FilesystemPicker.open(
+                                context: context,
+                                rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
+                                fsType: FilesystemType.folder,
+                                folderIconColor: Theme.of(context).secondaryHeaderColor,
+                              ).then((directory) => directory != null ? userPreferences.changeDefaultPrefixDirectory(directory) : () {}),
+                              child: const Text("Wineprefix Directory"),
+                            ),
+                            //Info Button
+                            IconButton(
+                              icon: const Icon(Icons.info),
+                              color: Theme.of(context).secondaryHeaderColor,
+                              onPressed: () => Widgets.showAlert(
+                                context,
+                                title: "Wineprefix Directory",
+                                content: "This is a special folder just for Wine, actually this is not used",
+                              ),
+                            ),
+                          ],
                         ),
                         //Spacer
                         const SizedBox(height: 30),
                         //Steam Compatibility Directory
-                        ElevatedButton(
-                          onPressed: () => FilesystemPicker.open(
-                            context: context,
-                            rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
-                            fsType: FilesystemType.folder,
-                            folderIconColor: Theme.of(context).secondaryHeaderColor,
-                          ).then((directory) => directory != null ? userPreferences.changeSteamCompatibilityDirectory(directory) : () {}),
-                          child: const Text("Steam Compatibility Directory"),
+                        Row(
+                          children: [
+                            //Button
+                            ElevatedButton(
+                              onPressed: () => FilesystemPicker.open(
+                                context: context,
+                                rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
+                                fsType: FilesystemType.folder,
+                                folderIconColor: Theme.of(context).secondaryHeaderColor,
+                              ).then((directory) => directory != null ? userPreferences.changeSteamCompatibilityDirectory(directory) : () {}),
+                              child: const Text("Steam Compatibility Directory"),
+                            ),
+                            //Info Button
+                            IconButton(
+                              icon: const Icon(Icons.info),
+                              color: Theme.of(context).secondaryHeaderColor,
+                              onPressed: () => Widgets.showAlert(
+                                context,
+                                title: "Steam Compatibility Directory",
+                                content: "Change the steam installation folder if is not located in default location \"~/.local/share/Steam\"",
+                              ),
+                            ),
+                          ],
                         ),
                         //Spacer
                         const SizedBox(height: 30),
@@ -228,30 +342,90 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         ),
                         //Spacer
                         const SizedBox(height: 30),
-                        //Clear data
-                        ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
-                          ),
-                          onPressed: () => Widgets.showQuestion(context, title: "Clear Data", content: "Are you sure you want to erase all saved datas?").then(
-                            //Clear data and reload data
-                            (value) => value
-                                //Clearing data
-                                ? SaveDatas.clearData().then(
-                                    //Reloading data
-                                    (_) => UserPreferences.loadPreference(context).then(
-                                      //Reseting HomePage
-                                      (value) {
-                                        Navigator.pop(context);
-                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
-                                      },
-                                    ),
-                                  )
-                                : () {},
-                          ),
-                          child: const Text(
-                            "Clear Data",
-                            style: TextStyle(color: Colors.black),
+                        //Clear Section
+                        FittedBox(
+                          child: Row(
+                            children: [
+                              //Clear Data
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
+                                ),
+                                onPressed: () => Widgets.showQuestion(context, title: "Clear Data", content: "Are you sure you want to erase all saved datas?").then(
+                                  //Clear data and reload data
+                                  (value) => value
+                                      //Clearing data
+                                      ? SaveDatas.clearData().then(
+                                          //Reloading data
+                                          (_) => UserPreferences.loadPreference(context).then(
+                                            //Reseting HomePage
+                                            (value) {
+                                              Navigator.pop(context);
+                                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+                                            },
+                                          ),
+                                        )
+                                      : () {},
+                                ),
+                                child: const Text(
+                                  "Clear Data",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ),
+                              //Spacer
+                              const SizedBox(width: 5),
+                              //Reset Preferences
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
+                                ),
+                                onPressed: () => Widgets.showQuestion(context, title: "Reset Preferences", content: "Are you sure you want to reset your preferences?").then(
+                                  //Clear data and reload data
+                                  (value) => value
+                                      //Clearing data
+                                      ? SaveDatas.clearPreferences().then(
+                                          //Reloading data
+                                          (_) => UserPreferences.loadPreference(context).then(
+                                            //Reseting HomePage
+                                            (value) {
+                                              Navigator.pop(context);
+                                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+                                            },
+                                          ),
+                                        )
+                                      : () {},
+                                ),
+                                child: const Text(
+                                  "Reset Preferences",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ),
+                              //Spacer
+                              const SizedBox(width: 5),
+                              //Reset Preferences
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
+                                ),
+                                onPressed: () => Widgets.showQuestion(context, title: "Clear Games", content: "Are you sure you want to remove all games from your library?").then(
+                                  //Clear games and reload launcher
+                                  (value) => value
+                                      //Clearing data
+                                      ? SaveDatas.clearGames().then(
+                                          //Reloading data
+                                          (_) => {
+                                            Navigator.pop(context),
+                                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage())),
+                                          },
+                                        )
+                                      : () {},
+                                ),
+                                child: const Text(
+                                  "Clear Games",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
