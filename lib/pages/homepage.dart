@@ -5,6 +5,7 @@ import 'package:path/path.dart';
 import 'package:protify/components/models.dart';
 import 'package:protify/components/screens/add_remove_game.dart';
 import 'package:protify/components/screens/install_dll.dart';
+import 'package:protify/components/screens/install_game.dart';
 import 'package:protify/components/screens/install_libs.dart';
 import 'package:protify/components/screens/preferences.dart';
 import 'package:protify/data/user_preferences.dart';
@@ -120,6 +121,17 @@ class _HomePageState extends State<HomePage> {
         isScrollControlled: true,
         builder: (BuildContext context) {
           return InstallDll(index: index);
+        },
+      );
+    }
+
+    installGame() {
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Theme.of(context).primaryColor,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return InstallGameScreen();
         },
       );
     }
@@ -459,7 +471,18 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   height: 30,
                   child: ElevatedButton(onPressed: () => addOrEditGameModal(), child: const Text("Add First Game")),
-                )
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  "Or install one",
+                  style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                //Add Game button
+                SizedBox(
+                  height: 30,
+                  child: ElevatedButton(onPressed: () => installGame(), child: const Text("Install Game")),
+                ),
               ],
             ),
           ),

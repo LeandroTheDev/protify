@@ -117,7 +117,11 @@ class GameLogScreenState extends State<GameLogScreen> {
       final exitCode = await process!.exitCode;
       //Process Finished
       if (exitCode == 0) {
-        addLog('[Info] Success Launching Game');
+        addLog('[Protify] Success Launching Process');
+        if (widget.game["CreateGameShortcut"] != null) {
+          process = await Process.start('/bin/bash', ['-c', 'ln -s "${preferences.defaultGameDirectory}" "${widget.game["CreateGameShortcut"]}"']);
+          addLog('[Protify] Success creating symbolic in prefix');
+        }
       } else {
         addLog('[Alert] Process Finished: $exitCode');
       }

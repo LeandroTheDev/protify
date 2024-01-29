@@ -8,34 +8,21 @@ import 'package:protify/components/widgets.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
 
-class InstallLibsScreen extends StatefulWidget {
-  final int index;
-  const InstallLibsScreen({super.key, required this.index});
+class InstallGameScreen extends StatefulWidget {
+  const InstallGameScreen({super.key});
 
   @override
-  State<InstallLibsScreen> createState() => _InstallLibsScreenState();
+  State<InstallGameScreen> createState() => _InstallGameScreenState();
 }
 
-class _InstallLibsScreenState extends State<InstallLibsScreen> {
-  bool loaded = false;
-  TextEditingController libraryArguments = TextEditingController();
-  String libraryDirectory = "";
-  String libraryProton = "none";
-  String libraryPrefixFolder = "";
-  bool librarySteamCompatibility = false;
+class _InstallGameScreenState extends State<InstallGameScreen> {
+  TextEditingController gameArguments = TextEditingController();
+  String gameDirectory = "";
+  String gameProton = "none";
+  bool gameSteamCompatibility = false;
   @override
   Widget build(BuildContext context) {
-    final int index = widget.index;
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
-    if (!loaded) {
-      loaded = true;
-      //Load game settings
-      UserPreferences.getGames().then(
-        (games) => setState(() {
-          libraryPrefixFolder = games[index]["PrefixFolder"];
-        }),
-      );
-    }
     return Padding(
       padding: const EdgeInsets.only(
         left: 8.0,
@@ -64,8 +51,9 @@ class _InstallLibsScreenState extends State<InstallLibsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      //Title
                       Text(
-                        'Library Installation',
+                        'Game Installation',
                         style: TextStyle(
                           color: Theme.of(context).secondaryHeaderColor,
                           fontWeight: FontWeight.bold,
@@ -78,29 +66,30 @@ class _InstallLibsScreenState extends State<InstallLibsScreen> {
                         color: Theme.of(context).secondaryHeaderColor,
                         onPressed: () => Widgets.showAlert(
                           context,
-                          title: "Library Installation",
-                          content: "Allows you to install and execute .exe into your prefix, like the vcruntimes,drivers, etc using proton or native wine",
+                          title: "Game Installation",
+                          content: "Allows you to install .exe/.iso into your default game search directory",
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 35),
+                  //Select Installer
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      //Library Directory
-                      Text(libraryDirectory == "" ? "No Library Selected" : basename(libraryDirectory), style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                      //Installer Directory
+                      Text(gameDirectory == "" ? "No Installer Selected" : basename(gameDirectory), style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
                       //Spacer
                       const SizedBox(height: 5),
                       //Button
                       ElevatedButton(
                         onPressed: () => FilesystemPicker.open(
                           context: context,
-                          rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/home/"),
+                          rootDirectory: Platform.isLinux ? Directory("/home/") : Directory("\\"),
                           fsType: FilesystemType.file,
                           folderIconColor: Theme.of(context).secondaryHeaderColor,
-                        ).then((directory) => setState(() => libraryDirectory = directory ?? "")),
-                        child: const Text("Select Library"),
+                        ).then((directory) => setState(() => gameDirectory = directory ?? "")),
+                        child: const Text("Select Installer"),
                       ),
                     ],
                   ),
@@ -112,7 +101,7 @@ class _InstallLibsScreenState extends State<InstallLibsScreen> {
                     children: [
                       //Selected Proton
                       Text(
-                        libraryProton == "none" ? "Wine" : libraryProton,
+                        gameProton == "none" ? "Wine" : gameProton,
                         style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
                       ),
                       //Spacer
@@ -120,20 +109,20 @@ class _InstallLibsScreenState extends State<InstallLibsScreen> {
                       //Select Proton Button
                       ElevatedButton(
                         onPressed: () => Widgets.selectProton(context, showWine: true, hideProton: true).then(
-                          (selectedProton) => setState(() => libraryProton = selectedProton),
+                          (selectedProton) => setState(() => gameProton = selectedProton),
                         ),
                         child: const Text("Select Proton/Wine"),
                       ),
                     ],
                   ),
                   const SizedBox(height: 35),
-                  //Library Arguments
+                  //Installer Arguments
                   SizedBox(
                     height: 60,
                     child: TextField(
-                      controller: libraryArguments,
+                      controller: gameArguments,
                       decoration: InputDecoration(
-                        labelText: 'Library Arguments',
+                        labelText: 'Installer Arguments',
                         labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
@@ -151,8 +140,8 @@ class _InstallLibsScreenState extends State<InstallLibsScreen> {
                     children: [
                       //Checkbox
                       Checkbox(
-                        value: librarySteamCompatibility,
-                        onChanged: (value) => setState(() => librarySteamCompatibility = value!),
+                        value: gameSteamCompatibility,
+                        onChanged: (value) => setState(() => gameSteamCompatibility = value!),
                         //Fill Color
                         fillColor: MaterialStateProperty.resolveWith(
                           (states) {
@@ -181,28 +170,76 @@ class _InstallLibsScreenState extends State<InstallLibsScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 35),
-                  //Prefix installation
-                  Text('Library Prefix Installation Directory: $libraryPrefixFolder', style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
                   const SizedBox(height: 10),
                   //Confirmation Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () => Models.startGame(context: context, game: {
-                        //libraryProton == "none": "none"
-                        //libraryProton == "Wine": "wine"
-                        //everthing else return the directory to the proton folder
-                        "ProtonDirectory": libraryProton == "none"
-                            ? null
-                            : libraryProton == "Wine"
-                                ? "wine"
-                                : join(preferences.defaultProtonDirectory, libraryProton),
-                        "EnableSteamCompatibility": librarySteamCompatibility,
-                        "PrefixFolder": libraryPrefixFolder,
-                        "LaunchDirectory": libraryDirectory,
-                        "ArgumentsCommand": libraryArguments.text,
-                      }),
+                      onPressed: () async {
+                        final gamePrefixDirectory = join(preferences.protifyDirectory, "data", "temp_prefix");
+                        //.iso files
+                        if (gameDirectory.endsWith(".iso")) {
+                          try {
+                            final Directory mountDirectory = Directory(join(preferences.protifyDirectory, "data", "temp_mount"));
+                            // Checking if prefix folder exist
+                            if (!mountDirectory.existsSync()) {
+                              // Create
+                              await mountDirectory.create();
+                            }
+                            //If exist then umount previous iso iso
+                            else {
+                              await Process.start('/bin/bash', ['-c', 'umount "${mountDirectory.path}"']);
+                            }
+                            //Mount iso
+                            await Process.start('/bin/bash', ['-c', 'mount -o loop "$gameDirectory" "${mountDirectory.path}"']);
+                            //Inform the user what he need to do
+                            await Widgets.showAlert(context, title: "Select Installer", content: "The iso sucessfully mounted, select the .exe installer now");
+                            //Get installer directory
+                            gameDirectory = await FilesystemPicker.open(
+                                  context: context,
+                                  rootDirectory: mountDirectory,
+                                  fsType: FilesystemType.file,
+                                  folderIconColor: Theme.of(context).secondaryHeaderColor,
+                                ) ??
+                                "";
+                            if (gameDirectory == "") {
+                              return;
+                            }
+                          } catch (error) {
+                            Widgets.showAlert(context, title: "Error", content: "Cannot create prefix directory reason: $error");
+                            return;
+                          }
+                        }
+                        //.exe files
+                        else {
+                          try {
+                            final Directory prefixDirectory = Directory(gamePrefixDirectory);
+                            // Checking if prefix folder exist
+                            if (!prefixDirectory.existsSync()) {
+                              // Create
+                              await prefixDirectory.create();
+                            }
+                          } catch (error) {
+                            Widgets.showAlert(context, title: "Error", content: "Cannot create prefix directory reason: $error");
+                            return;
+                          }
+                        }
+                        Models.startGame(context: context, game: {
+                          //gameProton == "none": "none"
+                          //gameProton == "Wine": "wine"
+                          //everthing else return the directory to the proton folder
+                          "ProtonDirectory": gameProton == "none"
+                              ? null
+                              : gameProton == "Wine"
+                                  ? "wine"
+                                  : join(preferences.defaultProtonDirectory, gameProton),
+                          "EnableSteamCompatibility": gameSteamCompatibility,
+                          "PrefixFolder": gamePrefixDirectory,
+                          "LaunchDirectory": gameDirectory,
+                          "ArgumentsCommand": gameArguments.text,
+                          "CreateGameShortcut": join(gamePrefixDirectory, "pfx", "drive_c", "Games Search Directory"),
+                        });
+                      },
                       child: const Text("Confirm"),
                     ),
                   ),

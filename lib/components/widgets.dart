@@ -7,18 +7,19 @@ import 'package:provider/provider.dart';
 
 class Widgets {
   /// Simple show a alert dialog to the user
-  static void showAlert(
+  static Future showAlert(
     BuildContext context, {
     String title = "",
     String content = "",
     String buttonTitle = "OK",
   }) {
+    Completer<void> completer = Completer<void>();
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return Center(
           child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.5, // Define a largura desejada (metade da tela)
+            width: MediaQuery.of(context).size.width * 0.5,
             child: AlertDialog(
               backgroundColor: Theme.of(context).colorScheme.tertiary,
               title: Text(title, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
@@ -27,6 +28,7 @@ class Widgets {
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
+                    completer.complete();
                   },
                   child: Text(buttonTitle, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
                 ),
@@ -36,6 +38,7 @@ class Widgets {
         );
       },
     );
+    return completer.future;
   }
 
   /// Simple show a alert dialog to the user

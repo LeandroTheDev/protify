@@ -1,17 +1,17 @@
 # Protify
-Tired of using Steam to open your favorite games? your cpu is too old and steam consumes a lot of cpu process? you hate the numbers in compatdata and getting lost everytime you need to change something in the prefix? heres the solution protify is a simply and light-height software builded in flutter to make a minimalist launcher for opening you favorite games in linux using proton.
+Tired of using Steam to open your favorite games? your cpu is too old and steam consumes a lot of cpu process? you hate the numbers in compatdata and getting lost everytime you need to change something in the prefix? heres the solution protify is a simply and light-weight software builded in flutter to make a minimalist launcher for opening you favorite games in linux using proton.
 
 This software is builded thinking in easily open your games and configure prefixes for you using the proton, and you can make a lot of tricks to run your games such adding arguments installing libraries, dlls and easily find the prefixes folder to make changes in there, the software comes with a easily gui to install libraries, dlls for prefixes.
 
 ### Features
 - Launch games with proton
+- Install .exe games or .iso games
 - Install libraries .exe drivers and runtimes in the game prefix folder
 - Install dlls easily into game prefix folder
 - Non proton games compatibility
 - Preferences page
 
 ### Future Features
-- Install .exe
 - Category
 - Playtime
 - Add game images
@@ -24,8 +24,8 @@ https://github.com/LeandroTheDev/protify/assets/106118473/970d2a94-3671-4a52-814
 ### First steps
 - Download protify from [releases](https://github.com/LeandroTheDev/protify/releases)
 - Download the proton you want to use, normally in the steam
-- Place the proton on ``protify/protons`` folder
-- See the [showcase](https://github.com/LeandroTheDev/protify/blob/main/SHOWCASE.md) for using the launcher
+- Place the proton on ``protify/protons`` folder if you not changed in preferences
+- See the more in [showcase](https://github.com/LeandroTheDev/protify/blob/main/SHOWCASE.md)
 
 ### FAQ
 > Editing the game name will change the prefix folder?

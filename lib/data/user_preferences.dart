@@ -35,12 +35,17 @@ class UserPreferences with ChangeNotifier {
     final Map preferences = jsonDecode(await SaveDatas.readData("preferences", "string") ?? "{}");
 
     //Default variables
-    final username = Platform.isLinux ? split(current)[2] : "Unknown";
-    final protifyDirectoryProcess = await Process.start('/bin/bash', ['-c', 'find "/home/$username/" -type f -name protify_finder.txt']);
-    final protifyDirectoryResult = await protifyDirectoryProcess.stdout.transform(utf8.decoder).toList();
+    final username = Platform.isLinux ? split(current)[2] : "Protify User";
+    late final List protifyDirectoryResult;
+    if (Platform.isLinux) {
+      final protifyDirectoryProcess = await Process.start('/bin/bash', ['-c', 'find "/home/$username/" -type f -name protify_finder.txt']);
+      protifyDirectoryResult = await protifyDirectoryProcess.stdout.transform(utf8.decoder).toList();
+    } else {
+      protifyDirectoryResult = [current];
+    }
     String protifyDirectory;
     if (protifyDirectoryResult.isNotEmpty) {
-      protifyDirectory = dirname(dirname(protifyDirectoryResult[0]));
+      protifyDirectory = Platform.isLinux ? dirname(dirname(protifyDirectoryResult[0])) : protifyDirectoryResult[0];
       //Check multiples protify_finder files
       while (true) {
         //Remove others protify_finders
@@ -92,7 +97,7 @@ class UserPreferences with ChangeNotifier {
       return;
     }
     // Updating Providers
-    userPreference.changeUsername(preferences["Username"]);
+    userPreference.changeUsername(preferences["Username"] ?? username);
     userPreference.changeProtifyDirectory(preferences["ProtifyDirectory"] ?? protifyDirectory);
     userPreference.changeDefaultGameDirectory(preferences["DefaultGameDirectory"] ?? defaultGameDirectory);
     userPreference.changeDefaultPrefixDirectory(preferences["DefaultPrefixDirectory"] ?? defaultPrefixDirectory);
