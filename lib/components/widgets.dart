@@ -164,4 +164,87 @@ class Widgets {
     }
     return "none";
   }
+
+  /// Show a dialog to select the protons located in the folder, need the list of categories
+  static Future<String> selectCategory(BuildContext context, {required Map<String, List<int>> categories}) async {
+    Future<String> chooseCategory(List<String> categoriesList) async {
+      Completer<String> completer = Completer<String>();
+      categoriesList.add("Add New Category");
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Center(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.5,
+              child: AlertDialog(
+                backgroundColor: Theme.of(context).colorScheme.tertiary,
+                title: Text("Select the Category", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                content: SizedBox(
+                  height: MediaQuery.of(context).size.width * 0.2,
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  child: ListView.builder(
+                    itemCount: categoriesList.length,
+                    itemBuilder: (context, index) => TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        if (categoriesList[index] == "Add New Category") {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                TextEditingController category = TextEditingController();
+                                return Center(
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width * 0.5,
+                                    child: AlertDialog(
+                                      backgroundColor: Theme.of(context).colorScheme.tertiary,
+                                      title: Column(
+                                        children: [
+                                          TextField(
+                                            controller: category,
+                                            decoration: InputDecoration(
+                                              labelText: 'Category',
+                                              labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
+                                              ),
+                                              enabledBorder: UnderlineInputBorder(
+                                                borderSide: BorderSide(color: Theme.of(context).colorScheme.primary), // Cor da borda inferior quando o campo não está focado
+                                              ),
+                                            ),
+                                            style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
+                                          ),
+                                          // Spacer
+                                          const SizedBox(height: 10),
+                                          ElevatedButton(
+                                            onPressed: () => {
+                                              completer.complete(category.text),
+                                              Navigator.pop(context),
+                                            },
+                                            child: Text("Confirm"),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              });
+                        } else {
+                          completer.complete(categoriesList[index]);
+                        }
+                      },
+                      child: Text(categoriesList[index], style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+
+      return completer.future;
+    }
+
+    return await chooseCategory(categories.keys.toList());
+  }
 }

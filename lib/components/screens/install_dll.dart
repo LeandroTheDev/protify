@@ -6,15 +6,15 @@ import 'package:path/path.dart';
 import 'package:protify/components/widgets.dart';
 import 'package:protify/data/user_preferences.dart';
 
-class InstallDll extends StatefulWidget {
+class InstallDllScreen extends StatefulWidget {
   final int index;
-  const InstallDll({super.key, required this.index});
+  const InstallDllScreen({super.key, required this.index});
 
   @override
-  State<InstallDll> createState() => _InstallDllState();
+  State<InstallDllScreen> createState() => _InstallDllScreenState();
 }
 
-class _InstallDllState extends State<InstallDll> {
+class _InstallDllScreenState extends State<InstallDllScreen> {
   bool loaded = false;
   late final Map game;
   String dllDirectory = "";
@@ -84,6 +84,7 @@ class _InstallDllState extends State<InstallDll> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      //Title
                       Text(
                         'Dll Installation',
                         style: TextStyle(

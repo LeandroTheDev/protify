@@ -10,9 +10,9 @@ This software is builded thinking in easily open your games and configure prefix
 - Install dlls easily into game prefix folder
 - Non proton games compatibility
 - Preferences page
+- Category system to organize your library
 
 ### Future Features
-- Category
 - Playtime
 - Add game images
 - Friends List

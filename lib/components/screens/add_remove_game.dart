@@ -48,7 +48,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
           "LaunchDirectory": gameDirectory,
           "PrefixFolder": gamePrefix == "" ? join(preferences.defaultPrefixDirectory, gameName.text) : gamePrefix,
           "ProtonDirectory": gameProton == "none" ? null : join(preferences.defaultProtonDirectory, gameProton),
-          "Category": "My Games",
+          "Category": "Uncategorized",
           "Ignore": [],
           "EnableSteamCompatibility": gameSteamCompatibility,
         });
@@ -77,7 +77,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
           "LaunchDirectory": gameDirectory,
           "PrefixFolder": gamePrefix == "" ? join(preferences.defaultPrefixDirectory, gameName.text) : gamePrefix,
           "ProtonDirectory": gameProton == "none" ? null : join(preferences.defaultProtonDirectory, gameProton),
-          "Category": "My Games",
+          "Category": games[index]["Category"],
           "Ignore": [],
           "EnableSteamCompatibility": gameSteamCompatibility,
         };
@@ -284,39 +284,41 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
                     //Spacer
                     const SizedBox(height: 25),
                     //Steam Compatibility
-                    Row(
-                      children: [
-                        //Checkbox
-                        Checkbox(
-                          value: gameSteamCompatibility,
-                          onChanged: (value) => setState(() => gameSteamCompatibility = value!),
-                          //Fill Color
-                          fillColor: MaterialStateProperty.resolveWith(
-                            (states) {
-                              if (states.contains(MaterialState.selected)) {
-                                return Theme.of(context).colorScheme.secondary;
-                              }
-                              return null;
-                            },
+                    FittedBox(
+                      child: Row(
+                        children: [
+                          //Checkbox
+                          Checkbox(
+                            value: gameSteamCompatibility,
+                            onChanged: (value) => setState(() => gameSteamCompatibility = value!),
+                            //Fill Color
+                            fillColor: MaterialStateProperty.resolveWith(
+                              (states) {
+                                if (states.contains(MaterialState.selected)) {
+                                  return Theme.of(context).colorScheme.secondary;
+                                }
+                                return null;
+                              },
+                            ),
+                            //Check Color
+                            checkColor: Theme.of(context).colorScheme.tertiary,
+                            //Border Color
+                            side: BorderSide(color: Theme.of(context).secondaryHeaderColor, width: 2.0),
                           ),
-                          //Check Color
-                          checkColor: Theme.of(context).colorScheme.tertiary,
-                          //Border Color
-                          side: BorderSide(color: Theme.of(context).secondaryHeaderColor, width: 2.0),
-                        ),
-                        //Text
-                        Text("Enable Steam Compatibility", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
-                        //Info Button
-                        IconButton(
-                          icon: const Icon(Icons.info),
-                          color: Theme.of(context).secondaryHeaderColor,
-                          onPressed: () => Widgets.showAlert(
-                            context,
-                            title: "Steam Compatibility",
-                            content: "Enables steam compatibility making the game open with STEAM_COMPAT_CLIENT_INSTALL_PATH to play online games in steam if you are using a legit install",
+                          //Text
+                          Text("Enable Steam Compatibility", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                          //Info Button
+                          IconButton(
+                            icon: const Icon(Icons.info),
+                            color: Theme.of(context).secondaryHeaderColor,
+                            onPressed: () => Widgets.showAlert(
+                              context,
+                              title: "Steam Compatibility",
+                              content: "Enables steam compatibility making the game open with STEAM_COMPAT_CLIENT_INSTALL_PATH to play online games in steam if you are using a legit install",
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     //Spacer
                     const SizedBox(height: 25),

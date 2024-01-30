@@ -8,6 +8,8 @@ import 'package:protify/components/screens/install_dll.dart';
 import 'package:protify/components/screens/install_game.dart';
 import 'package:protify/components/screens/install_libs.dart';
 import 'package:protify/components/screens/preferences.dart';
+import 'package:protify/components/widgets.dart';
+import 'package:protify/data/save_datas.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
 
@@ -22,18 +24,50 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool loaded = false;
   List games = [];
+  Map<String, List<int>> categories = {};
   Offset mousePosition = const Offset(0, 0);
   OverlayEntry? gameInfo;
   int? selectedGameIndex;
-  late final UserPreferences preferences;
+  String selectedCategory = "Uncategorized";
+  UserPreferences preferences = UserPreferences();
 
   @override
   Widget build(BuildContext context) {
     if (!loaded) {
-      loaded = true;
       preferences = Provider.of<UserPreferences>(context, listen: false);
-      UserPreferences.loadPreference(context); // Load Preferences
-      UserPreferences.getGames().then((value) => setState(() => games = value)); // Load Games
+      loaded = true;
+      // Load Preferences
+      UserPreferences.loadPreference(context);
+      // Load Games
+      UserPreferences.getGames().then(
+        (value) => setState(
+          () {
+            //Reset Categories
+            categories = {};
+            games = value;
+            //Swipe all games and add the category to it
+            for (int i = 0; i < games.length; i++) {
+              bool alreadyExist = false;
+              List<String> categoriesList = categories.keys.toList();
+              //Swipe all categories
+              for (int j = 0; j < categoriesList.length; j++) {
+                //Check if already exist
+                if (games[i]["Category"] == categoriesList[j]) {
+                  alreadyExist = true;
+                  //Add the index
+                  categories[games[i]["Category"]]!.add(i);
+                  break;
+                }
+              }
+              //if not exist
+              if (!alreadyExist) {
+                //Create a category
+                categories[games[i]["Category"]] = [i];
+              }
+            }
+          },
+        ),
+      );
     }
     // To add just call the function to edit simple add the index in parameter
     addOrEditGameModal([index]) {
@@ -42,9 +76,10 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).primaryColor,
         isScrollControlled: true,
         builder: (BuildContext context) => AddOrEditGameScreen(index: index),
-      ).then((value) => UserPreferences.getGames().then((value) => setState(() => games = value)));
+      ).then((value) => UserPreferences.getGames().then((value) => setState(() => loaded = false)));
     }
 
+    // Open preferences Screen
     preferencesScreen() {
       showModalBottomSheet(
         context: context,
@@ -120,11 +155,12 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).primaryColor,
         isScrollControlled: true,
         builder: (BuildContext context) {
-          return InstallDll(index: index);
+          return InstallDllScreen(index: index);
         },
       );
     }
 
+    // Install game in game search directory
     installGame() {
       showModalBottomSheet(
         context: context,
@@ -145,6 +181,7 @@ class _HomePageState extends State<HomePage> {
 
     // Show the game infos
     showGameInfo(int index, Offset mousePosition) {
+      hideGameInfo();
       //Create the gameInfo widget
       gameInfo = OverlayEntry(
         builder: (context) => Positioned(
@@ -153,7 +190,7 @@ class _HomePageState extends State<HomePage> {
           child: Material(
             color: Colors.transparent,
             child: Container(
-                width: 70,
+                width: 80,
                 padding: const EdgeInsets.all(8.0),
                 color: Theme.of(context).colorScheme.tertiary,
                 child: Column(
@@ -189,6 +226,33 @@ class _HomePageState extends State<HomePage> {
                     ),
                     // Spacer
                     const SizedBox(height: 10),
+                    // Category
+                    GestureDetector(
+                      onTap: () => {
+                        // Close the overlay
+                        hideGameInfo(),
+                        // Open category selector
+                        Widgets.selectCategory(context, categories: categories).then(
+                          // Update the Category
+                          (category) => {
+                            SaveDatas.updateGameCategory(index, category).then((gamesUpdated) => setState(() => {
+                                  games = gamesUpdated,
+                                  loaded = false,
+                                })), // Reload
+                          },
+                        )
+                      },
+                      child: const SizedBox(
+                        width: 70,
+                        child: Text(
+                          'Category',
+                          style: TextStyle(color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    // Spacer
+                    const SizedBox(height: 10),
                     // Remove Game
                     GestureDetector(
                       onTap: () => {
@@ -215,8 +279,12 @@ class _HomePageState extends State<HomePage> {
       Overlay.of(context).insert(gameInfo!);
     }
 
+    // Change selected category
+    selectCategory(String category) => setState(() => selectedCategory = category);
+
     // Left side of the window
     Widget leftSide() {
+      final categoriesList = categories.keys.toList();
       final windowSize = MediaQuery.of(context).size;
       return SizedBox(
         height: windowSize.height,
@@ -226,25 +294,28 @@ class _HomePageState extends State<HomePage> {
           children: [
             ListView.builder(
               shrinkWrap: true,
-              itemCount: games.length,
-              itemBuilder: (context, index) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-                child: Container(
-                  height: 35,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).secondaryHeaderColor,
-                      width: 1.0,
+              itemCount: categoriesList.length,
+              itemBuilder: (context, index) => GestureDetector(
+                onTap: () => selectCategory(categoriesList[index]),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                  child: Container(
+                    height: 35,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Theme.of(context).secondaryHeaderColor,
+                        width: 1.0,
+                      ),
                     ),
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 5.0),
-                      child: Text(
-                        games[index]["Title"],
-                        textAlign: TextAlign.start,
-                        style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 5.0),
+                        child: Text(
+                          categoriesList[index],
+                          textAlign: TextAlign.start,
+                          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                        ),
                       ),
                     ),
                   ),
@@ -411,7 +482,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             //Grid
             SizedBox(
-              height: windowSize.height - 40,
+              height: windowSize.height - 50,
               width: windowSize.width * 0.7 - 10,
               child: MouseRegion(
                 onHover: (event) => mousePosition = event.position,
@@ -422,17 +493,17 @@ class _HomePageState extends State<HomePage> {
                     childAspectRatio: 0.5,
                   ),
                   shrinkWrap: true,
-                  itemCount: games.length,
+                  itemCount: categories[selectedCategory] == null ? 0 : categories[selectedCategory]!.length,
                   itemBuilder: (context, index) => Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: GestureDetector(
                       onTap: () => setState(() => {selectedGameIndex = index, hideGameInfo()}),
-                      onSecondaryTap: gameInfo == null ? () => showGameInfo(index, mousePosition) : () => hideGameInfo(),
+                      onSecondaryTap: gameInfo == null ? () => showGameInfo(categories[selectedCategory]![index], mousePosition) : () => hideGameInfo(),
                       child: Container(
                         color: Theme.of(context).primaryColor,
                         child: Center(
                           child: Text(
-                            games[index]["Title"],
+                            games[categories[selectedCategory]![index]]["Title"],
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.secondary,
                               fontSize: 18.0,
@@ -446,10 +517,27 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            //Add Game button
-            SizedBox(
-              height: 30,
-              child: ElevatedButton(onPressed: () => {hideGameInfo(), addOrEditGameModal()}, child: const Text("Add Game")),
+            //Bottom Buttons
+            Container(
+              padding: EdgeInsets.all(8.0),
+              width: windowSize.width * 0.7 - 3,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  //Add game
+                  SizedBox(
+                    height: 30,
+                    width: windowSize.width > 380.0 ? null : 30,
+                    child: ElevatedButton(onPressed: () => {hideGameInfo(), addOrEditGameModal()}, child: const Text("Add Game")),
+                  ),
+                  //Edit game
+                  SizedBox(
+                    height: 30,
+                    width: windowSize.width > 380.0 ? null : 30,
+                    child: ElevatedButton(onPressed: () => {hideGameInfo(), installGame()}, child: const Text("Install Game")),
+                  ),
+                ],
+              ),
             ),
           ],
         );
