@@ -56,7 +56,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
           "Ignore": [],
           "EnableSteamCompatibility": gameSteamCompatibility,
           "EnableShadersCompileNVIDIA": gameShadersCompileNVIDIA,
-          "SteamRuntimeDirectory": gameRuntime == "none" || gameUseSteamRuntime ? null : join(preferences.protifyDirectory, "runtimes", gameRuntime),
+          "SteamRuntimeDirectory": gameRuntime == "none" || !gameUseSteamRuntime ? null : join(preferences.protifyDirectory, "runtimes", gameRuntime),
           "EnableSteamWrapper": gameUseSteamWrapper,
         });
         //Saving data
@@ -88,7 +88,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
           "Ignore": [],
           "EnableSteamCompatibility": gameSteamCompatibility,
           "EnableShadersCompileNVIDIA": gameShadersCompileNVIDIA,
-          "SteamRuntimeDirectory": gameRuntime == "none" || gameUseSteamRuntime ? null : join(preferences.protifyDirectory, "runtimes", gameRuntime),
+          "SteamRuntimeDirectory": gameRuntime == "none" || !gameUseSteamRuntime ? null : join(preferences.protifyDirectory, "runtimes", gameRuntime),
           "EnableSteamWrapper": gameUseSteamWrapper,
         };
         //Saving data

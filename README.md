@@ -24,6 +24,7 @@ https://github.com/LeandroTheDev/protify/assets/106118473/970d2a94-3671-4a52-814
 
 ### Dependencies
 - Install games with iso: sudo, mount
+- Run games with sniper runtime: openssl-1.1
 - Run/install windows games: proton or wine
 
 ### First steps
@@ -51,5 +52,7 @@ https://github.com/LeandroTheDev/protify/assets/106118473/970d2a94-3671-4a52-814
 
 ### Building
 To build this project is very simple, all you need is to download the [flutter](https://docs.flutter.dev/get-started/install) framework and his dependencies to build, then create a project using ``flutter create protify``, paste all the files from this project in there, build using the ``flutter build linux --release``, the release will be stored in ``build/linux/x64/release/bundle/``
+
+If you are trying to debug the application dont forget to add the lib/protify_finder.txt!!! or the application will not work propertly
 
 [![wtfpl-badge-1](https://github.com/LeandroTheDev/protify/assets/106118473/98d03827-c5fd-43bb-95b8-d559fbb4781c)](https://github.com/LeandroTheDev/protify/blob/main/LICENSE.md)
