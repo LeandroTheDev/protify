@@ -25,6 +25,8 @@ class GameLogScreenState extends State<GameLogScreen> {
   StreamSubscription? stdOut;
   StreamSubscription? stdErr;
 
+  Timer? symbolicLinkTimer;
+
   addLog(String log) {
     futureLog.add(log);
     //Check if timer is already created
@@ -119,8 +121,13 @@ class GameLogScreenState extends State<GameLogScreen> {
       if (exitCode == 0) {
         addLog('[Protify] Success Launching Process');
         if (widget.game["CreateGameShortcut"] != null) {
-          process = await Process.start('/bin/bash', ['-c', 'ln -s "${preferences.defaultGameDirectory}" "${widget.game["CreateGameShortcut"]}"']);
-          addLog('[Protify] Success creating symbolic in prefix');
+          symbolicLinkTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+            if (Directory(preferences.defaultGameDirectory).existsSync()) {
+              process = await Process.start('/bin/bash', ['-c', 'ln -s "${preferences.defaultGameDirectory}" "${widget.game["CreateGameShortcut"]}"']);
+              addLog('[Protify] Successfully created symbolic in prefix');
+              timer.cancel();
+            }
+          });
         }
       } else {
         addLog('[Alert] Process Finished: $exitCode');
@@ -207,6 +214,14 @@ class GameLogScreenState extends State<GameLogScreen> {
     //Check listeners and cancel
     if (stdErr != null) {
       stdErr!.cancel();
+    }
+    //Check logs timer null
+    if (logShower != null) {
+      logShower!.cancel();
+    }
+    //Check symbolic timer null
+    if (symbolicLinkTimer != null) {
+      symbolicLinkTimer!.cancel();
     }
   }
 }

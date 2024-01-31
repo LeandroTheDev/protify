@@ -1,3 +1,6 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:filesystem_picker/filesystem_picker.dart';
@@ -67,7 +70,7 @@ class _InstallGameScreenState extends State<InstallGameScreen> {
                         onPressed: () => Widgets.showAlert(
                           context,
                           title: "Game Installation",
-                          content: "Allows you to install .exe/.iso into your default game search directory",
+                          content: "Allows you to install .exe/.iso into your default game search directory, a directory will be created in C:\\ named Game Search Directory, select the installer to install there and the game will be installed on Game Search Directory correctly",
                         ),
                       ),
                     ],
@@ -178,22 +181,73 @@ class _InstallGameScreenState extends State<InstallGameScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () async {
+                        proceedToInstallation(gamePrefixDirectory) {
+                          Models.startGame(context: context, game: {
+                            //gameProton == "none": "none"
+                            //gameProton == "Wine": "wine"
+                            //everthing else return the directory to the proton folder
+                            "ProtonDirectory": gameProton == "none"
+                                ? null
+                                : gameProton == "Wine"
+                                    ? "wine"
+                                    : join(preferences.defaultProtonDirectory, gameProton),
+                            "EnableSteamCompatibility": gameSteamCompatibility,
+                            "PrefixFolder": gamePrefixDirectory,
+                            "LaunchDirectory": gameDirectory,
+                            "ArgumentsCommand": gameArguments.text,
+                            "CreateGameShortcut": join(gamePrefixDirectory, "pfx", "drive_c", "Games Search Directory"),
+                          });
+                        }
+
                         final gamePrefixDirectory = join(preferences.protifyDirectory, "data", "temp_prefix");
                         //.iso files
                         if (gameDirectory.endsWith(".iso")) {
                           try {
+                            final Directory prefixDirectory = Directory(gamePrefixDirectory);
+                            try {
+                              //Remove old prefix
+                              prefixDirectory.deleteSync(recursive: true);
+                            } catch (_) {}
+                            //Create new prefix
+                            prefixDirectory.createSync();
                             final Directory mountDirectory = Directory(join(preferences.protifyDirectory, "data", "temp_mount"));
                             // Checking if prefix folder exist
                             if (!mountDirectory.existsSync()) {
-                              // Create
-                              await mountDirectory.create();
+                              // Se o diretório de montagem não existir, crie-o
+                              mountDirectory.createSync(recursive: true);
                             }
                             //If exist then umount previous iso iso
                             else {
-                              await Process.start('/bin/bash', ['-c', 'umount "${mountDirectory.path}"']);
+                              final umount = await Process.start('/bin/bash', ['-c', 'sudo -S umount "${mountDirectory.path}"']);
+                              umount.stderr.transform(utf8.decoder).listen((data) async {
+                                if (data.contains("[sudo] password for ")) {
+                                  final password = await Widgets.typeInput(context, title: "Sudo Password for umount");
+                                  umount.stdin.writeln(password);
+                                }
+                              });
+                              int exitCode = await umount.exitCode;
+                              //Error treatment
+                              //0 means ok, 32 means nothing mounted
+                              if (exitCode != 0 && exitCode != 32) {
+                                Widgets.showAlert(context, title: "Error", content: "Cannot umount old iso, error code: $exitCode");
+                                return;
+                              }
                             }
                             //Mount iso
-                            await Process.start('/bin/bash', ['-c', 'mount -o loop "$gameDirectory" "${mountDirectory.path}"']);
+                            final mount = await Process.start('/bin/bash', ['-c', 'sudo -S mount -o loop "$gameDirectory" "${mountDirectory.path}"']);
+                            mount.stderr.transform(utf8.decoder).listen((data) async {
+                              if (data.contains("[sudo] password for ")) {
+                                final password = await Widgets.typeInput(context, title: "Sudo Password for mount iso");
+                                mount.stdin.writeln(password);
+                              }
+                            });
+                            int exitCode = await mount.exitCode;
+                            //Error treatment
+                            //0 means ok
+                            if (exitCode != 0) {
+                              Widgets.showAlert(context, title: "Error", content: "Cannot mount iso, error code: $exitCode");
+                              return;
+                            }
                             //Inform the user what he need to do
                             await Widgets.showAlert(context, title: "Select Installer", content: "The iso sucessfully mounted, select the .exe installer now");
                             //Get installer directory
@@ -207,6 +261,7 @@ class _InstallGameScreenState extends State<InstallGameScreen> {
                             if (gameDirectory == "") {
                               return;
                             }
+                            proceedToInstallation(gamePrefixDirectory);
                           } catch (error) {
                             Widgets.showAlert(context, title: "Error", content: "Cannot create prefix directory reason: $error");
                             return;
@@ -216,31 +271,18 @@ class _InstallGameScreenState extends State<InstallGameScreen> {
                         else {
                           try {
                             final Directory prefixDirectory = Directory(gamePrefixDirectory);
-                            // Checking if prefix folder exist
-                            if (!prefixDirectory.existsSync()) {
-                              // Create
-                              await prefixDirectory.create();
-                            }
+                            try {
+                              //Remove old prefix
+                              prefixDirectory.deleteSync(recursive: true);
+                            } catch (_) {}
+                            //Create new prefix
+                            prefixDirectory.createSync();
+                            proceedToInstallation(gamePrefixDirectory);
                           } catch (error) {
                             Widgets.showAlert(context, title: "Error", content: "Cannot create prefix directory reason: $error");
                             return;
                           }
                         }
-                        Models.startGame(context: context, game: {
-                          //gameProton == "none": "none"
-                          //gameProton == "Wine": "wine"
-                          //everthing else return the directory to the proton folder
-                          "ProtonDirectory": gameProton == "none"
-                              ? null
-                              : gameProton == "Wine"
-                                  ? "wine"
-                                  : join(preferences.defaultProtonDirectory, gameProton),
-                          "EnableSteamCompatibility": gameSteamCompatibility,
-                          "PrefixFolder": gamePrefixDirectory,
-                          "LaunchDirectory": gameDirectory,
-                          "ArgumentsCommand": gameArguments.text,
-                          "CreateGameShortcut": join(gamePrefixDirectory, "pfx", "drive_c", "Games Search Directory"),
-                        });
                       },
                       child: const Text("Confirm"),
                     ),

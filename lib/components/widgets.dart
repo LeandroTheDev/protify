@@ -188,46 +188,7 @@ class Widgets {
                       onPressed: () {
                         Navigator.of(context).pop();
                         if (categoriesList[index] == "Add New Category") {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                TextEditingController category = TextEditingController();
-                                return Center(
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width * 0.5,
-                                    child: AlertDialog(
-                                      backgroundColor: Theme.of(context).colorScheme.tertiary,
-                                      title: Column(
-                                        children: [
-                                          TextField(
-                                            controller: category,
-                                            decoration: InputDecoration(
-                                              labelText: 'Category',
-                                              labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
-                                              ),
-                                              enabledBorder: UnderlineInputBorder(
-                                                borderSide: BorderSide(color: Theme.of(context).colorScheme.primary), // Cor da borda inferior quando o campo não está focado
-                                              ),
-                                            ),
-                                            style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
-                                          ),
-                                          // Spacer
-                                          const SizedBox(height: 10),
-                                          ElevatedButton(
-                                            onPressed: () => {
-                                              completer.complete(category.text),
-                                              Navigator.pop(context),
-                                            },
-                                            child: Text("Confirm"),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              });
+                          completer.complete(typeInput(context, title: "Category"));
                         } else {
                           completer.complete(categoriesList[index]);
                         }
@@ -246,5 +207,51 @@ class Widgets {
     }
 
     return await chooseCategory(categories.keys.toList());
+  }
+
+  /// Show a prompt to user type something
+  static Future<String> typeInput(BuildContext context, {title = ""}) {
+    Completer<String> completer = Completer<String>();
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          TextEditingController input = TextEditingController();
+          return Center(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.5,
+              child: AlertDialog(
+                backgroundColor: Theme.of(context).colorScheme.tertiary,
+                title: Column(
+                  children: [
+                    TextField(
+                      controller: input,
+                      decoration: InputDecoration(
+                        labelText: title,
+                        labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary), // Cor da borda inferior quando o campo não está focado
+                        ),
+                      ),
+                      style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
+                    ),
+                    // Spacer
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () => {
+                        completer.complete(input.text),
+                        Navigator.pop(context),
+                      },
+                      child: const Text("Confirm"),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+    return completer.future;
   }
 }
