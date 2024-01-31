@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
 
@@ -161,6 +162,75 @@ class Widgets {
     //No proton folder treatment
     else {
       Widgets.showAlert(context, title: "Error", content: "Cannot find the folder for protons in protify folder, check if the folder exist if not create one and add your protons there.");
+    }
+    return "none";
+  }
+
+  /// Show a dialog to select the protons located in the folder
+  static Future<String> selectRuntime(BuildContext context) async {
+    final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
+    Future<String> chooseRuntime(List<String> runtimes) async {
+      Completer<String> completer = Completer<String>();
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          runtimes.add("No Runtime");
+          return Center(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.5,
+              child: AlertDialog(
+                backgroundColor: Theme.of(context).colorScheme.tertiary,
+                title: Text("Select the Runtime", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                content: SizedBox(
+                  height: MediaQuery.of(context).size.width * 0.2,
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  child: ListView.builder(
+                    itemCount: runtimes.length,
+                    itemBuilder: (context, index) => TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        if (runtimes[index] == "No Runtime") {
+                          completer.complete("none");
+                        } else {
+                          completer.complete(runtimes[index]);
+                        }
+                      },
+                      child: Text(runtimes[index], style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+
+      return completer.future;
+    }
+
+    final directory = Directory(join(preferences.protifyDirectory, "runtimes"));
+
+    List<String> runtimes = [];
+    //Check if proton folder exist
+    if (directory.existsSync()) {
+      final folders = directory.listSync().whereType<Directory>();
+      //Check if is not empty
+      if (folders.isNotEmpty) {
+        for (final proton in folders) {
+          //Add proton to the list
+          runtimes.add(proton.uri.pathSegments[proton.uri.pathSegments.length - 2]);
+        }
+        //Show dialog to choose the proton
+        return await chooseRuntime(runtimes);
+      }
+      //Empty treatment
+      else {
+        Widgets.showAlert(context, title: "Alert", content: "No runtimes can be found, add one.");
+      }
+    }
+    //No proton folder treatment
+    else {
+      Widgets.showAlert(context, title: "Error", content: "Cannot find the folder for runtimes in runtimes folder, check if the folder exist if not create one and add your runtimes there.");
     }
     return "none";
   }

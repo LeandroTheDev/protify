@@ -63,8 +63,16 @@ class GameLogScreenState extends State<GameLogScreen> {
     final String command;
     //Check if we are running a proton game
     if (widget.game["ProtonDirectory"] != null && widget.game["ProtonDirectory"] != "wine") {
-      // Check Steam Compatibility
       String checkEnviroments = "";
+      // Check Steam Wrapper
+      if (widget.game["EnableSteamWrapper"]) {
+        checkEnviroments += '"${preferences.steamCompatibilityDirectory}/ubuntu12_32/steam-launch-wrapper" -- ';
+      }
+      // Check Steam Runtime
+      if (widget.game["SteamRuntimeDirectory"] != null) {
+        checkEnviroments += '"${join(widget.game["SteamRuntimeDirectory"], "_v2-entry-point")}" --verb=waitforexitandrun -- ';
+      }
+      // Check Steam Compatibility
       if (widget.game["EnableSteamCompatibility"]) {
         checkEnviroments += 'STEAM_COMPAT_CLIENT_INSTALL_PATH="${preferences.steamCompatibilityDirectory}" ';
       }

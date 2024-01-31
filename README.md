@@ -41,7 +41,7 @@ https://github.com/LeandroTheDev/protify/assets/106118473/970d2a94-3671-4a52-814
 - Download the dll and in game preview click in dll and install the dll.
 > What types of data it will erase in clear button in preferences?
 - All types of data that is managed by the protify: Games and Preferences.
-- Prefixes and protons is not included.
+- Prefixes and protons are not included.
 > My steam is installed on a different location and i need to use steam compatibility how can i change?
 - In the preferences page click in ``Steam Compatibility Directory`` and select your steam folder
 > What happens if i remove the default prefix directory in my file manager and change it in preferences to another directory?

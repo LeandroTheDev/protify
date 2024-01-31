@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:protify/components/models.dart';
-import 'package:protify/components/screens/add_remove_game.dart';
+import 'package:protify/components/screens/add_edit_game.dart';
 import 'package:protify/components/screens/install_dll.dart';
 import 'package:protify/components/screens/install_game.dart';
 import 'package:protify/components/screens/install_libs.dart';

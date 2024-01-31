@@ -23,10 +23,13 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
   TextEditingController gameLaunchCommand = TextEditingController();
   TextEditingController gameArgumentsCommand = TextEditingController();
   String gameProton = "none";
+  String gameRuntime = "none";
   String gameDirectory = "";
   String gamePrefix = "";
   bool gameSteamCompatibility = false;
   bool gameShadersCompileNVIDIA = false;
+  bool gameUseSteamRuntime = false;
+  bool gameUseSteamWrapper = false;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +56,8 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
           "Ignore": [],
           "EnableSteamCompatibility": gameSteamCompatibility,
           "EnableShadersCompileNVIDIA": gameShadersCompileNVIDIA,
+          "SteamRuntimeDirectory": gameRuntime == "none" || gameUseSteamRuntime ? null : join(preferences.protifyDirectory, "runtimes", gameRuntime),
+          "EnableSteamWrapper": gameUseSteamWrapper,
         });
         //Saving data
         SaveDatas.saveData("games", jsonEncode(games));
@@ -83,6 +88,8 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
           "Ignore": [],
           "EnableSteamCompatibility": gameSteamCompatibility,
           "EnableShadersCompileNVIDIA": gameShadersCompileNVIDIA,
+          "SteamRuntimeDirectory": gameRuntime == "none" || gameUseSteamRuntime ? null : join(preferences.protifyDirectory, "runtimes", gameRuntime),
+          "EnableSteamWrapper": gameUseSteamWrapper,
         };
         //Saving data
         SaveDatas.saveData("games", jsonEncode(games));
@@ -109,6 +116,10 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
             gamePrefix = game["PrefixFolder"] ?? "";
             gameProton = basename(game["ProtonDirectory"] ?? "none");
             gameSteamCompatibility = game["EnableSteamCompatibility"] ?? false;
+            gameShadersCompileNVIDIA = game["EnableShadersCompileNVIDIA"] ?? false;
+            gameRuntime = basename(game["SteamRuntimeDirectory"] ?? "none");
+            gameUseSteamRuntime = (game["SteamRuntimeDirectory"] ?? "none") != "none";
+            gameUseSteamWrapper = game["EnableSteamWrapper"] ?? false;
           });
         }).catchError((error) {
           Widgets.showAlert(context, title: "Error", content: "Cannot load edit because of a retrieve game error: $error");
@@ -355,6 +366,102 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
                               context,
                               title: "Shader Compile",
                               content: "Sets the global enviroments from nvidia: \"__GL_SHADER_DISK_CACHE\" to 1 to enable compiling shaders and automatic configure shaders save location in protify/shaders",
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    //Steam Runtime Mode
+                    FittedBox(
+                      child: Row(
+                        children: [
+                          //Checkbox
+                          Checkbox(
+                            value: gameUseSteamRuntime,
+                            onChanged: (value) => setState(() => gameUseSteamRuntime = value!),
+                            //Fill Color
+                            fillColor: MaterialStateProperty.resolveWith(
+                              (states) {
+                                if (states.contains(MaterialState.selected)) {
+                                  return Theme.of(context).colorScheme.secondary;
+                                }
+                                return null;
+                              },
+                            ),
+                            //Check Color
+                            checkColor: Theme.of(context).colorScheme.tertiary,
+                            //Border Color
+                            side: BorderSide(color: Theme.of(context).secondaryHeaderColor, width: 2.0),
+                          ),
+                          //Text
+                          Text("Enable Steam Runtime Mode", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                          //Info Button
+                          IconButton(
+                            icon: const Icon(Icons.info),
+                            color: Theme.of(context).secondaryHeaderColor,
+                            onPressed: () => Widgets.showAlert(
+                              context,
+                              title: "Steam Runtime",
+                              content: "Steam Runtime is a tool for running the game in a container to make it more compatible with all devices, use it if you are having trouble running your game",
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    //Select Runtime
+                    gameUseSteamRuntime
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              //Selected Runtime
+                              Text(
+                                gameRuntime == "none" ? "No Runtime" : gameRuntime,
+                                style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+                              ),
+                              //Spacer
+                              const SizedBox(height: 5),
+                              //Select Runtime Button
+                              ElevatedButton(
+                                onPressed: () => Widgets.selectRuntime(context).then((selectedRuntime) => setState(() => gameRuntime = selectedRuntime)),
+                                child: const Text("Select Runtime"),
+                              ),
+                              //Spacer
+                              const SizedBox(height: 5),
+                            ],
+                          )
+                        : SizedBox(),
+                    //Steam Wrapper Mode
+                    FittedBox(
+                      child: Row(
+                        children: [
+                          //Checkbox
+                          Checkbox(
+                            value: gameUseSteamWrapper,
+                            onChanged: (value) => setState(() => gameUseSteamWrapper = value!),
+                            //Fill Color
+                            fillColor: MaterialStateProperty.resolveWith(
+                              (states) {
+                                if (states.contains(MaterialState.selected)) {
+                                  return Theme.of(context).colorScheme.secondary;
+                                }
+                                return null;
+                              },
+                            ),
+                            //Check Color
+                            checkColor: Theme.of(context).colorScheme.tertiary,
+                            //Border Color
+                            side: BorderSide(color: Theme.of(context).secondaryHeaderColor, width: 2.0),
+                          ),
+                          //Text
+                          Text("Enable Steam Wrapper Mode", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                          //Info Button
+                          IconButton(
+                            icon: const Icon(Icons.info),
+                            color: Theme.of(context).secondaryHeaderColor,
+                            onPressed: () => Widgets.showAlert(
+                              context,
+                              title: "Steam Wrapper",
+                              content: "Helps lauching games and compatibility problems, use if you are having trouble launching your game",
                             ),
                           ),
                         ],
