@@ -26,6 +26,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
   String gameDirectory = "";
   String gamePrefix = "";
   bool gameSteamCompatibility = false;
+  bool gameShadersCompileNVIDIA = false;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +52,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
           "Category": "Uncategorized",
           "Ignore": [],
           "EnableSteamCompatibility": gameSteamCompatibility,
+          "EnableShadersCompileNVIDIA": gameShadersCompileNVIDIA,
         });
         //Saving data
         SaveDatas.saveData("games", jsonEncode(games));
@@ -80,6 +82,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
           "Category": games[index]["Category"],
           "Ignore": [],
           "EnableSteamCompatibility": gameSteamCompatibility,
+          "EnableShadersCompileNVIDIA": gameShadersCompileNVIDIA,
         };
         //Saving data
         SaveDatas.saveData("games", jsonEncode(games));
@@ -315,6 +318,43 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
                               context,
                               title: "Steam Compatibility",
                               content: "Enables steam compatibility making the game open with STEAM_COMPAT_CLIENT_INSTALL_PATH to play online games in steam if you are using a legit install",
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    //Shaders Compile NVIDIA
+                    FittedBox(
+                      child: Row(
+                        children: [
+                          //Checkbox
+                          Checkbox(
+                            value: gameShadersCompileNVIDIA,
+                            onChanged: (value) => setState(() => gameShadersCompileNVIDIA = value!),
+                            //Fill Color
+                            fillColor: MaterialStateProperty.resolveWith(
+                              (states) {
+                                if (states.contains(MaterialState.selected)) {
+                                  return Theme.of(context).colorScheme.secondary;
+                                }
+                                return null;
+                              },
+                            ),
+                            //Check Color
+                            checkColor: Theme.of(context).colorScheme.tertiary,
+                            //Border Color
+                            side: BorderSide(color: Theme.of(context).secondaryHeaderColor, width: 2.0),
+                          ),
+                          //Text
+                          Text("Enable Shader Compile NVIDIA", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                          //Info Button
+                          IconButton(
+                            icon: const Icon(Icons.info),
+                            color: Theme.of(context).secondaryHeaderColor,
+                            onPressed: () => Widgets.showAlert(
+                              context,
+                              title: "Shader Compile",
+                              content: "Sets the global enviroments from nvidia: \"__GL_SHADER_DISK_CACHE\" to 1 to enable compiling shaders and automatic configure shaders save location in protify/shaders",
                             ),
                           ),
                         ],

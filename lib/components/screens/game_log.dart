@@ -64,10 +64,25 @@ class GameLogScreenState extends State<GameLogScreen> {
     //Check if we are running a proton game
     if (widget.game["ProtonDirectory"] != null && widget.game["ProtonDirectory"] != "wine") {
       // Check Steam Compatibility
-      String steamCompatibility = "";
+      String checkEnviroments = "";
       if (widget.game["EnableSteamCompatibility"]) {
-        steamCompatibility = 'STEAM_COMPAT_CLIENT_INSTALL_PATH="${preferences.steamCompatibilityDirectory}"';
+        checkEnviroments += 'STEAM_COMPAT_CLIENT_INSTALL_PATH="${preferences.steamCompatibilityDirectory}" ';
       }
+      // Check Shaders Compile NVIDIA
+      if (widget.game["EnableShadersCompileNVIDIA"]) {
+        // Shaders folder
+        final shadersDirectory = Directory('${preferences.protifyDirectory}/shaders');
+        if (!shadersDirectory.existsSync()) {
+          shadersDirectory.createSync();
+        }
+        // Game Shaders folder
+        final shadersGameDirectory = Directory('${preferences.protifyDirectory}/shaders/${widget.game["Title"]}');
+        if (!shadersGameDirectory.existsSync()) {
+          shadersGameDirectory.createSync();
+        }
+        checkEnviroments += '__GL_SHADER_DISK_CACHE_PATH="${preferences.protifyDirectory}/shaders/${widget.game["Title"]} __GL_SHADER_DISK_CACHE=1 __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1 ';
+      }
+
       //Command Variables
       final String protonDirectory = widget.game["ProtonDirectory"] ?? "";
       final String protonWineDirectory;
@@ -84,14 +99,18 @@ class GameLogScreenState extends State<GameLogScreen> {
       final String argumentsCommand = widget.game["ArgumentsCommand"] ?? "";
 
       //Proton full command
-      command = '$steamCompatibility WINEPREFIX="${preferences.defaultWineprefixDirectory}" STEAM_COMPAT_DATA_PATH="$gamePrefix" "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$gameDirectory" $argumentsCommand';
+      command = '$checkEnviroments $argumentsCommand STEAM_COMPAT_DATA_PATH="$gamePrefix" "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$gameDirectory"';
     }
     //Non proton game
     else {
       // Check Steam Compatibility
-      String steamCompatibility = "";
+      String checkEnviroments = "";
       if (widget.game["EnableSteamCompatibility"]) {
-        steamCompatibility = 'STEAM_COMPAT_CLIENT_INSTALL_PATH="${preferences.steamCompatibilityDirectory}"';
+        checkEnviroments += 'STEAM_COMPAT_CLIENT_INSTALL_PATH="${preferences.steamCompatibilityDirectory}" ';
+      }
+      // Check Shaders Compile NVIDIA
+      if (widget.game["EnableShadersCompileNVIDIA"]) {
+        checkEnviroments += '__GL_SHADER_DISK_CACHE_PATH="${preferences.protifyDirectory}/shaders/${widget.game["Title"]} __GL_SHADER_DISK_CACHE=1 __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1 ';
       }
       final String launchCommand;
       if (widget.game["ProtonDirectory"] == "wine") {
@@ -101,7 +120,7 @@ class GameLogScreenState extends State<GameLogScreen> {
       }
       final String argumentsCommand = widget.game["ArgumentsCommand"] ?? "";
       final String gameDirectory = widget.game["LaunchDirectory"] ?? "";
-      command = '$steamCompatibility $launchCommand $gameDirectory $argumentsCommand';
+      command = '$checkEnviroments $launchCommand $gameDirectory $argumentsCommand';
     }
 
     try {
