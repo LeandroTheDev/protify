@@ -51,3 +51,5 @@ https://github.com/LeandroTheDev/protify/assets/106118473/970d2a94-3671-4a52-814
 
 ### Building
 To build this project is very simple, all you need is to download the [flutter](https://docs.flutter.dev/get-started/install) framework and his dependencies to build, then create a project using ``flutter create protify``, paste all the files from this project in there, build using the ``flutter build linux --release``, the release will be stored in ``build/linux/x64/release/bundle/``
+
+[![wtfpl-badge-1](https://github.com/LeandroTheDev/protify/assets/106118473/98d03827-c5fd-43bb-95b8-d559fbb4781c)](https://github.com/LeandroTheDev/protify/blob/main/LICENSE.md)
