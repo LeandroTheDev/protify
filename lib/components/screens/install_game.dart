@@ -169,7 +169,7 @@ class _InstallGameScreenState extends State<InstallGameScreen> {
                           onPressed: () => Widgets.showAlert(
                             context,
                             title: "Steam Compatibility",
-                            content: "Enables steam compatibility making the game open with STEAM_COMPAT_CLIENT_INSTALL_PATH to play online games in steam if you are using a legit install",
+                            content: "Enables steam compatibility making the game open with STEAM_COMPAT_CLIENT_INSTALL_PATH to use the official protons",
                           ),
                         ),
                       ],

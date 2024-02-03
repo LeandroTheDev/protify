@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:protify/components/widgets.dart';
 import 'package:protify/data/save_datas.dart';
@@ -22,12 +23,14 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
   TextEditingController gameName = TextEditingController();
   TextEditingController gameLaunchCommand = TextEditingController();
   TextEditingController gameArgumentsCommand = TextEditingController();
+  TextEditingController gameSteamReaperId = TextEditingController();
   String gameProton = "none";
   String gameRuntime = "none";
   String gameDirectory = "";
   String gamePrefix = "";
   bool gameSteamCompatibility = false;
   bool gameShadersCompileNVIDIA = false;
+  bool gameUseSteamReaper = false;
   bool gameUseSteamRuntime = false;
   bool gameUseSteamWrapper = false;
 
@@ -56,6 +59,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
           "Ignore": [],
           "EnableSteamCompatibility": gameSteamCompatibility,
           "EnableShadersCompileNVIDIA": gameShadersCompileNVIDIA,
+          "SteamReaperAppId": gameUseSteamReaper ? int.parse(gameSteamReaperId.text) : null,
           "SteamRuntimeDirectory": gameRuntime == "none" || !gameUseSteamRuntime ? null : join(preferences.protifyDirectory, "runtimes", gameRuntime),
           "EnableSteamWrapper": gameUseSteamWrapper,
         });
@@ -88,6 +92,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
           "Ignore": [],
           "EnableSteamCompatibility": gameSteamCompatibility,
           "EnableShadersCompileNVIDIA": gameShadersCompileNVIDIA,
+          "SteamReaperAppId": gameUseSteamReaper ? int.parse(gameSteamReaperId.text) : null,
           "SteamRuntimeDirectory": gameRuntime == "none" || !gameUseSteamRuntime ? null : join(preferences.protifyDirectory, "runtimes", gameRuntime),
           "EnableSteamWrapper": gameUseSteamWrapper,
         };
@@ -119,6 +124,8 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
             gameShadersCompileNVIDIA = game["EnableShadersCompileNVIDIA"] ?? false;
             gameRuntime = basename(game["SteamRuntimeDirectory"] ?? "none");
             gameUseSteamRuntime = (game["SteamRuntimeDirectory"] ?? "none") != "none";
+            gameSteamReaperId.text = game["SteamReaperAppId"] == null ? 480.toString() : game["SteamReaperAppId"].toString();
+            gameUseSteamReaper = game["SteamReaperAppId"] != null;
             gameUseSteamWrapper = game["EnableSteamWrapper"] ?? false;
           });
         }).catchError((error) {
@@ -328,7 +335,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
                             onPressed: () => Widgets.showAlert(
                               context,
                               title: "Steam Compatibility",
-                              content: "Enables steam compatibility making the game open with STEAM_COMPAT_CLIENT_INSTALL_PATH to play online games in steam if you are using a legit install",
+                              content: "Enables steam compatibility making the game open with STEAM_COMPAT_CLIENT_INSTALL_PATH to use the official protons",
                             ),
                           ),
                         ],
@@ -371,6 +378,81 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
                         ],
                       ),
                     ),
+                    //Spacer
+                    const SizedBox(height: 5),  
+                    //Steam Modes Text
+                    Text(
+                      "Steam Modes",
+                      style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+                    ),
+                    //Spacer
+                    const SizedBox(height: 5),
+                    //Steam Reaper Mode
+                    FittedBox(
+                      child: Row(
+                        children: [
+                          //Checkbox
+                          Checkbox( 
+                            value: gameUseSteamReaper,
+                            onChanged: (value) => setState(() => gameUseSteamReaper = value!),
+                            //Fill Color
+                            fillColor: MaterialStateProperty.resolveWith(
+                              (states) {
+                                if (states.contains(MaterialState.selected)) {
+                                  return Theme.of(context).colorScheme.secondary;
+                                }
+                                return null;
+                              },
+                            ),
+                            //Check Color
+                            checkColor: Theme.of(context).colorScheme.tertiary,
+                            //Border Color
+                            side: BorderSide(color: Theme.of(context).secondaryHeaderColor, width: 2.0),
+                          ),
+                          //Text
+                          Text("Enable Steam Reaper Mode", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                          //Info Button
+                          IconButton(
+                            icon: const Icon(Icons.info),
+                            color: Theme.of(context).secondaryHeaderColor,
+                            onPressed: () => Widgets.showAlert(
+                              context,
+                              title: "Steam Reaoer",
+                              content: "Steam Reaper for steam AppId recognition for online games",
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    //Select Runtime
+                    gameUseSteamReaper
+                        ? //Arguments Commands
+                        Column(
+                            children: [
+                              SizedBox(
+                                height: 60,
+                                child: TextField(
+                                  controller: gameSteamReaperId,
+                                  decoration: InputDecoration(
+                                    labelText: 'Reaper Id',
+                                    labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
+                                    ),
+                                  ),
+                                  style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 15),
+                            ],
+                          )
+                        : const SizedBox(),
                     //Steam Runtime Mode
                     FittedBox(
                       child: Row(
@@ -402,7 +484,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
                             onPressed: () => Widgets.showAlert(
                               context,
                               title: "Steam Runtime",
-                              content: "Steam Runtime is a tool for running the game in a container to make it more compatible with all devices, use it if you are having trouble running your game",
+                              content: "Steam Runtime is a tool for running the game in a container to make it more compatible with all devices, use it if you are having trouble running your game, runtimes located in protify/runtimes",
                             ),
                           ),
                         ],
@@ -429,7 +511,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
                               const SizedBox(height: 5),
                             ],
                           )
-                        : SizedBox(),
+                        : const SizedBox(),
                     //Steam Wrapper Mode
                     FittedBox(
                       child: Row(

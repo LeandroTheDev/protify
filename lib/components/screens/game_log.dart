@@ -25,6 +25,8 @@ class GameLogScreenState extends State<GameLogScreen> {
   StreamSubscription? stdOut;
   StreamSubscription? stdErr;
 
+  int symbolicLinkChances = 10;
+
   Timer? symbolicLinkTimer;
 
   addLog(String log) {
@@ -76,13 +78,13 @@ class GameLogScreenState extends State<GameLogScreen> {
       final String gamePrefix = widget.game["PrefixFolder"];
       final String gameDirectory = widget.game["LaunchDirectory"] ?? "";
       final String argumentsCommand = widget.game["ArgumentsCommand"] ?? "";
-      String checkEnviroments = 'STEAM_RUNTIME=3 STEAM_COMPAT_DATA_PATH="$gamePrefix" WINEPREFIX="$gamePrefix/pfx" ';
+      String checkEnviroments = 'STEAM_RUNTIME=3 STEAM_COMPAT_DATA_PATH="$gamePrefix" WINEPREFIX="${preferences.defaultWineprefixDirectory}" ';
       // Check Steam Compatibility
       if (widget.game["EnableSteamCompatibility"]) {
         checkEnviroments += 'STEAM_COMPAT_CLIENT_INSTALL_PATH="${preferences.steamCompatibilityDirectory}" ';
       }
       // Check Shaders Compile NVIDIA
-      if (widget.game["EnableShadersCompileNVIDIA"]) {
+      if (widget.game["EnableShadersCompileNVIDIA"] ?? false) {
         // Shaders folder
         final shadersDirectory = Directory('${preferences.protifyDirectory}/shaders');
         if (!shadersDirectory.existsSync()) {
@@ -99,8 +101,11 @@ class GameLogScreenState extends State<GameLogScreen> {
       checkEnviroments += "$argumentsCommand ";
 
       // Sensive commands that can break game launch if not launched together
+      if (widget.game["SteamReaperAppId"] != null) {
+        checkEnviroments += '"${join(preferences.steamCompatibilityDirectory, "ubuntu12_32", "reaper")}" SteamLaunch AppId=${widget.game["SteamReaperAppId"]} -- ';
+      }
       // Check Steam Wrapper
-      if (widget.game["EnableSteamWrapper"]) {
+      if (widget.game["EnableSteamWrapper"] ?? false) {
         checkEnviroments += '"${join(preferences.steamCompatibilityDirectory, "ubuntu12_32", "steam-launch-wrapper")}" -- ';
       }
       // Check Steam Runtime
@@ -149,12 +154,27 @@ class GameLogScreenState extends State<GameLogScreen> {
       //Process Finished
       if (exitCode == 0) {
         addLog('[Protify] Success Launching Process');
+        //Check for creation symbolic links
         if (widget.game["CreateGameShortcut"] != null) {
+          //Timer repeat if symbolic cannot be create
           symbolicLinkTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+            //Check if exist
             if (Directory(preferences.defaultGameDirectory).existsSync()) {
               process = await Process.start('/bin/bash', ['-c', 'ln -s "${preferences.defaultGameDirectory}" "${widget.game["CreateGameShortcut"]}"']);
               addLog('[Protify] Successfully created symbolic in prefix');
               timer.cancel();
+            }
+            //If not exist
+            else {
+              //Check chances
+              if (symbolicLinkChances <= 0) {
+                addLog('[Protify Error] Cannot create the symbolic link after 10 trys, giving up...');
+                timer.cancel();
+                return;
+              }
+              //Log the error
+              symbolicLinkChances--;
+              addLog('[Protify Error] Trying to create symbolic in prefix but the directory doesnt exist...');
             }
           });
         }
@@ -216,7 +236,7 @@ class GameLogScreenState extends State<GameLogScreen> {
                   width: MediaQuery.of(context).size.width / 4,
                   height: 30,
                   child: ElevatedButton(
-                    onPressed: () => process!.kill(ProcessSignal.sigkill),
+                    onPressed: () => {process!.kill(ProcessSignal.sigkill)},
                     child: const Text(
                       "Kill",
                     ),
