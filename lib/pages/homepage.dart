@@ -259,7 +259,7 @@ class _HomePageState extends State<HomePage> {
                         // Close the overlay
                         hideGameInfo(),
                         // Remove the game
-                        UserPreferences.removeGame(index, games, context).then((value) => setState(() => games = value)),
+                        UserPreferences.removeGame(index, games, context).then((value) => setState(() => {games = value, loaded = false})),
                       },
                       child: const SizedBox(
                         width: 70,
