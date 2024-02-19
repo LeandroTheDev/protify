@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
 
@@ -208,7 +207,7 @@ class Widgets {
       return completer.future;
     }
 
-    final directory = Directory(join(preferences.protifyDirectory, "runtimes"));
+    final directory = Directory(preferences.defaultRuntimeDirectory);
 
     List<String> runtimes = [];
     //Check if proton folder exist

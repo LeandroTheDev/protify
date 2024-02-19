@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
@@ -139,6 +140,7 @@ class GameLogScreenState extends State<GameLogScreen> {
     }
 
     try {
+      addLog('[Info]: command: $command');
       //Resetting game log
       gameLog = [];
       process = await Process.start('/bin/bash', ['-c', command]);
@@ -207,9 +209,14 @@ class GameLogScreenState extends State<GameLogScreen> {
               child: ListView.builder(
                 controller: scrollController,
                 itemCount: gameLog.length,
-                itemBuilder: (context, index) => Text(
-                  gameLog[index],
-                  style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+                itemBuilder: (context, index) => GestureDetector(
+                  onTap: () {
+                    Clipboard.setData(ClipboardData(text: gameLog[index]));
+                  },
+                  child: Text(
+                    gameLog[index],
+                    style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+                  ),
                 ),
               ),
             ),

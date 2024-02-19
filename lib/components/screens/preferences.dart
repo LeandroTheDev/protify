@@ -204,6 +204,32 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 30),
+                        //Default Runtime Directory
+                        Row(
+                          children: [
+                            //Button
+                            ElevatedButton(
+                              onPressed: () => FilesystemPicker.open(
+                                context: context,
+                                rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
+                                fsType: FilesystemType.folder,
+                                folderIconColor: Theme.of(context).secondaryHeaderColor,
+                              ).then((directory) => directory != null ? userPreferences.changeDefaultPrefixDirectory(directory) : () {}),
+                              child: const Text("Default Runtime Directory"),
+                            ),
+                            //Info Button
+                            IconButton(
+                              icon: const Icon(Icons.info),
+                              color: Theme.of(context).secondaryHeaderColor,
+                              onPressed: () => Widgets.showAlert(
+                                context,
+                                title: "Default Runtime Directory",
+                                content: "Default Runtimes will be stored in this folder",
+                              ),
+                            ),
+                          ],
+                        ),
                         //Spacer
                         const SizedBox(height: 30),
                         //Wineprefix Directory

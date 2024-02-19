@@ -60,7 +60,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
           "EnableSteamCompatibility": gameSteamCompatibility,
           "EnableShadersCompileNVIDIA": gameShadersCompileNVIDIA,
           "SteamReaperAppId": gameUseSteamReaper ? int.parse(gameSteamReaperId.text) : null,
-          "SteamRuntimeDirectory": gameRuntime == "none" || !gameUseSteamRuntime ? null : join(preferences.protifyDirectory, "runtimes", gameRuntime),
+          "SteamRuntimeDirectory": gameRuntime == "none" || !gameUseSteamRuntime ? null : join(preferences.defaultRuntimeDirectory, gameRuntime),
           "EnableSteamWrapper": gameUseSteamWrapper,
         });
         //Saving data
@@ -93,7 +93,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
           "EnableSteamCompatibility": gameSteamCompatibility,
           "EnableShadersCompileNVIDIA": gameShadersCompileNVIDIA,
           "SteamReaperAppId": gameUseSteamReaper ? int.parse(gameSteamReaperId.text) : null,
-          "SteamRuntimeDirectory": gameRuntime == "none" || !gameUseSteamRuntime ? null : join(preferences.protifyDirectory, "runtimes", gameRuntime),
+          "SteamRuntimeDirectory": gameRuntime == "none" || !gameUseSteamRuntime ? null : join(preferences.defaultRuntimeDirectory, gameRuntime),
           "EnableSteamWrapper": gameUseSteamWrapper,
         };
         //Saving data
@@ -379,7 +379,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
                       ),
                     ),
                     //Spacer
-                    const SizedBox(height: 5),  
+                    const SizedBox(height: 5),
                     //Steam Modes Text
                     Text(
                       "Steam Modes",
@@ -392,7 +392,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
                       child: Row(
                         children: [
                           //Checkbox
-                          Checkbox( 
+                          Checkbox(
                             value: gameUseSteamReaper,
                             onChanged: (value) => setState(() => gameUseSteamReaper = value!),
                             //Fill Color
@@ -424,7 +424,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
                         ],
                       ),
                     ),
-                    //Select Runtime
+                    //Select Reaper ID
                     gameUseSteamReaper
                         ? //Arguments Commands
                         Column(

@@ -64,6 +64,7 @@ class UserPreferences with ChangeNotifier {
     }
     final defaultGameDirectory = Platform.isLinux ? "/home/$username" : "\\";
     final defaultPrefixDirectory = join(protifyDirectory, "prefixes");
+    final defaultRuntimeDirectory = join(protifyDirectory, "runtimes");
     final defaultWinePrefixDirectory = join(defaultPrefixDirectory, "Wine");
     final defaultProtonDirectory = join(protifyDirectory, "protons");
     const steamCompatibilityDirectory = "~/.local/share/Steam";
@@ -76,6 +77,7 @@ class UserPreferences with ChangeNotifier {
         "ProtifyDirectory": protifyDirectory,
         "DefaultGameDirectory": defaultGameDirectory,
         "DefaultPrefixDirectory": defaultPrefixDirectory,
+        "DefaultRuntimeDirectory": defaultRuntimeDirectory,
         "DefaultWinePrefixDirectory": defaultWinePrefixDirectory,
         "DefaultProtonDirectory": defaultProtonDirectory,
         "SteamCompatibilityDirectory": steamCompatibilityDirectory,
@@ -89,6 +91,7 @@ class UserPreferences with ChangeNotifier {
       userPreference.changeProtifyDirectory(saveData["ProtifyDirectory"]);
       userPreference.changeDefaultGameDirectory(saveData["DefaultGameDirectory"]);
       userPreference.changeDefaultPrefixDirectory(saveData["DefaultPrefixDirectory"]);
+      userPreference.changeDefaultRuntimeDirectory(saveData["DefaultRuntimeDirectory"]);
       userPreference.changeDefaultWineprefixDirectory(saveData["DefaultWinePrefixDirectory"]);
       userPreference.changeDefaultProtonDirectory(saveData["DefaultProtonDirectory"]);
       userPreference.changeSteamCompatibilityDirectory(saveData["SteamCompatibilityDirectory"]);
@@ -101,6 +104,7 @@ class UserPreferences with ChangeNotifier {
     userPreference.changeProtifyDirectory(preferences["ProtifyDirectory"] ?? protifyDirectory);
     userPreference.changeDefaultGameDirectory(preferences["DefaultGameDirectory"] ?? defaultGameDirectory);
     userPreference.changeDefaultPrefixDirectory(preferences["DefaultPrefixDirectory"] ?? defaultPrefixDirectory);
+    userPreference.changeDefaultRuntimeDirectory(preferences["DefaultRuntimeDirectory"] ?? defaultRuntimeDirectory);
     userPreference.changeDefaultWineprefixDirectory(preferences["DefaultWinePrefixDirectory"] ?? defaultWinePrefixDirectory);
     userPreference.changeDefaultProtonDirectory(preferences["DefaultProtonDirectory"] ?? defaultProtonDirectory);
     userPreference.changeSteamCompatibilityDirectory(preferences["SteamCompatibilityDirectory"] ?? steamCompatibilityDirectory);
@@ -162,6 +166,13 @@ class UserPreferences with ChangeNotifier {
         savePreferencesInData(option: "DefaultPrefixDirectory", value: value),
       };
   //Default Prefix Directory
+  String _defaultRuntimeDirectory = "";
+  get defaultRuntimeDirectory => _defaultRuntimeDirectory;
+  void changeDefaultRuntimeDirectory(String value) => {
+        _defaultRuntimeDirectory = value,
+        savePreferencesInData(option: "DefaultRuntimeDirectory", value: value),
+      };
+  //Default Wine Prefix Directory
   String _defaultWineprefixDirectory = "";
   get defaultWineprefixDirectory => _defaultWineprefixDirectory;
   void changeDefaultWineprefixDirectory(String value) => {
