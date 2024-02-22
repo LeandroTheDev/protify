@@ -2,8 +2,12 @@
 .idea
 .flutter-plugins
 .flutter-plugins-dependencies
-.metada
-buid/
+.metadata
+windows/
+web/
+android/
+ios/
+build/
 analysis_options.yaml
 protify.iml
 pubspec.lock

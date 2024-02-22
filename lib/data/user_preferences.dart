@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:protify/components/connection.dart';
 import 'package:protify/components/widgets.dart';
 import 'package:protify/data/save_datas.dart';
 import 'package:path/path.dart';
@@ -32,6 +33,7 @@ class UserPreferences with ChangeNotifier {
   static Future loadPreference(BuildContext context) async {
     // ignore: use_build_context_synchronously
     final UserPreferences userPreference = Provider.of<UserPreferences>(context, listen: false);
+    final Connection connection = Provider.of<Connection>(context, listen: false);
     final Map preferences = jsonDecode(await SaveDatas.readData("preferences", "string") ?? "{}");
 
     //Default variables
@@ -62,6 +64,7 @@ class UserPreferences with ChangeNotifier {
       Widgets.showAlert(context, title: "Error", content: "Cannot find the protify_finder.txt in protify/lib, check if exists, or if /home/$username exists");
       protifyDirectory = "/home/$username/protify";
     }
+    const defaultServerAddress = "localhost:6161";
     final defaultGameDirectory = Platform.isLinux ? "/home/$username" : "\\";
     final defaultPrefixDirectory = join(protifyDirectory, "prefixes");
     final defaultRuntimeDirectory = join(protifyDirectory, "runtimes");
@@ -73,6 +76,7 @@ class UserPreferences with ChangeNotifier {
     if (preferences.isEmpty) {
       //Object Creation
       final Map saveData = {
+        "ServerAddress": defaultServerAddress,
         "Username": username,
         "ProtifyDirectory": protifyDirectory,
         "DefaultGameDirectory": defaultGameDirectory,
@@ -87,6 +91,7 @@ class UserPreferences with ChangeNotifier {
       //Saving Preferences
       await SaveDatas.saveData("preferences", jsonEncode(saveData));
       //Updating Providers
+      connection.changeServerAddress(saveData["ServerAddress"]);
       userPreference.changeUsername(saveData["Username"]);
       userPreference.changeProtifyDirectory(saveData["ProtifyDirectory"]);
       userPreference.changeDefaultGameDirectory(saveData["DefaultGameDirectory"]);
@@ -100,6 +105,7 @@ class UserPreferences with ChangeNotifier {
       return;
     }
     // Updating Providers
+    connection.changeServerAddress(preferences["ServerAddress"] ?? defaultServerAddress);
     userPreference.changeUsername(preferences["Username"] ?? username);
     userPreference.changeProtifyDirectory(preferences["ProtifyDirectory"] ?? protifyDirectory);
     userPreference.changeDefaultGameDirectory(preferences["DefaultGameDirectory"] ?? defaultGameDirectory);

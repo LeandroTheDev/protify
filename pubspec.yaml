@@ -15,6 +15,7 @@ dependencies:
   filesystem_picker: ^4.1.0 # Folder Picker
   flutter_hooks: ^0.20.4 # Mouse Events
   provider: ^6.1.1 # Variables Control
+  http: ^1.2.0 # Http requests
   cupertino_icons: ^1.0.2
 
 dev_dependencies:

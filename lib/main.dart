@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:protify/components/connection.dart';
 import 'package:protify/data/save_datas.dart';
 import 'package:protify/data/system.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:protify/pages/homepage.dart';
+import 'package:protify/pages/store.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -29,6 +31,7 @@ void main() async {
     //Declaring the Provider
     ChangeNotifierProvider(create: (_) => UserPreferences()),
     ChangeNotifierProvider(create: (_) => ProtifySystem()),
+    ChangeNotifierProvider(create: (_) => Connection()),
   ], child: const Protify()));
 }
 
@@ -52,6 +55,10 @@ class Protify extends StatelessWidget {
         ),
         scaffoldBackgroundColor: const Color.fromARGB(255, 95, 95, 95),
       ),
+      routes: {
+        "home": (context) => const HomePage(),
+        "store": (context) => const StorePage(),
+      },
       home: const HomePage(),
     );
   }

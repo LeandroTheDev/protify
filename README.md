@@ -51,8 +51,10 @@ https://github.com/LeandroTheDev/protify/assets/106118473/970d2a94-3671-4a52-814
 - In your home directory anywhere you want, the protify will automatically setup everthing for you in the first launch, if you change the location remember to clear the data
 
 ### Building
-To build this project is very simple, all you need is to download the [flutter](https://docs.flutter.dev/get-started/install) framework and his dependencies to build, then create a project using ``flutter create protify``, paste all the files from this project in there, build using the ``flutter build linux --release``, the release will be stored in ``build/linux/x64/release/bundle/``
+To build this project is very simple, all you need is to download the [flutter](https://docs.flutter.dev/get-started/install) framework and his dependencies to build, then create a project using ``flutter create protify``, paste all the files from this project in there, build using the ``flutter build linux --release``, the release will be stored in ``build/linux/x64/release/bundle/``.
 
-If you are trying to debug the application dont forget to add the lib/protify_finder.txt!!! or the application will not work propertly
+If you are trying to debug the application dont forget to add the lib/protify_finder.txt!!! in project folder or the application will not work propertly.
 
-[![wtfpl-badge-1](https://github.com/LeandroTheDev/protify/assets/106118473/98d03827-c5fd-43bb-95b8-d559fbb4781c)](https://github.com/LeandroTheDev/protify/blob/main/LICENSE.md)
+Take a look in [Protify Server](https://github.com/LeandroTheDev/protify_server) to view more information about the store/friends features to make your own customizations.
+
+FTM License.

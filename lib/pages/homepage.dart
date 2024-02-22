@@ -89,13 +89,18 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
+    // Simple open store
+    openStore() => Navigator.pushNamed(context, 'store');
+
+    openFriends() {}
+
     // Return the grid horizontal count
-    int getGridGamesCrossAxisCount(windowSize, gameCount) {
-      if (windowSize.width <= 400) {
+    int getGridGamesCrossAxisCount(screenSize, gameCount) {
+      if (screenSize.width <= 400) {
         return 2;
-      } else if (windowSize.width <= 600) {
+      } else if (screenSize.width <= 600) {
         return 3;
-      } else if (windowSize.width <= 800) {
+      } else if (screenSize.width <= 800) {
         return 4;
       } else {
         return 5;
@@ -167,7 +172,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).primaryColor,
         isScrollControlled: true,
         builder: (BuildContext context) {
-          return InstallGameScreen();
+          return const InstallGameScreen();
         },
       );
     }
@@ -285,36 +290,52 @@ class _HomePageState extends State<HomePage> {
     // Left side of the window
     Widget leftSide() {
       final categoriesList = categories.keys.toList();
-      final windowSize = MediaQuery.of(context).size;
+      final screenSize = MediaQuery.of(context).size;
       return SizedBox(
-        height: windowSize.height,
-        width: windowSize.width * 0.3,
+        height: screenSize.height,
+        width: screenSize.width * 0.3,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: categoriesList.length,
-              itemBuilder: (context, index) => GestureDetector(
-                onTap: () => selectCategory(categoriesList[index]),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-                  child: Container(
-                    height: 35,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Theme.of(context).secondaryHeaderColor,
-                        width: 1.0,
+            //Top Buttons
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              height: screenSize.height * 0.1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  FittedBox(child: IconButton(onPressed: () => openStore(), icon: const Icon(Icons.library_books))),
+                  FittedBox(child: IconButton(onPressed: () => openFriends(), icon: const Icon(Icons.person))),
+                ],
+              ),
+            ),
+            //Category List
+            SizedBox(
+              height: screenSize.height * 0.8 - 10,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: categoriesList.length,
+                itemBuilder: (context, index) => GestureDetector(
+                  onTap: () => selectCategory(categoriesList[index]),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
+                    child: Container(
+                      height: 35,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Theme.of(context).secondaryHeaderColor,
+                          width: 1.0,
+                        ),
                       ),
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 5.0),
-                        child: Text(
-                          categoriesList[index],
-                          textAlign: TextAlign.start,
-                          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Text(
+                            categoriesList[index],
+                            textAlign: TextAlign.start,
+                            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                          ),
                         ),
                       ),
                     ),
@@ -322,11 +343,12 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
+            //Bottom Buttons
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: SizedBox(
-                width: windowSize.width * 0.3,
-                height: 30,
+                width: screenSize.width * 0.3,
+                height: screenSize.height * 0.05,
                 child: ElevatedButton(
                   onPressed: () => preferencesScreen(),
                   child: const Text("Preferences"),
@@ -340,7 +362,7 @@ class _HomePageState extends State<HomePage> {
 
     // Right side of the window
     Widget rightSide() {
-      final windowSize = MediaQuery.of(context).size;
+      final screenSize = MediaQuery.of(context).size;
       //Selected game
       if (selectedGameIndex.runtimeType == int) {
         return Column(
@@ -360,8 +382,8 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.only(left: 4),
               child: Container(
                 color: Theme.of(context).colorScheme.tertiary,
-                width: windowSize.width * 0.7 - 10,
-                height: windowSize.height * 0.2,
+                width: screenSize.width * 0.7 - 10,
+                height: screenSize.height * 0.2,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: FittedBox(
@@ -377,14 +399,14 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: SizedBox(
-                width: windowSize.width * 0.7 - 23,
+                width: screenSize.width * 0.7 - 23,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     //Play Button
                     SizedBox(
-                      width: windowSize.width * 0.15 < 56 ? 56 : windowSize.width * 0.15,
-                      height: windowSize.height * 0.07,
+                      width: screenSize.width * 0.15 < 56 ? 56 : screenSize.width * 0.15,
+                      height: screenSize.height * 0.07,
                       child: ElevatedButton(
                         onPressed: () => startGame(selectedGameIndex!),
                         child: const FittedBox(
@@ -397,8 +419,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     //Edit Button
                     SizedBox(
-                      width: windowSize.width * 0.15 < 56 ? 56 : windowSize.width * 0.15,
-                      height: windowSize.height * 0.07,
+                      width: screenSize.width * 0.15 < 56 ? 56 : screenSize.width * 0.15,
+                      height: screenSize.height * 0.07,
                       child: ElevatedButton(
                         onPressed: () => addOrEditGameModal(selectedGameIndex!),
                         child: const FittedBox(
@@ -418,7 +440,7 @@ class _HomePageState extends State<HomePage> {
                 ? Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SizedBox(
-                      width: windowSize.width * 0.7 - 23,
+                      width: screenSize.width * 0.7 - 23,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -426,8 +448,8 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(),
                           //Install Dependencie
                           SizedBox(
-                            width: windowSize.width * 0.15 < 56 ? 56 : windowSize.width * 0.15,
-                            height: windowSize.height * 0.07,
+                            width: screenSize.width * 0.15 < 56 ? 56 : screenSize.width * 0.15,
+                            height: screenSize.height * 0.07,
                             child: ElevatedButton(
                               onPressed: () => installLibs(selectedGameIndex!),
                               child: const FittedBox(
@@ -448,7 +470,7 @@ class _HomePageState extends State<HomePage> {
                 ? Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SizedBox(
-                      width: windowSize.width * 0.7 - 23,
+                      width: screenSize.width * 0.7 - 23,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -456,8 +478,8 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(),
                           //Install DLLs
                           SizedBox(
-                            width: windowSize.width * 0.15 < 56 ? 56 : windowSize.width * 0.15,
-                            height: windowSize.height * 0.07,
+                            width: screenSize.width * 0.15 < 56 ? 56 : screenSize.width * 0.15,
+                            height: screenSize.height * 0.07,
                             child: ElevatedButton(
                               onPressed: () => installDll(selectedGameIndex!),
                               child: const FittedBox(
@@ -482,13 +504,13 @@ class _HomePageState extends State<HomePage> {
           children: [
             //Grid
             SizedBox(
-              height: windowSize.height - 50,
-              width: windowSize.width * 0.7 - 10,
+              height: screenSize.height - 50,
+              width: screenSize.width * 0.7 - 10,
               child: MouseRegion(
                 onHover: (event) => mousePosition = event.position,
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: getGridGamesCrossAxisCount(windowSize, games.length),
+                    crossAxisCount: getGridGamesCrossAxisCount(screenSize, games.length),
                     crossAxisSpacing: 0,
                     childAspectRatio: 0.5,
                   ),
@@ -519,21 +541,21 @@ class _HomePageState extends State<HomePage> {
 
             //Bottom Buttons
             Container(
-              padding: EdgeInsets.all(8.0),
-              width: windowSize.width * 0.7 - 3,
+              padding: const EdgeInsets.all(8.0),
+              width: screenSize.width * 0.7 - 3,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   //Add game
                   SizedBox(
                     height: 30,
-                    width: windowSize.width > 380.0 ? null : 30,
+                    width: screenSize.width > 380.0 ? null : 30,
                     child: ElevatedButton(onPressed: () => {hideGameInfo(), addOrEditGameModal()}, child: const Text("Add Game")),
                   ),
                   //Edit game
                   SizedBox(
                     height: 30,
-                    width: windowSize.width > 380.0 ? null : 30,
+                    width: screenSize.width > 380.0 ? null : 30,
                     child: ElevatedButton(onPressed: () => {hideGameInfo(), installGame()}, child: const Text("Install Game")),
                   ),
                 ],
@@ -546,7 +568,7 @@ class _HomePageState extends State<HomePage> {
       else {
         return Center(
           child: SizedBox(
-            width: windowSize.width * 0.7 - 10,
+            width: screenSize.width * 0.7 - 10,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -578,7 +600,7 @@ class _HomePageState extends State<HomePage> {
       }
     }
 
-    final windowSize = MediaQuery.of(context).size;
+    final screenSize = MediaQuery.of(context).size;
     return GestureDetector(
       //Clicking everwhere will close the gameInfo
       onTap: () => hideGameInfo(),
@@ -594,7 +616,7 @@ class _HomePageState extends State<HomePage> {
               child: Container(
                 color: Theme.of(context).primaryColor,
                 width: 2,
-                height: windowSize.height,
+                height: screenSize.height,
               ),
             ),
 
