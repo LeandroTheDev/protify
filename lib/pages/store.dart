@@ -14,24 +14,33 @@ class StorePage extends StatefulWidget {
 
 class _StorePageState extends State<StorePage> {
   bool loaded = false;
-  Map<int, Map?> mainGames = {};
+  Map<int, Map?> showcase = {};
 
-  Future<Map<int, Map?>> getMainGames() async {
+  Future<Map<int, Map?>> getShowcase() async {
     //Communicate with the server
-    final response = await Connection.sendMessage(context, address: "/store_main", requestType: "GET");
+    Map<int, Map?> showcaseItems = {};
+    final responseShowcase = await Connection.sendMessage(context, address: "/store_showcase", requestType: "GET");
     //Check for errors
-    if (Connection.errorTreatment(context, response)) {
+    if (Connection.errorTreatment(context, responseShowcase)) {
       //Swipe every games and add to the main games variable
-      final games = jsonDecode(response.body)["content"]["games"];
-      for (int i = 0; i < games.length; i++) {
-        mainGames[games[i]] = null;
+      final List body = jsonDecode(responseShowcase.body)["content"];
+      for (int i = 0; i < body.length; i++) {
+        showcaseItems[body[i]] = null;
       }
     }
-    return mainGames;
+    for (int i = 0; i < showcaseItems.length; i++) {
+      final responseItemInfo = await Connection.sendMessage(context, address: "/get_item_info&item=1", requestType: "GET");
+    }
+    return showcaseItems;
   }
 
   @override
   Widget build(BuildContext context) {
+    // final screenSize = MediaQuery.of(context).size;
+    if (!loaded) {
+      loaded = true;
+      getShowcase().then((value) => setState(() => {}));
+    }
     return Scaffold(
       body: Column(
         children: [
@@ -46,40 +55,6 @@ class _StorePageState extends State<StorePage> {
               ),
             ],
           ),
-          FutureBuilder(
-            future: getMainGames(),
-            builder: (context, future) {
-              return future.hasData
-                  ? GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        crossAxisSpacing: 0,
-                        childAspectRatio: 0.5,
-                      ),
-                      shrinkWrap: true,
-                      itemCount: mainGames.length,
-                      itemBuilder: (context, index) => Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: GestureDetector(
-                          onTap: () => {},
-                          child: Container(
-                            color: Theme.of(context).primaryColor,
-                            child: Center(
-                              child: Text(
-                                mainGames[index] == null ? "Loading..." : mainGames[index]!["Title"],
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.secondary,
-                                  fontSize: 18.0,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  : const CircularProgressIndicator();
-            },
-          )
         ],
       ),
     );

@@ -15,6 +15,10 @@ class Connection with ChangeNotifier {
     UserPreferences.savePreferencesInData(option: "ServerAddress", value: value);
   }
 
+  int _accountId = 1;
+  int get accountId => _accountId;
+  changeAccountId(int value) => _accountId = value;
+
   String _accountUsername = "anonymous";
   String get accountUsername => _accountUsername;
   changeAccountUsername(String value) => _accountUsername = value;
@@ -43,7 +47,11 @@ class Connection with ChangeNotifier {
       try {
         result = await get(
           Uri.http(connection.serverAddress, address, body),
-          headers: {"username": connection.accountUsername, "token": connection.accountToken},
+          headers: {
+            "username": connection.accountUsername,
+            "token": connection.accountToken,
+            "id": connection.accountId.toString(),
+          },
         );
       } catch (error) {
         if (result == null) {
@@ -63,6 +71,29 @@ class Connection with ChangeNotifier {
             HttpHeaders.contentTypeHeader: 'application/json',
             "username": connection.accountUsername,
             "token": connection.accountToken,
+            "id": connection.accountId.toString(),
+          },
+          body: jsonEncode(body ?? "{}"),
+        );
+      } catch (error) {
+        if (result == null) {
+          return Response(jsonEncode({"No Connection: $error"}), 504);
+        }
+        return result;
+      }
+      return result;
+    }
+
+    Future<Response> patchRequest() async {
+      Response? result;
+      try {
+        result = await patch(
+          Uri.http(connection.serverAddress, address),
+          headers: {
+            HttpHeaders.contentTypeHeader: 'application/json',
+            "username": connection.accountUsername,
+            "token": connection.accountToken,
+            "id": connection.accountId.toString(),
           },
           body: jsonEncode(body ?? "{}"),
         );
@@ -84,6 +115,7 @@ class Connection with ChangeNotifier {
             HttpHeaders.contentTypeHeader: 'application/json',
             "username": connection.accountUsername,
             "token": connection.accountToken,
+            "id": connection.accountId.toString(),
           },
           body: jsonEncode(body ?? "{}"),
         );
@@ -101,6 +133,8 @@ class Connection with ChangeNotifier {
         return await getRequest();
       case "POST":
         return await postRequest();
+      case "PATCH":
+        return await patchRequest();
       case "DELETE":
         return await deleteRequest();
       default:
