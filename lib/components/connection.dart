@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:protify/components/widgets.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
+import 'package:web_socket_channel/io.dart';
 
 class Connection with ChangeNotifier {
   String _serverAddress = "localhost:6161";
@@ -144,36 +145,68 @@ class Connection with ChangeNotifier {
 
   ///Returns true if no error occurs, fatal erros return to home screen
   static bool errorTreatment(BuildContext context, Response response) {
+    late final String message;
+    try {
+      message = jsonDecode(response.body)["MESSAGE"];
+    } catch (_) {
+      message = "Unknow Error ${response.statusCode}";
+    }
     switch (response.statusCode) {
       //Temporary Banned
       case 413:
-        Widgets.showAlert(context, title: "Alert", content: jsonDecode(response.body)["message"]);
+        Widgets.showAlert(context, title: "Alert", content: message);
         return false;
       //Url Not Found
       case 404:
-        Widgets.showAlert(context, title: "Alert", content: jsonDecode(response.body)["message"]);
+        Widgets.showAlert(context, title: "Alert", content: message);
         return false;
       //Invalid Datas
       case 403:
-        Widgets.showAlert(context, title: "Alert", content: jsonDecode(response.body)["message"]);
+        Widgets.showAlert(context, title: "Alert", content: message);
         return false;
       //Wrong Credentials
       case 401:
-        Widgets.showAlert(context, title: "Alert", content: jsonDecode(response.body)["message"]);
+        Widgets.showAlert(context, title: "Alert", content: message);
         return false;
       //Server Crashed
       case 500:
-        Widgets.showAlert(context, title: "Alert", content: jsonDecode(response.body)["message"]);
+        Widgets.showAlert(context, title: "Alert", content: message);
         return false;
       //No connection with the server
       case 504:
-        Widgets.showAlert(context, title: "Alert", content: jsonDecode(response.body)["message"]);
+        Widgets.showAlert(context, title: "Alert", content: "Cannot connect to the servers");
         return false;
       //User Cancelled
       case 101:
-        Widgets.showAlert(context, title: "Alert", content: jsonDecode(response.body)["message"]);
+        Widgets.showAlert(context, title: "Alert", content: message);
         return false;
     }
     return true;
+  }
+
+  ///Start downloading the item,
+  ///can automatically continue downloading the item if stopped sundently
+  static void download_item(
+    BuildContext context,
+    int itemId,
+  ) {
+    final Connection connection = Provider.of<Connection>(context, listen: false);
+    final IOWebSocketChannel serverChannel = IOWebSocketChannel.connect(
+      "ws://${connection.serverAddress}/donwload_item",
+      headers: {
+        "username": connection.accountUsername,
+        "token": connection.accountToken,
+        "id": connection.accountId.toString(),
+      },
+    );
+    //Broadcast download
+    serverChannel.stream.asBroadcastStream().listen(null).onData((data) {
+      //Receiving game file
+      print(data);
+    });
+    //Send the socket to the server
+    serverChannel.sink.add(jsonEncode({
+      "ID": itemId.toString(),
+    }));
   }
 }

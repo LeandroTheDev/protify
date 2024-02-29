@@ -71,11 +71,13 @@ class UserPreferences with ChangeNotifier {
     final defaultWinePrefixDirectory = join(defaultPrefixDirectory, "Wine");
     final defaultProtonDirectory = join(protifyDirectory, "protons");
     const steamCompatibilityDirectory = "~/.local/share/Steam";
+    const defaultLanguage = "english";
 
     // Check if preferences is empty
     if (preferences.isEmpty) {
       //Object Creation
       final Map saveData = {
+        "Language": defaultLanguage,
         "ServerAddress": defaultServerAddress,
         "Username": username,
         "ProtifyDirectory": protifyDirectory,
@@ -91,6 +93,7 @@ class UserPreferences with ChangeNotifier {
       //Saving Preferences
       await SaveDatas.saveData("preferences", jsonEncode(saveData));
       //Updating Providers
+      userPreference.changeLanguage(saveData["Language"]);
       connection.changeServerAddress(saveData["ServerAddress"]);
       userPreference.changeUsername(saveData["Username"]);
       userPreference.changeProtifyDirectory(saveData["ProtifyDirectory"]);
@@ -105,6 +108,7 @@ class UserPreferences with ChangeNotifier {
       return;
     }
     // Updating Providers
+    userPreference.changeLanguage(preferences["Language"] ?? defaultLanguage);
     connection.changeServerAddress(preferences["ServerAddress"] ?? defaultServerAddress);
     userPreference.changeUsername(preferences["Username"] ?? username);
     userPreference.changeProtifyDirectory(preferences["ProtifyDirectory"] ?? protifyDirectory);
@@ -132,6 +136,14 @@ class UserPreferences with ChangeNotifier {
       },
     );
   }
+
+  //Language
+  String _language = "english";
+  get language => _language;
+  void changeLanguage(String value) => {
+        _language = value,
+        savePreferencesInData(option: "Language", value: value),
+      };
 
   //Username
   String _username = "";

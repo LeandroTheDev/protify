@@ -8,6 +8,5 @@ web/
 android/
 ios/
 build/
-analysis_options.yaml
 protify.iml
 pubspec.lock

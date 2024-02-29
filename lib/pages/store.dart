@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:protify/components/connection.dart';
+import 'package:protify/pages/item.dart';
 
 class StorePage extends StatefulWidget {
   const StorePage({super.key});
@@ -14,39 +15,56 @@ class StorePage extends StatefulWidget {
 
 class _StorePageState extends State<StorePage> {
   bool loaded = false;
+  bool failed = false;
   Map<int, Map?> showcase = {};
 
-  Future<Map<int, Map?>> getShowcase() async {
+  Future getShowcase() async {
     //Communicate with the server
-    Map<int, Map?> showcaseItems = {};
     final responseShowcase = await Connection.sendMessage(context, address: "/store_showcase", requestType: "GET");
+    if (!context.mounted) return;
+
     //Check for errors
     if (Connection.errorTreatment(context, responseShowcase)) {
       //Swipe every games and add to the main games variable
-      final List body = jsonDecode(responseShowcase.body)["content"];
-      for (int i = 0; i < body.length; i++) {
-        showcaseItems[body[i]] = null;
+      final List body = jsonDecode(responseShowcase.body)["CONTENT"];
+      for (int i = 0; i < body.length; i++) setState(() => showcase[body[i]] = null);
+
+      //Getting the items info
+      for (int i = 0; i < showcase.length; i++) {
+        //Getting the item info
+        Connection.sendMessage(context, address: "/get_item_info&item=1", requestType: "GET").then((response) {
+          if (Connection.errorTreatment(context, response)) {
+            //Updating the info
+            final body = jsonDecode(response.body)["CONTENT"];
+            setState(() => showcase[body["ID"]] = body);
+          } else
+            setState(() => failed = true);
+        });
       }
-    }
-    for (int i = 0; i < showcaseItems.length; i++) {
-      final responseItemInfo = await Connection.sendMessage(context, address: "/get_item_info&item=1", requestType: "GET");
-    }
-    return showcaseItems;
+    } else
+      setState(() => failed = true);
   }
 
   @override
   Widget build(BuildContext context) {
-    // final screenSize = MediaQuery.of(context).size;
+    final screenSize = MediaQuery.of(context).size;
     if (!loaded) {
       loaded = true;
-      getShowcase().then((value) => setState(() => {}));
+      //Get Showcase
+      getShowcase();
     }
+
+    //Convert showcase to List
+    List items = [];
+    showcase.entries.toList().forEach((item) => items.add(item.value));
+
     return Scaffold(
       body: Column(
         children: [
           //Top bar
           Row(
             children: [
+              //Back button
               IconButton(
                 //Back to home screen
                 onPressed: () => Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false),
@@ -55,6 +73,41 @@ class _StorePageState extends State<StorePage> {
               ),
             ],
           ),
+          items.isEmpty && !failed
+              ? const Center(child: CircularProgressIndicator())
+              //Showcase
+              : SizedBox(
+                  width: screenSize.width * 0.9,
+                  child: GridView.builder(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      crossAxisSpacing: 0,
+                      childAspectRatio: 0.5,
+                    ),
+                    shrinkWrap: true,
+                    itemCount: showcase.length,
+                    itemBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        //Game Page function
+                        onTap: items[index] == null ? () {} : () => Navigator.push(context, MaterialPageRoute(builder: (context) => ItemPage(item: items[index]))),
+                        child: Container(
+                          color: Theme.of(context).primaryColor,
+                          child: Center(
+                            //Game Title
+                            child: Text(
+                              items[index] == null ? "Loading..." : items[index]["NAME"],
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontSize: 18.0,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
         ],
       ),
     );
