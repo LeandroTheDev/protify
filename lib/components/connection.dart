@@ -9,11 +9,18 @@ import 'package:provider/provider.dart';
 import 'package:web_socket_channel/io.dart';
 
 class Connection with ChangeNotifier {
-  String _serverAddress = "localhost:6161";
-  String get serverAddress => _serverAddress;
-  changeServerAddress(String value) {
-    _serverAddress = value;
-    UserPreferences.savePreferencesInData(option: "ServerAddress", value: value);
+  String _httpAddress = "localhost:6161";
+  String get httpAddress => _httpAddress;
+  changeHttpAddress(String value) {
+    _httpAddress = value;
+    UserPreferences.savePreferencesInData(option: "HttpAddress", value: value);
+  }
+
+  String _socketAddress = "localhost:6262";
+  String get socketAddress => _socketAddress;
+  changeSocketAddress(String value) {
+    _socketAddress = value;
+    UserPreferences.savePreferencesInData(option: "SocketAddress", value: value);
   }
 
   int _accountId = 1;
@@ -47,7 +54,7 @@ class Connection with ChangeNotifier {
       Response? result;
       try {
         result = await get(
-          Uri.http(connection.serverAddress, address, body),
+          Uri.http(connection.httpAddress, address, body),
           headers: {
             "username": connection.accountUsername,
             "token": connection.accountToken,
@@ -67,7 +74,7 @@ class Connection with ChangeNotifier {
       Response? result;
       try {
         result = await post(
-          Uri.http(connection.serverAddress, address),
+          Uri.http(connection.httpAddress, address),
           headers: {
             HttpHeaders.contentTypeHeader: 'application/json',
             "username": connection.accountUsername,
@@ -89,7 +96,7 @@ class Connection with ChangeNotifier {
       Response? result;
       try {
         result = await patch(
-          Uri.http(connection.serverAddress, address),
+          Uri.http(connection.httpAddress, address),
           headers: {
             HttpHeaders.contentTypeHeader: 'application/json',
             "username": connection.accountUsername,
@@ -111,7 +118,7 @@ class Connection with ChangeNotifier {
       Response? result;
       try {
         result = await delete(
-          Uri.http(connection.serverAddress, address),
+          Uri.http(connection.httpAddress, address),
           headers: {
             HttpHeaders.contentTypeHeader: 'application/json',
             "username": connection.accountUsername,
@@ -186,13 +193,13 @@ class Connection with ChangeNotifier {
 
   ///Start downloading the item,
   ///can automatically continue downloading the item if stopped sundently
-  static void download_item(
+  static void downloadItem(
     BuildContext context,
     int itemId,
   ) {
     final Connection connection = Provider.of<Connection>(context, listen: false);
     final IOWebSocketChannel serverChannel = IOWebSocketChannel.connect(
-      "ws://${connection.serverAddress}/donwload_item",
+      "ws://127.0.0.1:6262",
       headers: {
         "username": connection.accountUsername,
         "token": connection.accountToken,
@@ -206,6 +213,7 @@ class Connection with ChangeNotifier {
     });
     //Send the socket to the server
     serverChannel.sink.add(jsonEncode({
+      "ACTION": "DOWNLOAD_ITEM",
       "ID": itemId.toString(),
     }));
   }

@@ -64,7 +64,8 @@ class UserPreferences with ChangeNotifier {
       Widgets.showAlert(context, title: "Error", content: "Cannot find the protify_finder.txt in protify/lib, check if exists, or if /home/$username exists");
       protifyDirectory = "/home/$username/protify";
     }
-    const defaultServerAddress = "localhost:6161";
+    const defaultHttpAddress = "localhost:6161";
+    const defaultSocketAddress = "localhost:6262";
     final defaultGameDirectory = Platform.isLinux ? "/home/$username" : "\\";
     final defaultPrefixDirectory = join(protifyDirectory, "prefixes");
     final defaultRuntimeDirectory = join(protifyDirectory, "runtimes");
@@ -78,7 +79,8 @@ class UserPreferences with ChangeNotifier {
       //Object Creation
       final Map saveData = {
         "Language": defaultLanguage,
-        "ServerAddress": defaultServerAddress,
+        "HttpAddress": defaultHttpAddress,
+        "SocketAddress": defaultSocketAddress,
         "Username": username,
         "ProtifyDirectory": protifyDirectory,
         "DefaultGameDirectory": defaultGameDirectory,
@@ -94,7 +96,8 @@ class UserPreferences with ChangeNotifier {
       await SaveDatas.saveData("preferences", jsonEncode(saveData));
       //Updating Providers
       userPreference.changeLanguage(saveData["Language"]);
-      connection.changeServerAddress(saveData["ServerAddress"]);
+      connection.changeHttpAddress(saveData["HttpAddress"]);
+      connection.changeSocketAddress(saveData["SocketAddress"]);
       userPreference.changeUsername(saveData["Username"]);
       userPreference.changeProtifyDirectory(saveData["ProtifyDirectory"]);
       userPreference.changeDefaultGameDirectory(saveData["DefaultGameDirectory"]);
@@ -109,7 +112,8 @@ class UserPreferences with ChangeNotifier {
     }
     // Updating Providers
     userPreference.changeLanguage(preferences["Language"] ?? defaultLanguage);
-    connection.changeServerAddress(preferences["ServerAddress"] ?? defaultServerAddress);
+    connection.changeHttpAddress(preferences["HttpAddress"] ?? defaultHttpAddress);
+    connection.changeSocketAddress(preferences["SocketAddress"] ?? defaultSocketAddress);
     userPreference.changeUsername(preferences["Username"] ?? username);
     userPreference.changeProtifyDirectory(preferences["ProtifyDirectory"] ?? protifyDirectory);
     userPreference.changeDefaultGameDirectory(preferences["DefaultGameDirectory"] ?? defaultGameDirectory);

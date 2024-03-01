@@ -58,7 +58,7 @@ class ItemPage extends StatelessWidget {
               children: [
                 const SizedBox(),
                 ElevatedButton(
-                  onPressed: () => Connection.download_item(context, item["ID"]),
+                  onPressed: () => Connection.downloadItem(context, item["ID"]),
                   child: const Text("Install Game"),
                 ),
               ],
