@@ -206,13 +206,31 @@ class Connection with ChangeNotifier {
         "id": connection.accountId.toString(),
       },
     );
+    sendMessageToSocket(String message) {
+      //Send the socket to the server
+      serverChannel.sink.add(message);
+    }
+
     //Broadcast download
     serverChannel.stream.asBroadcastStream().listen(null).onData((data) {
-      //Receiving game file
-      print(data);
+      final Map response = jsonDecode(data);
+      final String message = response["MESSAGE"];
+      switch (message) {
+        case "AUTHENTICATED":
+          sendMessageToSocket(jsonEncode({
+            "ACTION": "GET_ITEM_INFO",
+            "ID": itemId.toString(),
+          }));
+          return;
+        case "GAME_INFO":
+          sendMessageToSocket(jsonEncode({
+            "ACTION": "GET_ITEM_PART",
+            "PART": 1,
+          }));
+          return;
+      }
     });
-    //Send the socket to the server
-    serverChannel.sink.add(jsonEncode({
+    sendMessageToSocket(jsonEncode({
       "ACTION": "DOWNLOAD_ITEM",
       "ID": itemId.toString(),
     }));

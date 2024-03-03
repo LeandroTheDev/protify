@@ -240,9 +240,9 @@ class _HomePageState extends State<HomePage> {
                         Widgets.selectCategory(context, categories: categories).then(
                           // Update the Category
                           (category) => {
-                            SaveDatas.updateGameCategory(index, category).then((gamesUpdated) => setState(() => {
-                                  games = gamesUpdated,
-                                  loaded = false,
+                            SaveDatas.updateGameCategory(index, category).then((gamesUpdated) => setState(() {
+                                  games = gamesUpdated;
+                                  loaded = false;
                                 })), // Reload
                           },
                         )
@@ -264,7 +264,10 @@ class _HomePageState extends State<HomePage> {
                         // Close the overlay
                         hideGameInfo(),
                         // Remove the game
-                        UserPreferences.removeGame(index, games, context).then((value) => setState(() => {games = value, loaded = false})),
+                        UserPreferences.removeGame(index, games, context).then((value) => setState(() {
+                              games = value;
+                              loaded = false;
+                            })),
                       },
                       child: const SizedBox(
                         width: 70,
@@ -519,7 +522,10 @@ class _HomePageState extends State<HomePage> {
                   itemBuilder: (context, index) => Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: GestureDetector(
-                      onTap: () => setState(() => {selectedGameIndex = index, hideGameInfo()}),
+                      onTap: () => setState(() {
+                        selectedGameIndex = index;
+                        hideGameInfo();
+                      }),
                       onSecondaryTap: gameInfo == null ? () => showGameInfo(categories[selectedCategory]![index], mousePosition) : () => hideGameInfo(),
                       child: Container(
                         color: Theme.of(context).primaryColor,
