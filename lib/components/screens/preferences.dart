@@ -152,6 +152,33 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         ),
                         //Spacer
                         const SizedBox(height: 30),
+                        //Default Install Directory
+                        Row(
+                          children: [
+                            //Button
+                            ElevatedButton(
+                              onPressed: () => FilesystemPicker.open(
+                                context: context,
+                                rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
+                                fsType: FilesystemType.folder,
+                                folderIconColor: Theme.of(context).secondaryHeaderColor,
+                              ).then((directory) => directory != null ? userPreferences.changeDefaultGameInstallDirectory(directory) : () {}),
+                              child: const Text("Default Install Search Directory"),
+                            ),
+                            //Info Button
+                            IconButton(
+                              icon: const Icon(Icons.info),
+                              color: Theme.of(context).secondaryHeaderColor,
+                              onPressed: () => Widgets.showAlert(
+                                context,
+                                title: "Search Install Directory",
+                                content: "The main folder for finding games install in install game page",
+                              ),
+                            ),
+                          ],
+                        ),
+                        //Spacer
+                        const SizedBox(height: 30),
                         //Default Game Directory
                         Row(
                           children: [

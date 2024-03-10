@@ -33,6 +33,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
   bool gameUseSteamReaper = false;
   bool gameUseSteamRuntime = false;
   bool gameUseSteamWrapper = false;
+  bool gameProtonScript = false;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +63,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
           "SteamReaperAppId": gameUseSteamReaper ? int.parse(gameSteamReaperId.text) : null,
           "SteamRuntimeDirectory": gameRuntime == "none" || !gameUseSteamRuntime ? null : join(preferences.defaultRuntimeDirectory, gameRuntime),
           "EnableSteamWrapper": gameUseSteamWrapper,
+          "EnableProtonScript": gameProtonScript,
         });
         //Saving data
         SaveDatas.saveData("games", jsonEncode(games));
@@ -95,6 +97,7 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
           "SteamReaperAppId": gameUseSteamReaper ? int.parse(gameSteamReaperId.text) : null,
           "SteamRuntimeDirectory": gameRuntime == "none" || !gameUseSteamRuntime ? null : join(preferences.defaultRuntimeDirectory, gameRuntime),
           "EnableSteamWrapper": gameUseSteamWrapper,
+          "EnableProtonScript": gameProtonScript,
         };
         //Saving data
         SaveDatas.saveData("games", jsonEncode(games));
@@ -550,6 +553,44 @@ class _AddOrEditGameScreenState extends State<AddOrEditGameScreen> {
                       ),
                     ),
                     //Spacer
+                    const SizedBox(height: 25),
+                    //Python Script
+                    FittedBox(
+                      child: Row(
+                        children: [
+                          //Checkbox
+                          Checkbox(
+                            value: gameProtonScript,
+                            onChanged: (value) => setState(() => gameProtonScript = value!),
+                            //Fill Color
+                            fillColor: MaterialStateProperty.resolveWith(
+                              (states) {
+                                if (states.contains(MaterialState.selected)) {
+                                  return Theme.of(context).colorScheme.secondary;
+                                }
+                                return null;
+                              },
+                            ),
+                            //Check Color
+                            checkColor: Theme.of(context).colorScheme.tertiary,
+                            //Border Color
+                            side: BorderSide(color: Theme.of(context).secondaryHeaderColor, width: 2.0),
+                          ),
+                          //Text
+                          Text("Enable Proton Script", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                          //Info Button
+                          IconButton(
+                            icon: const Icon(Icons.info),
+                            color: Theme.of(context).secondaryHeaderColor,
+                            onPressed: () => Widgets.showAlert(
+                              context,
+                              title: "Python Script",
+                              content: "Start the proton with the python script",
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: 25),
                     //Confirmation Button
                     SizedBox(

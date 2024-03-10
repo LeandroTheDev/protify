@@ -23,6 +23,7 @@ class _InstallGameScreenState extends State<InstallGameScreen> {
   String gameDirectory = "";
   String gameProton = "none";
   bool gameSteamCompatibility = false;
+  bool gameProtonScript = false;
   @override
   Widget build(BuildContext context) {
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
@@ -88,7 +89,7 @@ class _InstallGameScreenState extends State<InstallGameScreen> {
                       ElevatedButton(
                         onPressed: () => FilesystemPicker.open(
                           context: context,
-                          rootDirectory: Platform.isLinux ? Directory("/home/") : Directory("\\"),
+                          rootDirectory: Directory(preferences.defaultGameInstallDirectory),
                           fsType: FilesystemType.file,
                           folderIconColor: Theme.of(context).secondaryHeaderColor,
                         ).then((directory) => setState(() => gameDirectory = directory ?? "")),
@@ -175,6 +176,43 @@ class _InstallGameScreenState extends State<InstallGameScreen> {
                       ],
                     ),
                   ),
+                  //Python Script
+                  FittedBox(
+                    child: Row(
+                      children: [
+                        //Checkbox
+                        Checkbox(
+                          value: gameProtonScript,
+                          onChanged: (value) => setState(() => gameProtonScript = value!),
+                          //Fill Color
+                          fillColor: MaterialStateProperty.resolveWith(
+                            (states) {
+                              if (states.contains(MaterialState.selected)) {
+                                return Theme.of(context).colorScheme.secondary;
+                              }
+                              return null;
+                            },
+                          ),
+                          //Check Color
+                          checkColor: Theme.of(context).colorScheme.tertiary,
+                          //Border Color
+                          side: BorderSide(color: Theme.of(context).secondaryHeaderColor, width: 2.0),
+                        ),
+                        //Text
+                        Text("Enable Proton Script", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                        //Info Button
+                        IconButton(
+                          icon: const Icon(Icons.info),
+                          color: Theme.of(context).secondaryHeaderColor,
+                          onPressed: () => Widgets.showAlert(
+                            context,
+                            title: "Python Script",
+                            content: "Start the proton with the python script",
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   //Confirmation Button
                   SizedBox(
@@ -192,6 +230,7 @@ class _InstallGameScreenState extends State<InstallGameScreen> {
                                     ? "wine"
                                     : join(preferences.defaultProtonDirectory, gameProton),
                             "EnableSteamCompatibility": gameSteamCompatibility,
+                            "EnableProtonScript": gameProtonScript,
                             "PrefixFolder": gamePrefixDirectory,
                             "LaunchDirectory": gameDirectory,
                             "ArgumentsCommand": gameArguments.text,

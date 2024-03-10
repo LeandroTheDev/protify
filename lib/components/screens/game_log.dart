@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path/path.dart';
+import 'package:protify/components/models.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
 
@@ -63,80 +63,15 @@ class GameLogScreenState extends State<GameLogScreen> {
   startCommand(BuildContext context) async {
     running = true;
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
+
     final String command;
     //Check if we are running a proton game
     if (widget.game["ProtonDirectory"] != null && widget.game["ProtonDirectory"] != "wine") {
-      //Command Variables
-      final String protonDirectory = widget.game["ProtonDirectory"] ?? "";
-      final String protonWineDirectory;
-      //Check Compatibility for protons
-      if (Directory(join(protonDirectory, "dist")).existsSync()) {
-        protonWineDirectory = join(protonDirectory, "dist", "bin", "wine64");
-      } else {
-        protonWineDirectory = join(protonDirectory, "files", "bin", "wine64");
-      }
-      final String protonExecutable = join(protonDirectory, "proton");
-      final String gamePrefix = widget.game["PrefixFolder"];
-      final String gameDirectory = widget.game["LaunchDirectory"] ?? "";
-      final String argumentsCommand = widget.game["ArgumentsCommand"] ?? "";
-      String checkEnviroments = 'STEAM_RUNTIME=3 STEAM_COMPAT_DATA_PATH="$gamePrefix" WINEPREFIX="${preferences.defaultWineprefixDirectory}" ';
-      // Check Steam Compatibility
-      if (widget.game["EnableSteamCompatibility"]) {
-        checkEnviroments += 'STEAM_COMPAT_CLIENT_INSTALL_PATH="${preferences.steamCompatibilityDirectory}" ';
-      }
-      // Check Shaders Compile NVIDIA
-      if (widget.game["EnableShadersCompileNVIDIA"] ?? false) {
-        // Shaders folder
-        final shadersDirectory = Directory('${preferences.protifyDirectory}/shaders');
-        if (!shadersDirectory.existsSync()) {
-          shadersDirectory.createSync();
-        }
-        // Game Shaders folder
-        final shadersGameDirectory = Directory('${preferences.protifyDirectory}/shaders/${widget.game["Title"]}');
-        if (!shadersGameDirectory.existsSync()) {
-          shadersGameDirectory.createSync();
-        }
-        checkEnviroments += '__GL_SHADER_DISK_CACHE_PATH="${preferences.protifyDirectory}/shaders/${widget.game["Title"]}" __GL_SHADER_DISK_CACHE=1 __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1 ';
-      }
-      // Add arguments throught the enviroments
-      checkEnviroments += "$argumentsCommand ";
-
-      // Sensive commands that can break game launch if not launched together
-      if (widget.game["SteamReaperAppId"] != null) {
-        checkEnviroments += '"${join(preferences.steamCompatibilityDirectory, "ubuntu12_32", "reaper")}" SteamLaunch AppId=${widget.game["SteamReaperAppId"]} -- ';
-      }
-      // Check Steam Wrapper
-      if (widget.game["EnableSteamWrapper"] ?? false) {
-        checkEnviroments += '"${join(preferences.steamCompatibilityDirectory, "ubuntu12_32", "steam-launch-wrapper")}" -- ';
-      }
-      // Check Steam Runtime
-      if (widget.game["SteamRuntimeDirectory"] != null) {
-        checkEnviroments += '"${join(widget.game["SteamRuntimeDirectory"], "_v2-entry-point")}" --verb=waitforexitandrun -- ';
-      }
-
-      //Proton full command
-      command = '$checkEnviroments "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$gameDirectory"';
+      command = Models.generateProtonStartCommand(context, widget.game);
     }
     //Non proton game
     else {
-      // Check Steam Compatibility
-      String checkEnviroments = "";
-      if (widget.game["EnableSteamCompatibility"]) {
-        checkEnviroments += 'STEAM_COMPAT_CLIENT_INSTALL_PATH="${preferences.steamCompatibilityDirectory}" ';
-      }
-      // Check Shaders Compile NVIDIA
-      if (widget.game["EnableShadersCompileNVIDIA"]) {
-        checkEnviroments += '__GL_SHADER_DISK_CACHE_PATH="${preferences.protifyDirectory}/shaders/${widget.game["Title"]} __GL_SHADER_DISK_CACHE=1 __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1 ';
-      }
-      final String launchCommand;
-      if (widget.game["ProtonDirectory"] == "wine") {
-        launchCommand = 'WINEPREFIX="${preferences.defaultWineprefixDirectory}" wine';
-      } else {
-        launchCommand = widget.game["LaunchCommand"] ?? "";
-      }
-      final String argumentsCommand = widget.game["ArgumentsCommand"] ?? "";
-      final String gameDirectory = widget.game["LaunchDirectory"] ?? "";
-      command = '$checkEnviroments $launchCommand $gameDirectory $argumentsCommand';
+      command = Models.generateWineStartCommand(context, widget.game);
     }
 
     try {

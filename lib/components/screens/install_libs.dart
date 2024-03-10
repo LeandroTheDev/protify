@@ -23,6 +23,7 @@ class _InstallLibsScreenState extends State<InstallLibsScreen> {
   String libraryProton = "none";
   String libraryPrefixFolder = "";
   bool librarySteamCompatibility = false;
+  bool libraryProtonScript = false;
   @override
   Widget build(BuildContext context) {
     final int index = widget.index;
@@ -184,6 +185,43 @@ class _InstallLibsScreenState extends State<InstallLibsScreen> {
                     ),
                   ),
                   const SizedBox(height: 35),
+                  //Python Script
+                  FittedBox(
+                    child: Row(
+                      children: [
+                        //Checkbox
+                        Checkbox(
+                          value: libraryProtonScript,
+                          onChanged: (value) => setState(() => libraryProtonScript = value!),
+                          //Fill Color
+                          fillColor: MaterialStateProperty.resolveWith(
+                            (states) {
+                              if (states.contains(MaterialState.selected)) {
+                                return Theme.of(context).colorScheme.secondary;
+                              }
+                              return null;
+                            },
+                          ),
+                          //Check Color
+                          checkColor: Theme.of(context).colorScheme.tertiary,
+                          //Border Color
+                          side: BorderSide(color: Theme.of(context).secondaryHeaderColor, width: 2.0),
+                        ),
+                        //Text
+                        Text("Enable Proton Script", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                        //Info Button
+                        IconButton(
+                          icon: const Icon(Icons.info),
+                          color: Theme.of(context).secondaryHeaderColor,
+                          onPressed: () => Widgets.showAlert(
+                            context,
+                            title: "Python Script",
+                            content: "Start the proton with the python script",
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   //Prefix installation
                   Text('Library Prefix Installation Directory: $libraryPrefixFolder', style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
                   const SizedBox(height: 10),
@@ -201,6 +239,7 @@ class _InstallLibsScreenState extends State<InstallLibsScreen> {
                                 ? "wine"
                                 : join(preferences.defaultProtonDirectory, libraryProton),
                         "EnableSteamCompatibility": librarySteamCompatibility,
+                        "EnableProtonScript": libraryProtonScript,
                         "PrefixFolder": libraryPrefixFolder,
                         "LaunchDirectory": libraryDirectory,
                         "ArgumentsCommand": libraryArguments.text,

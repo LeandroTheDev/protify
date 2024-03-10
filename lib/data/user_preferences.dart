@@ -66,6 +66,7 @@ class UserPreferences with ChangeNotifier {
     }
     const defaultHttpAddress = "localhost:6161";
     const defaultSocketAddress = "localhost:6262";
+    final defaultGameInstallDirectory = Platform.isLinux ? "/home/$username" : "\\";
     final defaultGameDirectory = Platform.isLinux ? "/home/$username" : "\\";
     final defaultPrefixDirectory = join(protifyDirectory, "prefixes");
     final defaultRuntimeDirectory = join(protifyDirectory, "runtimes");
@@ -83,6 +84,7 @@ class UserPreferences with ChangeNotifier {
         "SocketAddress": defaultSocketAddress,
         "Username": username,
         "ProtifyDirectory": protifyDirectory,
+        "DefaultGameInstallDirectory": defaultGameInstallDirectory,
         "DefaultGameDirectory": defaultGameDirectory,
         "DefaultPrefixDirectory": defaultPrefixDirectory,
         "DefaultRuntimeDirectory": defaultRuntimeDirectory,
@@ -100,6 +102,7 @@ class UserPreferences with ChangeNotifier {
       connection.changeSocketAddress(saveData["SocketAddress"]);
       userPreference.changeUsername(saveData["Username"]);
       userPreference.changeProtifyDirectory(saveData["ProtifyDirectory"]);
+      userPreference.changeDefaultGameInstallDirectory(saveData["DefaultGameInstallDirectory"]);
       userPreference.changeDefaultGameDirectory(saveData["DefaultGameDirectory"]);
       userPreference.changeDefaultPrefixDirectory(saveData["DefaultPrefixDirectory"]);
       userPreference.changeDefaultRuntimeDirectory(saveData["DefaultRuntimeDirectory"]);
@@ -116,6 +119,7 @@ class UserPreferences with ChangeNotifier {
     connection.changeSocketAddress(preferences["SocketAddress"] ?? defaultSocketAddress);
     userPreference.changeUsername(preferences["Username"] ?? username);
     userPreference.changeProtifyDirectory(preferences["ProtifyDirectory"] ?? protifyDirectory);
+    userPreference.changeDefaultGameInstallDirectory(preferences["DefaultGameInstallDirectory"] ?? defaultGameInstallDirectory);
     userPreference.changeDefaultGameDirectory(preferences["DefaultGameDirectory"] ?? defaultGameDirectory);
     userPreference.changeDefaultPrefixDirectory(preferences["DefaultPrefixDirectory"] ?? defaultPrefixDirectory);
     userPreference.changeDefaultRuntimeDirectory(preferences["DefaultRuntimeDirectory"] ?? defaultRuntimeDirectory);
@@ -163,6 +167,14 @@ class UserPreferences with ChangeNotifier {
   void changeProtifyDirectory(String value) => {
         _protifyDirectory = value,
         savePreferencesInData(option: "ProtifyDirectory", value: value),
+      };
+
+  //Default Game Directory
+  String _defaultGameInstallDirectory = "";
+  get defaultGameInstallDirectory => _defaultGameInstallDirectory;
+  void changeDefaultGameInstallDirectory(String value) => {
+        _defaultGameInstallDirectory = value,
+        savePreferencesInData(option: "DefaultGameInstallDirectory", value: value),
       };
 
   //Default Game Directory
