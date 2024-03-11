@@ -2,13 +2,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:protify/components/models.dart';
-import 'package:protify/components/screens/add_edit_game.dart';
+import 'package:protify/components/models/library.dart';
 import 'package:protify/components/screens/install_dll.dart';
 import 'package:protify/components/screens/install_game.dart';
 import 'package:protify/components/screens/install_libs.dart';
 import 'package:protify/components/screens/preferences.dart';
-import 'package:protify/components/widgets.dart';
+import 'package:protify/components/models/dialogs.dart';
+import 'package:protify/components/widgets/library/category_list.dart';
+import 'package:protify/components/widgets/library/item_info.dart';
+import 'package:protify/components/widgets/library/library_provider.dart';
+import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
 import 'package:protify/data/save_datas.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
@@ -23,74 +26,32 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool loaded = false;
-  List games = [];
-  Map<String, List<int>> categories = {};
   Offset mousePosition = const Offset(0, 0);
-  OverlayEntry? gameInfo;
   int? selectedGameIndex;
-  String selectedCategory = "Uncategorized";
-  UserPreferences preferences = UserPreferences();
 
   @override
   Widget build(BuildContext context) {
+    final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
+    final LibraryProvider libraryProvider = LibraryProvider.getProvider(context);
+
     if (!loaded) {
-      preferences = Provider.of<UserPreferences>(context, listen: false);
       loaded = true;
       // Load Preferences
       UserPreferences.loadPreference(context);
-      // Load Games
-      UserPreferences.getGames().then(
-        (value) => setState(
+      // Load Items
+      UserPreferences.getItems().then(
+        (items) => setState(
           () {
-            //Reset Categories
-            categories = {};
-            games = value;
+            libraryProvider.changeItems(items);
             //Swipe all games and add the category to it
-            for (int i = 0; i < games.length; i++) {
-              bool alreadyExist = false;
-              List<String> categoriesList = categories.keys.toList();
-              //Swipe all categories
-              for (int j = 0; j < categoriesList.length; j++) {
-                //Check if already exist
-                if (games[i]["Category"] == categoriesList[j]) {
-                  alreadyExist = true;
-                  //Add the index
-                  categories[games[i]["Category"]]!.add(i);
-                  break;
-                }
-              }
-              //if not exist
-              if (!alreadyExist) {
-                //Create a category
-                categories[games[i]["Category"]] = [i];
-              }
+            for (int i = 0; i < libraryProvider.items.length; i++) {
+              //Add the index
+              libraryProvider.addItemCategory(libraryProvider.items[i]["Category"] ?? "Uncategorized", i);
             }
           },
         ),
       );
     }
-    // To add just call the function to edit simple add the index in parameter
-    addOrEditGameModal([index]) {
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: Theme.of(context).primaryColor,
-        isScrollControlled: true,
-        builder: (BuildContext context) => AddOrEditGameScreen(index: index),
-      ).then((value) => UserPreferences.getGames().then((value) => setState(() => loaded = false)));
-    }
-
-    // Open preferences Screen
-    preferencesScreen() {
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: Theme.of(context).primaryColor,
-        isScrollControlled: true,
-        builder: (BuildContext context) => const PreferencesScreen(),
-      );
-    }
-
-    // Simple open store
-    openStore() => Navigator.pushNamed(context, 'store');
 
     openFriends() {}
 
@@ -107,263 +68,52 @@ class _HomePageState extends State<HomePage> {
       }
     }
 
-    // Create the prefix folder before the game initializes
-    checkPrefixExistence(int index) async {
-      //No prefix if is not proton
-      if (games[index]["ProtonDirectory"] == null || games[index]["PrefixFolder"] == null) return;
-      String currentDirectory = dirname(games[index]["PrefixFolder"]);
-      // Checking if prefix folder exist
-      if (!Directory(currentDirectory).existsSync()) {
-        // Create
-        await Directory(currentDirectory).create();
-      }
-      // Create the wine prefix
-      if (!Directory(preferences.defaultWineprefixDirectory).existsSync()) {
-        // Create
-        await Directory(preferences.defaultWineprefixDirectory).create();
-      }
-
-      // Game Prefix Folder
-      currentDirectory = games[index]["PrefixFolder"] as String;
-      // Check if not exist
-      if (!Directory(currentDirectory).existsSync()) {
-        // Create
-        Directory(currentDirectory).createSync();
-      }
-    }
-
     // Start the game
     startGame(int index) async {
-      // Creating the prefix folder if not exist
-      checkPrefixExistence(index);
+      // // Creating the prefix folder if not exist
+      // checkPrefixExistence(index);
 
-      // Call the functions for starting the game
-      Models.startGame(context: context, game: games[index]);
+      // // Call the functions for starting the game
+      // Models.startGame(context: context, game: games[index]);
     }
 
     // Install libraries for the prefix
     installLibs(int index) {
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: Theme.of(context).primaryColor,
-        isScrollControlled: true,
-        builder: (BuildContext context) {
-          return InstallLibsScreen(index: index);
-        },
-      );
+      // showModalBottomSheet(
+      //   context: context,
+      //   backgroundColor: Theme.of(context).primaryColor,
+      //   isScrollControlled: true,
+      //   builder: (BuildContext context) {
+      //     return InstallLibsScreen(index: index);
+      //   },
+      // );
     }
 
     // Install libraries for the prefix
     installDll(int index) {
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: Theme.of(context).primaryColor,
-        isScrollControlled: true,
-        builder: (BuildContext context) {
-          return InstallDllScreen(index: index);
-        },
-      );
+      // showModalBottomSheet(
+      //   context: context,
+      //   backgroundColor: Theme.of(context).primaryColor,
+      //   isScrollControlled: true,
+      //   builder: (BuildContext context) {
+      //     return InstallDllScreen(index: index);
+      //   },
+      // );
     }
 
     // Install game in game search directory
     installGame() {
-      showModalBottomSheet(
-        context: context,
-        backgroundColor: Theme.of(context).primaryColor,
-        isScrollControlled: true,
-        builder: (BuildContext context) {
-          return const InstallGameScreen();
-        },
-      );
+      // showModalBottomSheet(
+      //   context: context,
+      //   backgroundColor: Theme.of(context).primaryColor,
+      //   isScrollControlled: true,
+      //   builder: (BuildContext context) {
+      //     return const InstallGameScreen();
+      //   },
+      // );
     }
 
-    // Hide game infos
-    hideGameInfo([index, mousePosition]) {
-      //Remove game info
-      gameInfo?.remove();
-      gameInfo = null;
-    }
-
-    // Show the game infos
-    showGameInfo(int index, Offset mousePosition) {
-      hideGameInfo();
-      //Create the gameInfo widget
-      gameInfo = OverlayEntry(
-        builder: (context) => Positioned(
-          left: mousePosition.dx,
-          top: mousePosition.dy,
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-                width: 80,
-                padding: const EdgeInsets.all(8.0),
-                color: Theme.of(context).colorScheme.tertiary,
-                child: Column(
-                  children: [
-                    // Game Title
-                    SizedBox(
-                      width: 50,
-                      child: Text(
-                        games[index]["Title"],
-                        style: const TextStyle(color: Colors.white),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    // Spacer
-                    const SizedBox(height: 10),
-                    // Edit Game
-                    GestureDetector(
-                      onTap: () => {
-                        // Close the overlay
-                        hideGameInfo(),
-                        // Open edit game modal
-                        addOrEditGameModal(index),
-                      },
-                      child: const SizedBox(
-                        width: 70,
-                        child: Text(
-                          'Edit',
-                          style: TextStyle(color: Colors.white),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                    // Spacer
-                    const SizedBox(height: 10),
-                    // Category
-                    GestureDetector(
-                      onTap: () => {
-                        // Close the overlay
-                        hideGameInfo(),
-                        // Open category selector
-                        Widgets.selectCategory(context, categories: categories).then(
-                          // Update the Category
-                          (category) => {
-                            SaveDatas.updateGameCategory(index, category).then((gamesUpdated) => setState(() {
-                                  games = gamesUpdated;
-                                  loaded = false;
-                                })), // Reload
-                          },
-                        )
-                      },
-                      child: const SizedBox(
-                        width: 70,
-                        child: Text(
-                          'Category',
-                          style: TextStyle(color: Colors.white),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                    // Spacer
-                    const SizedBox(height: 10),
-                    // Remove Game
-                    GestureDetector(
-                      onTap: () => {
-                        // Close the overlay
-                        hideGameInfo(),
-                        // Remove the game
-                        UserPreferences.removeGame(index, games, context).then((value) => setState(() {
-                              games = value;
-                              loaded = false;
-                            })),
-                      },
-                      child: const SizedBox(
-                        width: 70,
-                        child: Text(
-                          'Remove',
-                          style: TextStyle(color: Colors.white),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ],
-                )),
-          ),
-        ),
-      );
-      //Inserting into context
-      Overlay.of(context).insert(gameInfo!);
-    }
-
-    // Change selected category
-    selectCategory(String category) => setState(() => selectedCategory = category);
-
-    // Left side of the window
-    Widget leftSide() {
-      final categoriesList = categories.keys.toList();
-      final screenSize = MediaQuery.of(context).size;
-      return SizedBox(
-        height: screenSize.height,
-        width: screenSize.width * 0.3,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            //Top Buttons
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              height: screenSize.height * 0.1,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  FittedBox(child: IconButton(onPressed: () => openStore(), icon: const Icon(Icons.library_books))),
-                  FittedBox(child: IconButton(onPressed: () => openFriends(), icon: const Icon(Icons.person))),
-                ],
-              ),
-            ),
-            //Category List
-            SizedBox(
-              height: screenSize.height * 0.8 - 10,
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: categoriesList.length,
-                itemBuilder: (context, index) => GestureDetector(
-                  onTap: () => selectCategory(categoriesList[index]),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-                    child: Container(
-                      height: 35,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Theme.of(context).secondaryHeaderColor,
-                          width: 1.0,
-                        ),
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 5.0),
-                          child: Text(
-                            categoriesList[index],
-                            textAlign: TextAlign.start,
-                            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            //Bottom Buttons
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: screenSize.width * 0.3,
-                height: screenSize.height * 0.05,
-                child: ElevatedButton(
-                  onPressed: () => preferencesScreen(),
-                  child: const Text("Preferences"),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    // Right side of the window
+    // Dynamic shows the right side of the window
     Widget rightSide() {
       final screenSize = MediaQuery.of(context).size;
       //Selected game
@@ -391,7 +141,7 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.all(8.0),
                   child: FittedBox(
                     child: Text(
-                      games[selectedGameIndex!]["Title"],
+                      libraryProvider.items[selectedGameIndex!]["Title"],
                       style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
                     ),
                   ),
@@ -425,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                       width: screenSize.width * 0.15 < 56 ? 56 : screenSize.width * 0.15,
                       height: screenSize.height * 0.07,
                       child: ElevatedButton(
-                        onPressed: () => addOrEditGameModal(selectedGameIndex!),
+                        onPressed: () => LibraryModel.addItemModal(context),
                         child: const FittedBox(
                           child: Text(
                             "Edit",
@@ -439,7 +189,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             //Library
-            games[selectedGameIndex!]["ProtonDirectory"] != null
+            libraryProvider.items[selectedGameIndex!]["ProtonDirectory"] != null
                 ? Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SizedBox(
@@ -469,7 +219,7 @@ class _HomePageState extends State<HomePage> {
                   )
                 : const SizedBox(),
             //Dlls
-            games[selectedGameIndex!]["ProtonDirectory"] != null
+            libraryProvider.items[selectedGameIndex!]["ProtonDirectory"] != null
                 ? Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SizedBox(
@@ -502,7 +252,7 @@ class _HomePageState extends State<HomePage> {
         );
       }
       //Show Game Grid
-      if (games.isNotEmpty) {
+      if (libraryProvider.items.isNotEmpty) {
         return Column(
           children: [
             //Grid
@@ -513,25 +263,31 @@ class _HomePageState extends State<HomePage> {
                 onHover: (event) => mousePosition = event.position,
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: getGridGamesCrossAxisCount(screenSize, games.length),
+                    crossAxisCount: getGridGamesCrossAxisCount(screenSize, libraryProvider.items.length),
                     crossAxisSpacing: 0,
                     childAspectRatio: 0.5,
                   ),
                   shrinkWrap: true,
-                  itemCount: categories[selectedCategory] == null ? 0 : categories[selectedCategory]!.length,
+                  itemCount: libraryProvider.itemsCategories[libraryProvider.selectedItemCategory] == null ? 0 : libraryProvider.itemsCategories[libraryProvider.selectedItemCategory].length,
                   itemBuilder: (context, index) => Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: GestureDetector(
                       onTap: () => setState(() {
                         selectedGameIndex = index;
-                        hideGameInfo();
+                        libraryProvider.hideItemInfo();
                       }),
-                      onSecondaryTap: gameInfo == null ? () => showGameInfo(categories[selectedCategory]![index], mousePosition) : () => hideGameInfo(),
+                      onSecondaryTap: libraryProvider.itemInfo == null
+                          ? () {
+                              libraryProvider.hideItemInfo();
+                              //Create the gameInfo widget
+                              libraryProvider.changeItemInfo(context, ItemInfoWidget.build(context));
+                            }
+                          : () => libraryProvider.hideItemInfo(),
                       child: Container(
                         color: Theme.of(context).primaryColor,
                         child: Center(
                           child: Text(
-                            games[categories[selectedCategory]![index]]["Title"],
+                            libraryProvider.items[libraryProvider.itemsCategories[libraryProvider.selectedItemCategory]![index]]["ItemName"] ?? "Unknown",
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.secondary,
                               fontSize: 18.0,
@@ -556,13 +312,19 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(
                     height: 30,
                     width: screenSize.width > 380.0 ? null : 30,
-                    child: ElevatedButton(onPressed: () => {hideGameInfo(), addOrEditGameModal()}, child: const Text("Add Game")),
+                    child: ElevatedButton(
+                        onPressed: () => {
+                              libraryProvider.hideItemInfo(),
+                              ScreenBuilderProvider.resetProviderDatas(context),
+                              LibraryModel.addItemModal(context),
+                            },
+                        child: const Text("Add Game")),
                   ),
                   //Edit game
                   SizedBox(
                     height: 30,
                     width: screenSize.width > 380.0 ? null : 30,
-                    child: ElevatedButton(onPressed: () => {hideGameInfo(), installGame()}, child: const Text("Install Game")),
+                    child: ElevatedButton(onPressed: () => {libraryProvider.hideItemInfo(), installGame()}, child: const Text("Install Game")),
                   ),
                 ],
               ),
@@ -586,7 +348,7 @@ class _HomePageState extends State<HomePage> {
                 //Add Game button
                 SizedBox(
                   height: 30,
-                  child: ElevatedButton(onPressed: () => addOrEditGameModal(), child: const Text("Add First Game")),
+                  child: ElevatedButton(onPressed: () => LibraryModel.addItemModal(context), child: const Text("Add First Game")),
                 ),
                 const SizedBox(height: 10),
                 Text(
@@ -609,12 +371,58 @@ class _HomePageState extends State<HomePage> {
     final screenSize = MediaQuery.of(context).size;
     return GestureDetector(
       //Clicking everwhere will close the gameInfo
-      onTap: () => hideGameInfo(),
+      onTap: () => libraryProvider.hideItemInfo(),
       child: Scaffold(
         body: Row(
           children: [
             //Left Side
-            leftSide(),
+            SizedBox(
+              height: screenSize.height,
+              width: screenSize.width * 0.3,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  //Top Buttons
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    height: screenSize.height * 0.1,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        FittedBox(
+                          child: IconButton(
+                            onPressed: () => Navigator.pushNamed(context, 'store'),
+                            icon: const Icon(Icons.library_books),
+                          ),
+                        ),
+                        FittedBox(child: IconButton(onPressed: () => openFriends(), icon: const Icon(Icons.person))),
+                      ],
+                    ),
+                  ),
+                  //Category List
+                  const CategoryList(),
+                  //Bottom Buttons
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      width: screenSize.width * 0.3,
+                      height: screenSize.height * 0.05,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            backgroundColor: Theme.of(context).primaryColor,
+                            isScrollControlled: true,
+                            builder: (BuildContext context) => const PreferencesScreen(),
+                          );
+                        },
+                        child: const Text("Preferences"),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
             //Divider
             Padding(

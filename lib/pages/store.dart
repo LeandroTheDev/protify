@@ -3,7 +3,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:protify/components/connection.dart';
+import 'package:protify/components/models/connection.dart';
 import 'package:protify/pages/item.dart';
 
 class StorePage extends StatefulWidget {
@@ -20,11 +20,11 @@ class _StorePageState extends State<StorePage> {
 
   Future getShowcase() async {
     //Communicate with the server
-    final responseShowcase = await Connection.sendMessage(context, address: "/store_showcase", requestType: "GET");
+    final responseShowcase = await ConnectionModel.sendMessage(context, address: "/store_showcase", requestType: "GET");
     if (!context.mounted) return;
 
     //Check for errors
-    if (Connection.errorTreatment(context, responseShowcase)) {
+    if (ConnectionModel.errorTreatment(context, responseShowcase)) {
       //Swipe every games and add to the main games variable
       final List body = jsonDecode(responseShowcase.body)["CONTENT"];
       for (int i = 0; i < body.length; i++) setState(() => showcase[body[i]] = null);
@@ -32,8 +32,8 @@ class _StorePageState extends State<StorePage> {
       //Getting the items info
       for (int i = 0; i < showcase.length; i++) {
         //Getting the item info
-        Connection.sendMessage(context, address: "/get_item_info&item=1", requestType: "GET").then((response) {
-          if (Connection.errorTreatment(context, response)) {
+        ConnectionModel.sendMessage(context, address: "/get_item_info&item=1", requestType: "GET").then((response) {
+          if (ConnectionModel.errorTreatment(context, response)) {
             //Updating the info
             final body = jsonDecode(response.body)["CONTENT"];
             setState(() => showcase[body["ID"]] = body);

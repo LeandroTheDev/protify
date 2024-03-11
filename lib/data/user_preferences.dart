@@ -2,24 +2,25 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:protify/components/connection.dart';
-import 'package:protify/components/widgets.dart';
+import 'package:protify/components/models/connection.dart';
+import 'package:protify/components/models/dialogs.dart';
 import 'package:protify/data/save_datas.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserPreferences with ChangeNotifier {
   /// Returns a list of all games saved in device
-  static Future<List> getGames() async {
-    final games = jsonDecode(await SaveDatas.readData("games", "string") ?? "[]");
+  static Future<List> getItems() async {
+    final games = jsonDecode(await SaveDatas.readData("items", "string") ?? "[]");
     return games;
   }
 
   /// Remove a specific game by the index, needs the games, if context is not provided,
   /// the message asking will not appear
-  static Future<List> removeGame(int index, List games, [context]) async {
+  static Future<List> removeItem(int index, List games, [context]) async {
     if (context != null) {
-      final result = await Widgets.showQuestion(context, title: "Remove Game", content: "Do you wish to remove this game from your library?");
+      final result = await DialogsModel.showQuestion(context, title: "Remove Game", content: "Do you wish to remove this game from your library?");
       if (!result) return games;
     }
     //Removing
@@ -33,7 +34,7 @@ class UserPreferences with ChangeNotifier {
   static Future loadPreference(BuildContext context) async {
     // ignore: use_build_context_synchronously
     final UserPreferences userPreference = Provider.of<UserPreferences>(context, listen: false);
-    final Connection connection = Provider.of<Connection>(context, listen: false);
+    final ConnectionModel connection = Provider.of<ConnectionModel>(context, listen: false);
     final Map preferences = jsonDecode(await SaveDatas.readData("preferences", "string") ?? "{}");
 
     //Default variables
@@ -61,7 +62,7 @@ class UserPreferences with ChangeNotifier {
       }
     } else {
       // ignore: use_build_context_synchronously
-      Widgets.showAlert(context, title: "Error", content: "Cannot find the protify_finder.txt in protify/lib, check if exists, or if /home/$username exists");
+      DialogsModel.showAlert(context, title: "Error", content: "Cannot find the protify_finder.txt in protify/lib, check if exists, or if /home/$username exists");
       protifyDirectory = "/home/$username/protify";
     }
     const defaultHttpAddress = "localhost:6161";
@@ -143,6 +144,18 @@ class UserPreferences with ChangeNotifier {
         SaveDatas.saveData("preferences", jsonEncode(updatedPreferences));
       },
     );
+  }
+
+  /// Update game category with a index and the category
+  static Future<List> updateItemCategory(int index, String category) async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    // Get all games
+    final games = jsonDecode(preferences.getString("items")!);
+    // Change the specific game index and his category
+    games[index]["Category"] = category;
+    // Save the new category
+    await preferences.setString("items", jsonEncode(games));
+    return games;
   }
 
   //Language
@@ -241,4 +254,8 @@ class UserPreferences with ChangeNotifier {
         _startWindowWidth = value,
         savePreferencesInData(option: "StartWindowWidth", value: value),
       };
+
+  static UserPreferences getProvider(BuildContext context) {
+    return Provider.of<UserPreferences>(context, listen: false);
+  }
 }

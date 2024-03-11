@@ -6,7 +6,7 @@ import 'package:protify/components/screens/game_log.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
 
-class Models {
+class LauncherModel {
   /// Generates the starting commands for running a game or program with Proton
   static String generateProtonStartCommand(BuildContext context, Map game) {
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
@@ -54,7 +54,7 @@ class Models {
 
     // Sensive commands that can break game launch if not launched together
     if (game["SteamReaperAppId"] != null) {
-      checkEnviroments += '"${join(preferences.steamCompatibilityDirectory, "ubuntu12_32", "reaper")}" SteamLaunch AppId=${game["SteamReaperAppId"]} -- ';
+      checkEnviroments += '"${join("/home/bobs/.local/share/Steam/", "ubuntu12_32", "reaper")}" SteamLaunch AppId=${game["SteamReaperAppId"]} -- ';
     }
     // Check Steam Wrapper
     if (game["EnableSteamWrapper"] ?? false) {
@@ -94,16 +94,39 @@ class Models {
 
   /// Start the game and show the logs
   static void startGame({required BuildContext context, required Map game}) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Theme.of(context).primaryColor,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return GameLogScreen(game: game);
-      },
-    );
+    // showModalBottomSheet(
+    //   context: context,
+    //   backgroundColor: Theme.of(context).primaryColor,
+    //   isScrollControlled: true,
+    //   builder: (BuildContext context) {
+    //     return GameLogScreen(game: game);
+    //   },
+    // );
   }
 
-  /// Will check for dependencies for some necessary librarys in linux
-  static void checkLinuxDependencies() {}
+  /// Create the prefix folder if not exist
+  static Future checkPrefixExistence(BuildContext context, Map item) async {
+    UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
+    //No prefix if is not proton or wine
+    if (item["SelectedLauncher"] == null || item["SelectedPrefix"] == null) return;
+    String currentDirectory = dirname(item["SelectedPrefix"]);
+    // Checking if prefix folder exist
+    if (!Directory(currentDirectory).existsSync()) {
+      // Create
+      await Directory(currentDirectory).create();
+    }
+    // Create the wine prefix
+    if (!Directory(preferences.defaultWineprefixDirectory).existsSync()) {
+      // Create
+      await Directory(preferences.defaultWineprefixDirectory).create();
+    }
+
+    // Game Prefix Folder
+    currentDirectory = item["SelectedPrefix"] as String;
+    // Check if not exist
+    if (!Directory(currentDirectory).existsSync()) {
+      // Create
+      Directory(currentDirectory).createSync();
+    }
+  }
 }

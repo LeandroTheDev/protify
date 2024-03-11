@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:protify/components/widgets.dart';
+import 'package:protify/components/models/dialogs.dart';
 import 'package:protify/data/save_datas.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:protify/pages/homepage.dart';
@@ -115,7 +115,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             IconButton(
                               icon: const Icon(Icons.info),
                               color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => Widgets.showAlert(
+                              onPressed: () => DialogsModel.showAlert(
                                 context,
                                 title: "Protify Directory",
                                 content: "Where the protify launcher is located",
@@ -142,7 +142,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             IconButton(
                               icon: const Icon(Icons.info),
                               color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => Widgets.showAlert(
+                              onPressed: () => DialogsModel.showAlert(
                                 context,
                                 title: "Proton Directory",
                                 content: "Where the protify will try to find the list of protons available",
@@ -169,7 +169,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             IconButton(
                               icon: const Icon(Icons.info),
                               color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => Widgets.showAlert(
+                              onPressed: () => DialogsModel.showAlert(
                                 context,
                                 title: "Search Install Directory",
                                 content: "The main folder for finding games install in install game page",
@@ -196,7 +196,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             IconButton(
                               icon: const Icon(Icons.info),
                               color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => Widgets.showAlert(
+                              onPressed: () => DialogsModel.showAlert(
                                 context,
                                 title: "Search Game Directory",
                                 content: "The main folder for finding games in add game page",
@@ -223,7 +223,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             IconButton(
                               icon: const Icon(Icons.info),
                               color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => Widgets.showAlert(
+                              onPressed: () => DialogsModel.showAlert(
                                 context,
                                 title: "Default Prefix Directory",
                                 content: "Default prefixes will be stored in this folder",
@@ -249,7 +249,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             IconButton(
                               icon: const Icon(Icons.info),
                               color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => Widgets.showAlert(
+                              onPressed: () => DialogsModel.showAlert(
                                 context,
                                 title: "Default Runtime Directory",
                                 content: "Default Runtimes will be stored in this folder",
@@ -276,7 +276,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             IconButton(
                               icon: const Icon(Icons.info),
                               color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => Widgets.showAlert(
+                              onPressed: () => DialogsModel.showAlert(
                                 context,
                                 title: "Wineprefix Directory",
                                 content: "This is a special folder just for Wine, actually this is not used",
@@ -303,7 +303,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             IconButton(
                               icon: const Icon(Icons.info),
                               color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => Widgets.showAlert(
+                              onPressed: () => DialogsModel.showAlert(
                                 context,
                                 title: "Steam Compatibility Directory",
                                 content: "Change the steam installation folder if is not located in default location \"~/.local/share/Steam\"",
@@ -404,7 +404,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                                 style: ButtonStyle(
                                   backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
                                 ),
-                                onPressed: () => Widgets.showQuestion(context, title: "Clear Data", content: "Are you sure you want to erase all saved datas?").then(
+                                onPressed: () => DialogsModel.showQuestion(context, title: "Clear Data", content: "Are you sure you want to erase all saved datas?").then(
                                   //Clear data and reload data
                                   (value) => value
                                       //Clearing data
@@ -432,7 +432,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                                 style: ButtonStyle(
                                   backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
                                 ),
-                                onPressed: () => Widgets.showQuestion(context, title: "Reset Preferences", content: "Are you sure you want to reset your preferences?").then(
+                                onPressed: () => DialogsModel.showQuestion(context, title: "Reset Preferences", content: "Are you sure you want to reset your preferences?").then(
                                   //Clear data and reload data
                                   (value) => value
                                       //Clearing data
@@ -460,7 +460,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                                 style: ButtonStyle(
                                   backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
                                 ),
-                                onPressed: () => Widgets.showQuestion(context, title: "Clear Games", content: "Are you sure you want to remove all games from your library?").then(
+                                onPressed: () => DialogsModel.showQuestion(context, title: "Clear Games", content: "Are you sure you want to remove all games from your library?").then(
                                   //Clear games and reload launcher
                                   (value) => value
                                       //Clearing data

@@ -57,18 +57,6 @@ class SaveDatas {
   /// Clean all games saved
   static Future clearGames() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.remove("games");
-  }
-
-  /// Update game category with a index and the category
-  static Future<List> updateGameCategory(int index, String category) async {
-    final SharedPreferences preferences = await SharedPreferences.getInstance();
-    // Get all games
-    final games = jsonDecode(preferences.getString("games")!);
-    // Change the specific game index and his category
-    games[index]["Category"] = category;
-    // Save the new category
-    await preferences.setString("games", jsonEncode(games));
-    return games;
+    await preferences.remove("items");
   }
 }

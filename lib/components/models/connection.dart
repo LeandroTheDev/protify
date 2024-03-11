@@ -3,12 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:protify/components/widgets.dart';
+import 'package:protify/components/models/dialogs.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:web_socket_channel/io.dart';
 
-class Connection with ChangeNotifier {
+class ConnectionModel with ChangeNotifier {
   String _httpAddress = "localhost:6161";
   String get httpAddress => _httpAddress;
   changeHttpAddress(String value) {
@@ -48,7 +48,7 @@ class Connection with ChangeNotifier {
     required String requestType,
     Map<String, dynamic>? body,
   }) async {
-    final Connection connection = Provider.of<Connection>(context, listen: false);
+    final ConnectionModel connection = Provider.of<ConnectionModel>(context, listen: false);
 
     Future<Response> getRequest() async {
       Response? result;
@@ -161,31 +161,31 @@ class Connection with ChangeNotifier {
     switch (response.statusCode) {
       //Temporary Banned
       case 413:
-        Widgets.showAlert(context, title: "Alert", content: message);
+        DialogsModel.showAlert(context, title: "Alert", content: message);
         return false;
       //Url Not Found
       case 404:
-        Widgets.showAlert(context, title: "Alert", content: message);
+        DialogsModel.showAlert(context, title: "Alert", content: message);
         return false;
       //Invalid Datas
       case 403:
-        Widgets.showAlert(context, title: "Alert", content: message);
+        DialogsModel.showAlert(context, title: "Alert", content: message);
         return false;
       //Wrong Credentials
       case 401:
-        Widgets.showAlert(context, title: "Alert", content: message);
+        DialogsModel.showAlert(context, title: "Alert", content: message);
         return false;
       //Server Crashed
       case 500:
-        Widgets.showAlert(context, title: "Alert", content: message);
+        DialogsModel.showAlert(context, title: "Alert", content: message);
         return false;
       //No connection with the server
       case 504:
-        Widgets.showAlert(context, title: "Alert", content: "Cannot connect to the servers");
+        DialogsModel.showAlert(context, title: "Alert", content: "Cannot connect to the servers");
         return false;
       //User Cancelled
       case 101:
-        Widgets.showAlert(context, title: "Alert", content: message);
+        DialogsModel.showAlert(context, title: "Alert", content: message);
         return false;
     }
     return true;
@@ -197,7 +197,7 @@ class Connection with ChangeNotifier {
     BuildContext context,
     int itemId,
   ) {
-    final Connection connection = Provider.of<Connection>(context, listen: false);
+    final ConnectionModel connection = Provider.of<ConnectionModel>(context, listen: false);
     final IOWebSocketChannel serverChannel = IOWebSocketChannel.connect(
       "ws://127.0.0.1:6262",
       headers: {

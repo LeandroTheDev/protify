@@ -1,110 +1,64 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:protify/components/screens/add_item.dart';
+import 'package:protify/components/screens/edit_item.dart';
+import 'package:protify/components/models/dialogs.dart';
+import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
+import 'package:protify/data/save_datas.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
 
-class Widgets {
-  /// Simple show a alert dialog to the user
-  static Future showAlert(
-    BuildContext context, {
-    String title = "",
-    String content = "",
-    String buttonTitle = "OK",
-  }) {
-    Completer<void> completer = Completer<void>();
-    showDialog(
+class LibraryModel {
+  /// Create a modal for adding new item
+  static Future addItemModal(BuildContext context) {
+    return showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
-        return Center(
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.5,
-            child: AlertDialog(
-              backgroundColor: Theme.of(context).colorScheme.tertiary,
-              title: Text(title, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
-              content: Text(content, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    completer.complete();
-                  },
-                  child: Text(buttonTitle, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
-                ),
-              ],
-            ),
-          ),
+      backgroundColor: Theme.of(context).primaryColor,
+      isScrollControlled: true,
+      builder: (BuildContext context) => const AddItemScreen(),
+    );
+  }
+
+  /// Create a modal for editing new item
+  static Future<void> editItemModal(BuildContext context, int index) {
+    return SaveDatas.readData("items", "string").then(
+      (stringGames) {
+        final List items = jsonDecode(stringGames ?? "[]");
+        if (items[index] == null) {
+          DialogsModel.showAlert(
+            context,
+            title: "Error Loading Game",
+            content: "Cannot load the game, the data is corrupted",
+          );
+          return null;
+        }
+        ScreenBuilderProvider.readData(context, items[index]);
+        return showModalBottomSheet(
+          context: context,
+          backgroundColor: Theme.of(context).primaryColor,
+          isScrollControlled: true,
+          builder: (BuildContext context) => const EditItemScreen(),
         );
       },
     );
-    return completer.future;
   }
 
-  /// Simple show a alert dialog to the user
-  static Future<bool> showQuestion(
-    BuildContext context, {
-    String title = "",
-    String content = "",
-    String buttonTitle = "Yes",
-    String buttonTitle2 = "No",
-  }) {
-    Completer<bool> completer = Completer<bool>();
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Center(
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.5,
-            child: AlertDialog(
-              backgroundColor: Theme.of(context).colorScheme.tertiary,
-              title: Text(title, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
-              content: Text(content, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
-              actions: [
-                //yes
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    completer.complete(true);
-                  },
-                  child: Text(buttonTitle, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
-                ),
-                //no
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    completer.complete(false);
-                  },
-                  child: Text(buttonTitle2, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    return completer.future;
-  }
-
-  /// Show a dialog to select the protons located in the folder
-  static Future<String> selectProton(BuildContext context, {bool showWine = false, bool hideProton = false}) async {
+  /// Show a dialog to select the launchers located in the folder
+  static Future<String?> selectLauncher(
+    BuildContext context,
+  ) async {
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
-    Future<String> chooseProton(List<String> protons) async {
-      Completer<String> completer = Completer<String>();
+    Future<Future<String?>> chooseProton(List<String> protons) async {
+      Completer<String?> completer = Completer<String?>();
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          //Default alternatives
-          if (showWine && hideProton) {
-            protons.add("Wine");
-          } else if (showWine) {
-            protons.add("Wine");
-            protons.add("No Proton");
-          } else {
-            protons.add("No Proton");
-          }
+          // Wine option
+          protons.add("Wine");
+          protons.add("None");
           return Center(
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.5,
@@ -119,8 +73,8 @@ class Widgets {
                     itemBuilder: (context, index) => TextButton(
                       onPressed: () {
                         Navigator.of(context).pop();
-                        if (protons[index] == "No Proton") {
-                          completer.complete("none");
+                        if (protons[index] == "None") {
+                          completer.complete(null);
                         } else {
                           completer.complete(protons[index]);
                         }
@@ -155,21 +109,21 @@ class Widgets {
       }
       //Empty treatment
       else {
-        Widgets.showAlert(context, title: "Alert", content: "No protons can be found, add one.");
+        DialogsModel.showAlert(context, title: "Alert", content: "No protons can be found, add one.");
       }
     }
     //No proton folder treatment
     else {
-      Widgets.showAlert(context, title: "Error", content: "Cannot find the folder for protons in protify folder, check if the folder exist if not create one and add your protons there.");
+      DialogsModel.showAlert(context, title: "Error", content: "Cannot find the folder for protons in protify folder, check if the folder exist if not create one and add your protons there.");
     }
     return "none";
   }
 
   /// Show a dialog to select the protons located in the folder
-  static Future<String> selectRuntime(BuildContext context) async {
+  static Future<String?> selectRuntime(BuildContext context) async {
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
-    Future<String> chooseRuntime(List<String> runtimes) async {
-      Completer<String> completer = Completer<String>();
+    Future<String?> chooseRuntime(List<String> runtimes) async {
+      Completer<String?> completer = Completer<String?>();
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -189,7 +143,7 @@ class Widgets {
                       onPressed: () {
                         Navigator.of(context).pop();
                         if (runtimes[index] == "No Runtime") {
-                          completer.complete("none");
+                          completer.complete(null);
                         } else {
                           completer.complete(runtimes[index]);
                         }
@@ -224,12 +178,12 @@ class Widgets {
       }
       //Empty treatment
       else {
-        Widgets.showAlert(context, title: "Alert", content: "No runtimes can be found, add one.");
+        DialogsModel.showAlert(context, title: "Alert", content: "No runtimes can be found, add one.");
       }
     }
     //No proton folder treatment
     else {
-      Widgets.showAlert(context, title: "Error", content: "Cannot find the folder for runtimes in runtimes folder, check if the folder exist if not create one and add your runtimes there.");
+      DialogsModel.showAlert(context, title: "Error", content: "Cannot find the folder for runtimes in runtimes folder, check if the folder exist if not create one and add your runtimes there.");
     }
     return "none";
   }
@@ -257,7 +211,7 @@ class Widgets {
                       onPressed: () {
                         Navigator.of(context).pop();
                         if (categoriesList[index] == "Add New Category") {
-                          completer.complete(typeInput(context, title: "Category"));
+                          completer.complete(DialogsModel.typeInput(context, title: "Category"));
                         } else {
                           completer.complete(categoriesList[index]);
                         }
@@ -276,51 +230,5 @@ class Widgets {
     }
 
     return await chooseCategory(categories.keys.toList());
-  }
-
-  /// Show a prompt to user type something
-  static Future<String> typeInput(BuildContext context, {title = ""}) {
-    Completer<String> completer = Completer<String>();
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          TextEditingController input = TextEditingController();
-          return Center(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.5,
-              child: AlertDialog(
-                backgroundColor: Theme.of(context).colorScheme.tertiary,
-                title: Column(
-                  children: [
-                    TextField(
-                      controller: input,
-                      decoration: InputDecoration(
-                        labelText: title,
-                        labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary), // Cor da borda inferior quando o campo não está focado
-                        ),
-                      ),
-                      style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
-                    ),
-                    // Spacer
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () => {
-                        completer.complete(input.text),
-                        Navigator.pop(context),
-                      },
-                      child: const Text("Confirm"),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        });
-    return completer.future;
   }
 }

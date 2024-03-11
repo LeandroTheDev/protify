@@ -1,0 +1,70 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+class LibraryProvider extends ChangeNotifier {
+  List _items = [];
+  get items => _items;
+  void changeItems(List value) {
+    _items = value;
+  }
+
+  int? _itemIndex;
+  get itemIndex => _itemIndex;
+  void changeItemIndex(int? value) {
+    _itemIndex = value;
+  }
+
+  OverlayEntry? _itemInfo;
+  get itemInfo => _itemInfo;
+  void changeItemInfo(BuildContext context, OverlayEntry? value) {
+    _itemInfo = value;
+    Overlay.of(context).insert(_itemInfo!);
+  }
+
+  void hideItemInfo() {
+    if (_itemInfo != null) {
+      _itemInfo!.remove();
+      _itemInfo = null;
+    }
+  }
+
+  Map<String, dynamic> _itemSelected = {};
+  get itemSelected => _itemSelected;
+  void changeItemSelected(Map<String, dynamic>? value) {
+    if (value == null)
+      _itemSelected = {};
+    else
+      _itemSelected = value;
+  }
+
+  Map<String, List<int>> _itemsCategories = {};
+  get itemsCategories => _itemsCategories;
+  void changeItemsCategories(Map<String, List<int>> value) {
+    _itemsCategories = value;
+  }
+
+  void addItemCategory(String value, int itemIndex) {
+    //Null check
+    if (_itemsCategories[value] == null) {
+      _itemsCategories[value] = [];
+    }
+    _itemsCategories[value]!.add(itemIndex);
+  }
+
+  String _selectedItemCategory = "Uncategorized";
+  get selectedItemCategory => _selectedItemCategory;
+  void changeSelectedItemCategory(String value) {
+    _selectedItemCategory = value;
+  }
+
+  Offset _mousePosition = const Offset(0, 0);
+  get mousePosition => _mousePosition;
+  void changeMousePosition(Offset value) {
+    _mousePosition = value;
+  }
+
+  /// Returns the provider for getting the datas
+  static LibraryProvider getProvider(BuildContext context) {
+    return Provider.of<LibraryProvider>(context, listen: false);
+  }
+}
