@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:protify/debug/logs.dart';
 import 'package:provider/provider.dart';
 
 class LibraryProvider extends ChangeNotifier {
@@ -28,13 +29,10 @@ class LibraryProvider extends ChangeNotifier {
     }
   }
 
-  Map<String, dynamic> _itemSelected = {};
+  Map<String, dynamic>? _itemSelected;
   get itemSelected => _itemSelected;
   void changeItemSelected(Map<String, dynamic>? value) {
-    if (value == null)
-      _itemSelected = {};
-    else
-      _itemSelected = value;
+    _itemSelected = value;
   }
 
   Map<String, List<int>> _itemsCategories = {};
@@ -51,6 +49,14 @@ class LibraryProvider extends ChangeNotifier {
     _itemsCategories[value]!.add(itemIndex);
   }
 
+  bool _screenUpdate = true;
+  get screenUpdate => _screenUpdate;
+  void changeScreenUpdate(bool value) => _screenUpdate = value;
+  void updateScreen([bool? value]) {
+    notifyListeners();
+    DebugLogs.print("Library Screen Refreshed");
+  }
+
   String _selectedItemCategory = "Uncategorized";
   get selectedItemCategory => _selectedItemCategory;
   void changeSelectedItemCategory(String value) {
@@ -63,8 +69,27 @@ class LibraryProvider extends ChangeNotifier {
     _mousePosition = value;
   }
 
+  /// Automatically cleans the item selection
+  void clearItemSelection() {
+    _itemIndex = null;
+    _itemSelected = null;
+    DebugLogs.print("Library Data Selection Clean");
+  }
+
+  /// Change datas to the default datas
+  void clearDatas() {
+    _items = [];
+    _itemsCategories = {};
+    DebugLogs.print("Library Data Clean");
+  }
+
   /// Returns the provider for getting the datas
   static LibraryProvider getProvider(BuildContext context) {
     return Provider.of<LibraryProvider>(context, listen: false);
+  }
+
+  /// Returns the provider for getting the datas with listener
+  static LibraryProvider getProviderListenable(BuildContext context) {
+    return Provider.of<LibraryProvider>(context, listen: true);
   }
 }

@@ -35,7 +35,7 @@ https://github.com/LeandroTheDev/protify/assets/106118473/970d2a94-3671-4a52-814
 
 ### FAQ
 > Editing the game name will change the prefix folder?
-- No, the folder prefix is generated on add game page or editing in edit page
+- No, the prefix folder is generated when adding new game page or editing in edit page
 > When i launch the game its crash and says c++ error
 - Download vcruntime in official microsoft sites, click in the game and use the libs button, select the vcruntime, proceed to installation.
 > When i launch the game its says is missing some random dll
@@ -46,14 +46,16 @@ https://github.com/LeandroTheDev/protify/assets/106118473/970d2a94-3671-4a52-814
 > My steam is installed on a different location and i need to use steam compatibility how can i change?
 - In the preferences page click in ``Steam Compatibility Directory`` and select your steam folder
 > What happens if i remove the default prefix directory in my file manager and change it in preferences to another directory?
-- All games will need to be reconfigured, if not reconfigured the games will still find the old folder and recreate the prefixes there
+- Old games will need to be reconfigured, if not reconfigured the games will still find the old folder and recreate the prefixes there
 > Where is the best location to keep the protify in my device?
-- In your home directory anywhere you want, the protify will automatically setup everthing for you in the first launch, if you change the location remember to clear the data
+- In your home directory anywhere you want, the protify will automatically setup everthing for you in the first launch, if you change the location remember to clear the data or manually change it in preferences page.
+> I can open this program with sudo privilegies?
+- No. this is not tested, protify is builded to be used in user ambient.
 
 ### Building
 To build this project is very simple, all you need is to download the [flutter](https://docs.flutter.dev/get-started/install) framework and his dependencies to build, then create a project using ``flutter create protify``, paste all the files from this project in there, build using the ``flutter build linux --release``, the release will be stored in ``build/linux/x64/release/bundle/``.
 
-If you are trying to debug the application dont forget to add the lib/protify_finder.txt!!! in project folder or the application will not work propertly.
+If you are trying to debug the application AND you dont have the protify installed in your user dont forget to add the lib/protify_finder.txt in project folder or the application will not work propertly, if you have the protify installed in your computer the debug will consider the protify installed folder has a data storage, this is not a problem for the program.
 
 Take a look in [Protify Server](https://github.com/LeandroTheDev/protify_server) to view more information about the store/friends features to make your own customizations.
 

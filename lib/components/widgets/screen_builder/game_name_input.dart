@@ -13,6 +13,7 @@ class _GameNameInputState extends State<GameNameInput> {
   Widget build(BuildContext context) {
     ScreenBuilderProvider provider = ScreenBuilderProvider.getProvider(context);
     TextEditingController gameName = TextEditingController();
+    gameName.text = provider.datas["ItemName"] ?? "";
     gameName.addListener(() => provider.changeData("ItemName", gameName.text));
     return SizedBox(
       height: 60,

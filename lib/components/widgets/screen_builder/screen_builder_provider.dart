@@ -45,18 +45,35 @@ class ScreenBuilderProvider extends ChangeNotifier {
   static void readData(BuildContext context, Map item) {
     final ScreenBuilderProvider provider = ScreenBuilderProvider.getProvider(context);
     provider.setData({
-      "ItemName": item["ItemName"] ?? "Undefined",
+      "ItemName": item["ItemName"] == "" ? null : item["ItemName"], // Because this is from a input it can be any empty string
       "LaunchCommand": item["LaunchCommand"] ?? "",
-      "Arguments": item["Arguments"] ?? "",
-      "ReaperID": item["ReaperID"] ?? "",
+      "ArgumentsCommand": item["ArgumentsCommand"] ?? "",
       "EnableNvidiaCompile": item["EnableNvidiaCompile"] ?? false,
-      "EnableProtonScript": item["EnableProtonScript"] ?? false,
       "EnableSteamCompatibility": item["EnableSteamCompatibility"] ?? false,
       "EnableSteamWrapper": item["EnableSteamWrapper"] ?? false,
-      "SelectedGame": item["SelectedGame"],
+      "SelectedReaperID": item["SelectedReaperID"] == "" ? null : item["SelectedReaperID"], // Because this is from a input it can be any empty string
+      "SelectedItem": item["SelectedItem"],
       "SelectedPrefix": item["SelectedPrefix"],
       "SelectedLauncher": item["SelectedLauncher"],
       "SelectedRuntime": item["SelectedRuntime"],
+    });
+  }
+
+  /// Reads the specific data for the library installation
+  static void readLibraryData(BuildContext context, Map item) {
+    final ScreenBuilderProvider provider = ScreenBuilderProvider.getProvider(context);
+    provider.setData({
+      "ItemName": item["ItemName"] ?? "Undefined",
+      "SelectedPrefix": item["SelectedPrefix"],
+    });
+  }
+
+  /// Reads the specific data for the library installation
+  static void readDllData(BuildContext context, Map item) {
+    final ScreenBuilderProvider provider = ScreenBuilderProvider.getProvider(context);
+    provider.setData({
+      "ItemName": item["ItemName"] ?? "Undefined",
+      "SelectedPrefix": item["SelectedPrefix"],
     });
   }
 }

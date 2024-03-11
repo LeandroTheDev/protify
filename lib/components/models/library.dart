@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:protify/components/screens/add_item.dart';
 import 'package:protify/components/screens/edit_item.dart';
 import 'package:protify/components/models/dialogs.dart';
+import 'package:protify/components/screens/install_dll_item.dart';
+import 'package:protify/components/screens/install_game_item.dart';
+import 'package:protify/components/screens/install_libs_item.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
 import 'package:protify/data/save_datas.dart';
 import 'package:protify/data/user_preferences.dart';
@@ -23,7 +26,15 @@ class LibraryModel {
   }
 
   /// Create a modal for editing new item
-  static Future<void> editItemModal(BuildContext context, int index) {
+  static Future<void> editItemModal(BuildContext context, int? index) async {
+    if (index == null) {
+      DialogsModel.showAlert(
+        context,
+        title: "Error Loading Game",
+        content: "Cannot load the game, index is bugged",
+      );
+      return;
+    }
     return SaveDatas.readData("items", "string").then(
       (stringGames) {
         final List items = jsonDecode(stringGames ?? "[]");
@@ -46,6 +57,80 @@ class LibraryModel {
     );
   }
 
+  /// Create a modal for installing libraries to the item
+  static Future<void> installLibsItemModal(BuildContext context, int? index) async {
+    if (index == null) {
+      DialogsModel.showAlert(
+        context,
+        title: "Error Loading Game",
+        content: "Cannot load the game, index is bugged",
+      );
+      return;
+    }
+    return SaveDatas.readData("items", "string").then(
+      (stringGames) {
+        final List items = jsonDecode(stringGames ?? "[]");
+        if (items[index] == null) {
+          DialogsModel.showAlert(
+            context,
+            title: "Error Loading Game",
+            content: "Cannot load the game, the data is corrupted",
+          );
+          return null;
+        }
+        ScreenBuilderProvider.readLibraryData(context, items[index]);
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Theme.of(context).primaryColor,
+          isScrollControlled: true,
+          builder: (BuildContext context) => const InstallLibsScreen(),
+        );
+      },
+    );
+  }
+
+  /// Create a modal for installing dlls to the item
+  static Future<void> installDllItemModal(BuildContext context, int? index) async {
+    if (index == null) {
+      DialogsModel.showAlert(
+        context,
+        title: "Error Loading Game",
+        content: "Cannot load the game, index is bugged",
+      );
+      return;
+    }
+    return SaveDatas.readData("items", "string").then(
+      (stringGames) {
+        final List items = jsonDecode(stringGames ?? "[]");
+        if (items[index] == null) {
+          DialogsModel.showAlert(
+            context,
+            title: "Error Loading Game",
+            content: "Cannot load the game, the data is corrupted",
+          );
+          return null;
+        }
+        ScreenBuilderProvider.readDllData(context, items[index]);
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Theme.of(context).primaryColor,
+          isScrollControlled: true,
+          builder: (BuildContext context) => const InstallDllScreen(),
+        );
+      },
+    );
+  }
+
+  /// Create a modal for installing a new item
+  static Future installItemModal(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).primaryColor,
+      isScrollControlled: true,
+      builder: (BuildContext context) => const InstallGameScreen(),
+    );
+  }
+
   /// Show a dialog to select the launchers located in the folder
   static Future<String?> selectLauncher(
     BuildContext context,
@@ -63,7 +148,7 @@ class LibraryModel {
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.5,
               child: AlertDialog(
-                backgroundColor: Theme.of(context).colorScheme.tertiary,
+                backgroundColor: Theme.of(context).primaryColor,
                 title: Text("Select the Proton", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
                 content: SizedBox(
                   height: MediaQuery.of(context).size.width * 0.2,
@@ -132,7 +217,7 @@ class LibraryModel {
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.5,
               child: AlertDialog(
-                backgroundColor: Theme.of(context).colorScheme.tertiary,
+                backgroundColor: Theme.of(context).primaryColor,
                 title: Text("Select the Runtime", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
                 content: SizedBox(
                   height: MediaQuery.of(context).size.width * 0.2,
@@ -189,10 +274,10 @@ class LibraryModel {
   }
 
   /// Show a dialog to select the protons located in the folder, need the list of categories
-  static Future<String> selectCategory(BuildContext context, {required Map<String, List<int>> categories}) async {
+  static Future<String> selectCategory(BuildContext context, {required Map<String, List<int>> categories, bool disableNew = false}) async {
     Future<String> chooseCategory(List<String> categoriesList) async {
       Completer<String> completer = Completer<String>();
-      categoriesList.add("Add New Category");
+      if (!disableNew) categoriesList.add("Add New Category");
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -200,7 +285,7 @@ class LibraryModel {
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.5,
               child: AlertDialog(
-                backgroundColor: Theme.of(context).colorScheme.tertiary,
+                backgroundColor: Theme.of(context).primaryColor,
                 title: Text("Select the Category", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
                 content: SizedBox(
                   height: MediaQuery.of(context).size.width * 0.2,

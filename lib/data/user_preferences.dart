@@ -12,30 +12,29 @@ import 'package:shared_preferences/shared_preferences.dart';
 class UserPreferences with ChangeNotifier {
   /// Returns a list of all games saved in device
   static Future<List> getItems() async {
-    final games = jsonDecode(await SaveDatas.readData("items", "string") ?? "[]");
-    return games;
+    final items = jsonDecode(await SaveDatas.readData("items", "string") ?? "[]");
+    return items;
   }
 
   /// Remove a specific game by the index, needs the games, if context is not provided,
   /// the message asking will not appear
-  static Future<List> removeItem(int index, List games, [context]) async {
+  static Future<List> removeItem(int index, List items, [context]) async {
     if (context != null) {
       final result = await DialogsModel.showQuestion(context, title: "Remove Game", content: "Do you wish to remove this game from your library?");
-      if (!result) return games;
+      if (!result) return items;
     }
     //Removing
-    games.removeAt(index);
+    items.removeAt(index);
     //Update new data
-    await SaveDatas.saveData('games', jsonEncode(games));
-    return games;
+    await SaveDatas.saveData('items', jsonEncode(items));
+    return items;
   }
 
   /// Load all preferences into provider context
   static Future loadPreference(BuildContext context) async {
-    // ignore: use_build_context_synchronously
+    // Provider Declarations
     final UserPreferences userPreference = Provider.of<UserPreferences>(context, listen: false);
     final ConnectionModel connection = Provider.of<ConnectionModel>(context, listen: false);
-    final Map preferences = jsonDecode(await SaveDatas.readData("preferences", "string") ?? "{}");
 
     //Default variables
     final username = Platform.isLinux ? split(current)[2] : "Protify User";
@@ -61,74 +60,46 @@ class UserPreferences with ChangeNotifier {
         }
       }
     } else {
-      // ignore: use_build_context_synchronously
       DialogsModel.showAlert(context, title: "Error", content: "Cannot find the protify_finder.txt in protify/lib, check if exists, or if /home/$username exists");
       protifyDirectory = "/home/$username/protify";
     }
-    const defaultHttpAddress = "localhost:6161";
-    const defaultSocketAddress = "localhost:6262";
-    final defaultGameInstallDirectory = Platform.isLinux ? "/home/$username" : "\\";
-    final defaultGameDirectory = Platform.isLinux ? "/home/$username" : "\\";
-    final defaultPrefixDirectory = join(protifyDirectory, "prefixes");
-    final defaultRuntimeDirectory = join(protifyDirectory, "runtimes");
-    final defaultWinePrefixDirectory = join(defaultPrefixDirectory, "Wine");
-    final defaultProtonDirectory = join(protifyDirectory, "protons");
-    const steamCompatibilityDirectory = "~/.local/share/Steam";
-    const defaultLanguage = "english";
+    //Object Creation
+    final Map defaultData = {
+      "Language": "english",
+      "HttpAddress": "localhost:6161",
+      "SocketAddress": "localhost:6262",
+      "Username": username,
+      "ProtifyDirectory": protifyDirectory,
+      "DefaultGameInstallDirectory": Platform.isLinux ? "/home/$username" : "\\",
+      "DefaultGameDirectory": Platform.isLinux ? "/home/$username" : "\\",
+      "DefaultPrefixDirectory": join(protifyDirectory, "prefixes"),
+      "DefaultRuntimeDirectory": join(protifyDirectory, "runtimes"),
+      "DefaultWinePrefixDirectory": join(protifyDirectory, "prefixes", "Wine"),
+      "DefaultProtonDirectory": join(protifyDirectory, "protons"),
+      "SteamCompatibilityDirectory": "/home/$username/.local/share/Steam",
+      "StartWindowHeight": 600.0,
+      "StartWindowWidth": 800.0,
+      "DefaultCategory": "Uncategorized",
+    };
 
-    // Check if preferences is empty
-    if (preferences.isEmpty) {
-      //Object Creation
-      final Map saveData = {
-        "Language": defaultLanguage,
-        "HttpAddress": defaultHttpAddress,
-        "SocketAddress": defaultSocketAddress,
-        "Username": username,
-        "ProtifyDirectory": protifyDirectory,
-        "DefaultGameInstallDirectory": defaultGameInstallDirectory,
-        "DefaultGameDirectory": defaultGameDirectory,
-        "DefaultPrefixDirectory": defaultPrefixDirectory,
-        "DefaultRuntimeDirectory": defaultRuntimeDirectory,
-        "DefaultWinePrefixDirectory": defaultWinePrefixDirectory,
-        "DefaultProtonDirectory": defaultProtonDirectory,
-        "SteamCompatibilityDirectory": steamCompatibilityDirectory,
-        "StartWindowHeight": 600.0,
-        "StartWindowWidth": 800.0,
-      };
-      //Saving Preferences
-      await SaveDatas.saveData("preferences", jsonEncode(saveData));
-      //Updating Providers
-      userPreference.changeLanguage(saveData["Language"]);
-      connection.changeHttpAddress(saveData["HttpAddress"]);
-      connection.changeSocketAddress(saveData["SocketAddress"]);
-      userPreference.changeUsername(saveData["Username"]);
-      userPreference.changeProtifyDirectory(saveData["ProtifyDirectory"]);
-      userPreference.changeDefaultGameInstallDirectory(saveData["DefaultGameInstallDirectory"]);
-      userPreference.changeDefaultGameDirectory(saveData["DefaultGameDirectory"]);
-      userPreference.changeDefaultPrefixDirectory(saveData["DefaultPrefixDirectory"]);
-      userPreference.changeDefaultRuntimeDirectory(saveData["DefaultRuntimeDirectory"]);
-      userPreference.changeDefaultWineprefixDirectory(saveData["DefaultWinePrefixDirectory"]);
-      userPreference.changeDefaultProtonDirectory(saveData["DefaultProtonDirectory"]);
-      userPreference.changeSteamCompatibilityDirectory(saveData["SteamCompatibilityDirectory"]);
-      userPreference.changeStartWindowHeight(saveData["StartWindowHeight"]);
-      userPreference.changeStartWindowWidth(saveData["StartWindowWidth"]);
-      return;
-    }
+    //Load preferences
+    final Map storedPreference = jsonDecode(await SaveDatas.readData("preferences", "string") ?? "{}");
     // Updating Providers
-    userPreference.changeLanguage(preferences["Language"] ?? defaultLanguage);
-    connection.changeHttpAddress(preferences["HttpAddress"] ?? defaultHttpAddress);
-    connection.changeSocketAddress(preferences["SocketAddress"] ?? defaultSocketAddress);
-    userPreference.changeUsername(preferences["Username"] ?? username);
-    userPreference.changeProtifyDirectory(preferences["ProtifyDirectory"] ?? protifyDirectory);
-    userPreference.changeDefaultGameInstallDirectory(preferences["DefaultGameInstallDirectory"] ?? defaultGameInstallDirectory);
-    userPreference.changeDefaultGameDirectory(preferences["DefaultGameDirectory"] ?? defaultGameDirectory);
-    userPreference.changeDefaultPrefixDirectory(preferences["DefaultPrefixDirectory"] ?? defaultPrefixDirectory);
-    userPreference.changeDefaultRuntimeDirectory(preferences["DefaultRuntimeDirectory"] ?? defaultRuntimeDirectory);
-    userPreference.changeDefaultWineprefixDirectory(preferences["DefaultWinePrefixDirectory"] ?? defaultWinePrefixDirectory);
-    userPreference.changeDefaultProtonDirectory(preferences["DefaultProtonDirectory"] ?? defaultProtonDirectory);
-    userPreference.changeSteamCompatibilityDirectory(preferences["SteamCompatibilityDirectory"] ?? steamCompatibilityDirectory);
-    userPreference.changeStartWindowHeight(preferences["StartWindowHeight"] ?? 600.0);
-    userPreference.changeStartWindowWidth(preferences["StartWindowWidth"] ?? 800.0);
+    userPreference.changeLanguage(storedPreference["Language"] ?? defaultData["Language"]);
+    connection.changeHttpAddress(storedPreference["HttpAddress"] ?? defaultData["HttpAddress"]);
+    connection.changeSocketAddress(storedPreference["SocketAddress"] ?? defaultData["SocketAddress"]);
+    userPreference.changeUsername(storedPreference["Username"] ?? defaultData["Username"]);
+    userPreference.changeProtifyDirectory(storedPreference["ProtifyDirectory"] ?? defaultData["ProtifyDirectory"]);
+    userPreference.changeDefaultGameInstallDirectory(storedPreference["DefaultGameInstallDirectory"] ?? defaultData["DefaultGameInstallDirectory"]);
+    userPreference.changeDefaultGameDirectory(storedPreference["DefaultGameDirectory"] ?? defaultData["DefaultGameDirectory"]);
+    userPreference.changeDefaultPrefixDirectory(storedPreference["DefaultPrefixDirectory"] ?? defaultData["DefaultPrefixDirectory"]);
+    userPreference.changeDefaultRuntimeDirectory(storedPreference["DefaultRuntimeDirectory"] ?? defaultData["DefaultRuntimeDirectory"]);
+    userPreference.changeDefaultWineprefixDirectory(storedPreference["DefaultWinePrefixDirectory"] ?? defaultData["DefaultWinePrefixDirectory"]);
+    userPreference.changeDefaultProtonDirectory(storedPreference["DefaultProtonDirectory"] ?? defaultData["DefaultProtonDirectory"]);
+    userPreference.changeSteamCompatibilityDirectory(storedPreference["SteamCompatibilityDirectory"] ?? defaultData["SteamCompatibilityDirectory"]);
+    userPreference.changeStartWindowHeight(storedPreference["StartWindowHeight"] ?? defaultData["StartWindowHeight"]);
+    userPreference.changeStartWindowWidth(storedPreference["StartWindowWidth"] ?? defaultData["StartWindowWidth"]);
+    userPreference.changeDefaultCategory(storedPreference["DefaultCategory"] ?? defaultData["DefaultCategory"]);
   }
 
   /// Save a preference option in data storage
@@ -253,6 +224,14 @@ class UserPreferences with ChangeNotifier {
         if (value < 230) {value = 230},
         _startWindowWidth = value,
         savePreferencesInData(option: "StartWindowWidth", value: value),
+      };
+
+  //Default Category when load
+  String _defaultCategory = "";
+  get defaultCategory => _defaultCategory;
+  void changeDefaultCategory(String value) => {
+        _defaultCategory = value,
+        savePreferencesInData(option: "DefaultCategory", value: value),
       };
 
   static UserPreferences getProvider(BuildContext context) {

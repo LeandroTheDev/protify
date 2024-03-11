@@ -4,6 +4,8 @@ import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:protify/components/models/dialogs.dart';
+import 'package:protify/components/models/library.dart';
+import 'package:protify/components/widgets/library/library_provider.dart';
 import 'package:protify/data/save_datas.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:protify/pages/homepage.dart';
@@ -24,6 +26,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
   @override
   Widget build(BuildContext context) {
     final UserPreferences userPreferences = Provider.of<UserPreferences>(context, listen: false);
+    final LibraryProvider libraryProvider = LibraryProvider.getProvider(context);
     final windowSize = MediaQuery.of(context).size;
 
     if (!loaded) {
@@ -279,7 +282,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                               onPressed: () => DialogsModel.showAlert(
                                 context,
                                 title: "Wineprefix Directory",
-                                content: "This is a special folder just for Wine, actually this is not used",
+                                content: "In some cases the proton should use the wine folder for some reason, so setting this when this happens the wine folder will be created here and not in home folder.",
                               ),
                             ),
                           ],
@@ -395,6 +398,32 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         ),
                         //Spacer
                         const SizedBox(height: 30),
+                        //Default Category
+                        Row(
+                          children: [
+                            //Button
+                            ElevatedButton(
+                              onPressed: () => LibraryModel.selectCategory(context, categories: libraryProvider.itemsCategories, disableNew: true).then(
+                                // Update the Category
+                                (category) => userPreferences.changeDefaultCategory(category),
+                              ),
+                              child: const Text("Change Default Category"),
+                            ),
+                            //Info Button
+                            IconButton(
+                              icon: const Icon(Icons.info),
+                              color: Theme.of(context).secondaryHeaderColor,
+                              onPressed: () => DialogsModel.showAlert(
+                                context,
+                                title: "Default Category",
+                                content: "The default category to show up when opening the protify",
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        //Spacer
+                        const SizedBox(height: 30),
                         //Clear Section
                         FittedBox(
                           child: Row(
@@ -415,6 +444,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                                             (value) {
                                               Navigator.pop(context);
                                               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+                                              LibraryProvider.getProvider(context).changeScreenUpdate(true);
+                                              LibraryProvider.getProvider(context).updateScreen();
                                             },
                                           ),
                                         )
@@ -443,6 +474,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                                             (value) {
                                               Navigator.pop(context);
                                               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+                                              LibraryProvider.getProvider(context).changeScreenUpdate(true);
+                                              LibraryProvider.getProvider(context).updateScreen();
                                             },
                                           ),
                                         )
@@ -466,9 +499,11 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                                       //Clearing data
                                       ? SaveDatas.clearGames().then(
                                           //Reloading data
-                                          (_) => {
-                                            Navigator.pop(context),
-                                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage())),
+                                          (_) {
+                                            Navigator.pop(context);
+                                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+                                            LibraryProvider.getProvider(context).changeScreenUpdate(true);
+                                            LibraryProvider.getProvider(context).updateScreen();
                                           },
                                         )
                                       : () {},

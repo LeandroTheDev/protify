@@ -11,7 +11,7 @@ class CategoryList extends StatefulWidget {
 class _CategoryListState extends State<CategoryList> {
   @override
   Widget build(BuildContext context) {
-    final LibraryProvider libraryProvider = LibraryProvider.getProvider(context);
+    final LibraryProvider libraryProvider = LibraryProvider.getProviderListenable(context);
     final categoriesList = libraryProvider.itemsCategories.keys.toList();
     final screenSize = MediaQuery.of(context).size;
     return SizedBox(
@@ -20,7 +20,12 @@ class _CategoryListState extends State<CategoryList> {
         shrinkWrap: true,
         itemCount: categoriesList.length,
         itemBuilder: (context, index) => GestureDetector(
-          onTap: () => libraryProvider.changeSelectedItemCategory(categoriesList[index]),
+          onTap: () => {
+            libraryProvider.clearItemSelection(),
+            libraryProvider.hideItemInfo(),
+            libraryProvider.changeSelectedItemCategory(categoriesList[index]),
+            libraryProvider.updateScreen(),
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
             child: Container(

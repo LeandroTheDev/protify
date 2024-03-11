@@ -21,19 +21,19 @@ class _SelectPrefixButtonState extends State<SelectPrefixButton> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        //Selected Launcher
+        //Selected Prefix
         Text(
           provider.datas["SelectedPrefix"] ?? "Default Prefix",
           style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
         ),
         //Spacer
         const SizedBox(height: 5),
-        //Select Launcher Button
+        //Select Prefix Button
         ElevatedButton(
           onPressed: () => FilesystemPicker.open(
             context: context,
             rootDirectory: Directory(preferences.defaultPrefixDirectory),
-            fsType: FilesystemType.file,
+            fsType: FilesystemType.folder,
             folderIconColor: Theme.of(context).secondaryHeaderColor,
           ).then((selectedPrefix) => setState(
                 () => provider.changeData("SelectedPrefix", selectedPrefix),

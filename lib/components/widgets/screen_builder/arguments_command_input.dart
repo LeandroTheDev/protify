@@ -13,8 +13,8 @@ class _ArgumentsCommandInputState extends State<ArgumentsCommandInput> {
   Widget build(BuildContext context) {
     ScreenBuilderProvider provider = ScreenBuilderProvider.getProvider(context);
     TextEditingController argumentsCommand = TextEditingController();
-    argumentsCommand.text = provider.datas["Arguments"] ?? "";
-    argumentsCommand.addListener(() => provider.changeData("Arguments", argumentsCommand.text));
+    argumentsCommand.text = provider.datas["ArgumentsCommand"] ?? "";
+    argumentsCommand.addListener(() => provider.changeData("ArgumentsCommand", argumentsCommand.text));
     return SizedBox(
       height: 60,
       child: TextField(

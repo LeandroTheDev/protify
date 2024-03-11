@@ -2,44 +2,42 @@ import 'dart:io';
 
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
-import 'package:protify/data/user_preferences.dart';
 
 // ignore: must_be_immutable
-class SelectGameButton extends StatefulWidget {
-  const SelectGameButton({super.key});
+class SelectDllInstallationButton extends StatefulWidget {
+  const SelectDllInstallationButton({super.key});
   @override
-  State<SelectGameButton> createState() => _SelectGameButtonState();
+  State<SelectDllInstallationButton> createState() => _SelectDllInstallationButtonState();
 }
 
-class _SelectGameButtonState extends State<SelectGameButton> {
+class _SelectDllInstallationButtonState extends State<SelectDllInstallationButton> {
   @override
   Widget build(BuildContext context) {
     ScreenBuilderProvider provider = ScreenBuilderProvider.getProvider(context);
-    UserPreferences preferences = UserPreferences.getProvider(context);
+    // UserPreferences preferences = UserPreferences.getProvider(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        //Selected Launcher
+        //Selected Prefix
         Text(
-          provider.datas["SelectedItem"] == null ? "No Game Selected" : basename(provider.datas["SelectedItem"]),
+          provider.datas["SelectedDllInstallation"] ?? "Default Dll Installation",
           style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
         ),
         //Spacer
         const SizedBox(height: 5),
-        //Select Launcher Button
+        //Select Prefix Button
         ElevatedButton(
           onPressed: () => FilesystemPicker.open(
             context: context,
-            rootDirectory: Directory(preferences.defaultGameDirectory),
-            fsType: FilesystemType.file,
+            rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/home/"),
+            fsType: FilesystemType.folder,
             folderIconColor: Theme.of(context).secondaryHeaderColor,
-          ).then((selectedGame) => setState(
-                () => provider.changeData("SelectedItem", selectedGame),
+          ).then((selectedPrefix) => setState(
+                () => provider.changeData("SelectedDllInstallation", selectedPrefix),
               )),
-          child: const Text("Select Game"),
+          child: const Text("Select Dll Installation"),
         ),
       ],
     );

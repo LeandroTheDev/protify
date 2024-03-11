@@ -18,7 +18,7 @@ class DialogsModel {
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.5,
             child: AlertDialog(
-              backgroundColor: Theme.of(context).colorScheme.tertiary,
+              backgroundColor: Theme.of(context).primaryColor,
               title: Text(title, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
               content: Text(content, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
               actions: [

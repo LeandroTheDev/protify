@@ -1,9 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:protify/components/widgets/library/library_provider.dart';
+import 'package:protify/components/models/dialogs.dart';
+import 'package:protify/components/models/launcher.dart';
 import 'package:protify/components/widgets/screen_builder/arguments_command_input.dart';
-import 'package:protify/components/widgets/screen_builder/game_name_input.dart';
 import 'package:protify/components/widgets/screen_builder/launch_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/nvidia_shader_compile_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/select_game_button.dart';
@@ -14,20 +12,18 @@ import 'package:protify/components/widgets/screen_builder/steam_compatibility_ch
 import 'package:protify/components/widgets/screen_builder/steam_reaper_input.dart';
 import 'package:protify/components/widgets/screen_builder/steam_wrapper_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
-import 'package:protify/data/save_datas.dart';
 
-class EditItemScreen extends StatefulWidget {
-  const EditItemScreen({super.key});
+class InstallLibsScreen extends StatefulWidget {
+  const InstallLibsScreen({super.key});
 
   @override
-  State<EditItemScreen> createState() => _EditItemScreenState();
+  State<InstallLibsScreen> createState() => _InstallLibsScreenState();
 }
 
-class _EditItemScreenState extends State<EditItemScreen> {
+class _InstallLibsScreenState extends State<InstallLibsScreen> {
   @override
   Widget build(BuildContext context) {
     final ScreenBuilderProvider provider = ScreenBuilderProvider.getProvider(context);
-    final LibraryProvider libraryProvider = LibraryProvider.getProvider(context);
 
     return SizedBox(
       height: MediaQuery.of(context).size.height,
@@ -56,21 +52,29 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     //Spacer
                     const SizedBox(height: 5),
                     //Screen Title
-                    Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        'Editing ${provider.datas["ItemName"] ?? "Unknown"}',
-                        style: TextStyle(
-                          color: Theme.of(context).secondaryHeaderColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Library ${provider.datas["ItemName"] ?? "Unknown"}',
+                          style: TextStyle(
+                            color: Theme.of(context).secondaryHeaderColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
                         ),
-                      ),
+                        //Info Button
+                        IconButton(
+                          icon: const Icon(Icons.info),
+                          color: Theme.of(context).secondaryHeaderColor,
+                          onPressed: () => DialogsModel.showAlert(
+                            context,
+                            title: "Library Installation",
+                            content: "Allows you to install and execute .exe into your prefix, like the vcruntimes,drivers, etc using proton or native wine",
+                          ),
+                        ),
+                      ],
                     ),
-                    //Spacer
-                    const SizedBox(height: 15),
-                    //Game Input
-                    const GameNameInput(),
                     //Spacer
                     const SizedBox(height: 15),
                     //Proton
@@ -113,24 +117,14 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     const SteamWrapperCheckbox(),
                     //Spacer
                     const SizedBox(height: 15),
-                    //Confirmation Button
+                    //Installation Button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          SaveDatas.readData("items", "string").then((stringItems) {
-                            // Check if doesnt exist items
-                            final items = jsonDecode(stringItems ?? "[]");
-                            // Edit new game
-                            items[libraryProvider.itemIndex] = ScreenBuilderProvider.buildData(context);
-                            // Save the game
-                            SaveDatas.saveData("items", jsonEncode(items));
-                            libraryProvider.changeItemSelected(items[libraryProvider.itemIndex]);
-                            libraryProvider.changeItems(items);
-                            Navigator.pop(context);
-                          });
+                          LauncherModel.launchItem(context, ScreenBuilderProvider.buildData(context));
                         },
-                        child: const Text("Confirm"),
+                        child: const Text("Install"),
                       ),
                     ),
                     //Spacer

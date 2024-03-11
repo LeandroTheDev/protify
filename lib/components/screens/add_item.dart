@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:protify/components/widgets/library/library_provider.dart';
 import 'package:protify/components/widgets/screen_builder/arguments_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/game_name_input.dart';
 import 'package:protify/components/widgets/screen_builder/launch_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/nvidia_shader_compile_checkbox.dart';
-import 'package:protify/components/widgets/screen_builder/proton_script_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/select_game_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_prefix_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_launcher_button.dart';
@@ -26,6 +26,8 @@ class AddItemScreen extends StatefulWidget {
 class _AddItemScreenState extends State<AddItemScreen> {
   @override
   Widget build(BuildContext context) {
+    ScreenBuilderProvider.resetProviderDatas(context);
+
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: Padding(
@@ -110,10 +112,6 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     const SteamWrapperCheckbox(),
                     //Spacer
                     const SizedBox(height: 15),
-                    //Proton Script
-                    const ProtonScriptCheckbox(),
-                    //Spacer
-                    const SizedBox(height: 15),
                     //Confirmation Button
                     SizedBox(
                       width: double.infinity,
@@ -122,11 +120,17 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           SaveDatas.readData("items", "string").then((stringItem) {
                             // Check if doesnt exist games
                             final items = jsonDecode(stringItem ?? "[]");
+                            // Create default variables and build the data
+                            ScreenBuilderProvider.readData(context, ScreenBuilderProvider.buildData(context));
+                            final item = ScreenBuilderProvider.buildData(context);
+
                             // Add the new game
-                            items.add(ScreenBuilderProvider.buildData(context));
+                            items.add(item);
                             // Save the game
                             SaveDatas.saveData("items", jsonEncode(items));
                             Navigator.pop(context);
+                            LibraryProvider.getProvider(context).changeScreenUpdate(true);
+                            LibraryProvider.getProvider(context).updateScreen();
                           });
                         },
                         child: const Text("Confirm"),

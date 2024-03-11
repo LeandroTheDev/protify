@@ -14,8 +14,8 @@ class _SteamReaperInputState extends State<SteamReaperInput> {
   Widget build(BuildContext context) {
     ScreenBuilderProvider provider = ScreenBuilderProvider.getProvider(context);
     TextEditingController reaperId = TextEditingController();
-    reaperId.text = provider.datas["ReaperID"] ?? "";
-    reaperId.addListener(() => provider.changeData("ReaperID", reaperId.text));
+    reaperId.text = provider.datas["SelectedReaperID"] ?? "";
+    reaperId.addListener(() => provider.changeData("SelectedReaperID", reaperId.text));
     return SizedBox(
       height: 60,
       child: TextField(

@@ -22,7 +22,7 @@ class ItemInfoWidget {
                   SizedBox(
                     width: 50,
                     child: Text(
-                      libraryProvider.itemSelected["ItemName"] ?? "Unknown",
+                      libraryProvider.items[libraryProvider.itemIndex]["ItemName"] ?? "Unknown",
                       style: const TextStyle(color: Colors.white),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -58,9 +58,11 @@ class ItemInfoWidget {
                       LibraryModel.selectCategory(context, categories: libraryProvider.itemsCategories).then(
                         // Update the Category
                         (category) => {
-                          UserPreferences.updateItemCategory(libraryProvider.itemIndex, libraryProvider.itemsCategories).then(
-                            (itemUpdated) {
-                              libraryProvider.changeItems(itemUpdated);
+                          UserPreferences.updateItemCategory(libraryProvider.itemIndex, category).then(
+                            (itemsUpdated) {
+                              libraryProvider.changeItems(itemsUpdated);
+                              libraryProvider.changeScreenUpdate(true);
+                              libraryProvider.updateScreen();
                             },
                           ),
                         },
@@ -79,13 +81,18 @@ class ItemInfoWidget {
                   const SizedBox(height: 10),
                   // Remove Game
                   GestureDetector(
-                    onTap: () => {
+                    onTap: () {
                       // Close the overlay
-                      libraryProvider.hideItemInfo(),
+                      libraryProvider.hideItemInfo();
+                      final previousLength = libraryProvider.items.length;
                       // Remove the game
-                      UserPreferences.removeItem(libraryProvider.itemIndex, libraryProvider.itemIndex, context).then((itemsUpdated) {
-                        libraryProvider.changeItems(itemsUpdated);
-                      }),
+                      UserPreferences.removeItem(libraryProvider.itemIndex, libraryProvider.items, context).then((itemsUpdated) {
+                        // Check if something changed
+                        if (previousLength != itemsUpdated.length) {
+                          libraryProvider.changeScreenUpdate(true);
+                          libraryProvider.updateScreen();
+                        }
+                      });
                     },
                     child: const SizedBox(
                       width: 70,
