@@ -108,6 +108,7 @@ class UserPreferences with ChangeNotifier {
     SaveDatas.readData("preferences", "string").then(
       //Saving DefaultGameDirectory Preference
       (preferences) {
+        preferences ??= "{}";
         final updatedPreferences = jsonDecode(preferences);
         //Updating the value
         updatedPreferences[option] = value;

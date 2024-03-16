@@ -62,7 +62,7 @@ class LauncherModel {
     }
     // Check Steam Runtime
     if (item["SelectedRuntime"] != null) {
-      checkEnviroments += '"${join(item["SteamRuntimeDirectory"], "_v2-entry-point")}" --verb=waitforexitandrun -- ';
+      checkEnviroments += '"${join(preferences.defaultRuntimeDirectory, item["SelectedRuntime"], "_v2-entry-point")}" --verb=waitforexitandrun -- ';
     }
 
     //Proton full command
