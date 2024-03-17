@@ -18,6 +18,11 @@ This software is builded thinking in easily open your games and configure prefix
 - Friends List
 - Download Games
 
+### Considerations
+In some cases running a game using the steam works but using the protify maybe not work, i don't know why this happens, feel free to sugest new configurations and commands to improve the protify.
+
+In terminal log after starting the game/program you can simple click on the log you want to copy.
+
 https://github.com/LeandroTheDev/protify/assets/106118473/b177c297-b642-4af4-baef-d2f6b5c9ecb4
 
 https://github.com/LeandroTheDev/protify/assets/106118473/970d2a94-3671-4a52-8145-ae6bba9ff891

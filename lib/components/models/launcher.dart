@@ -26,6 +26,7 @@ class LauncherModel {
     final String protonExecutable = join(protonDirectory, "proton");
     final String itemPrefix = item["SelectedPrefix"] ?? join(preferences.defaultPrefixDirectory, item["ItemName"]);
     final String itemDirectory = item["SelectedItem"] ?? "";
+    final String launchCommand = item["LaunchCommand"] ?? "";
     final String argumentsCommand = item["ArgumentsCommand"] ?? "";
     String checkEnviroments = 'STEAM_RUNTIME=3 STEAM_COMPAT_DATA_PATH="$itemPrefix" WINEPREFIX="${preferences.defaultWineprefixDirectory}" ';
     // Check Steam Compatibility
@@ -49,8 +50,6 @@ class LauncherModel {
       // Creating the variable
       checkEnviroments += '__GL_SHADER_DISK_CACHE_PATH="${preferences.protifyDirectory}/shaders/${item["ItemName"]}" __GL_SHADER_DISK_CACHE=1 __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1 ';
     }
-    // Add arguments throught the enviroments
-    checkEnviroments += "$argumentsCommand ";
 
     // Sensive commands that can break game launch if not launched together
     if (item["SelectedReaperID"] != null) {
@@ -66,7 +65,7 @@ class LauncherModel {
     }
 
     //Proton full command
-    return '$checkEnviroments "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$itemDirectory"';
+    return '$launchCommand $checkEnviroments "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$itemDirectory" $argumentsCommand';
   }
 
   /// Generates the starting commands for running a game or program with Wine
