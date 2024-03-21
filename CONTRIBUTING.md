@@ -56,6 +56,9 @@ Column(
         fsType: FilesystemType.file,
         folderIconColor: Theme.of(context).secondaryHeaderColor,
       ).then((fileSelected) => setState(
+        // This function is for saving the new data in storage
+        // to be accessed by the model launcher in the future
+        // this function accepts all primitive datas
         () => provider.changeData("CustomSelection", fileSelected),
       )),
       child: const Text("Select File"),
@@ -107,3 +110,46 @@ static Future showCustomScreen(BuildContext context) {
   );
 }
 ```
+
+### New options for Launcher/Adding a command in launcher
+- Start by viewing how to create a new [Shared Widget](https://github.com/LeandroTheDev/protify/blob/main/CONTRIBUTING.md#shared-widgets-1)
+- Go to add_item.dart and the edit_item.dart for adding your new shared widget.
+
+- Now you can go to /components/models/launcher.dart
+- Find the function you want to use the new option you created for example ``generateProtonStartCommand``
+
+``Example``
+```dart
+static String generateProtonStartCommand(BuildContext context, Map item) {
+  ...
+  // This options add a new GLOBAL variable
+  if(item["SelectedReaperID"] != null) {
+    checkEnviroments += "${item["SelectedReaperID"]} "; // Consider always adding a space in the string final
+  }
+  ...
+}
+```
+
+### New Preferences
+- Go to /data/user_preferences.dart
+- Find the functionn ``loadPreferences``
+- Find the defaultData variable
+
+``Add your new preference here``
+```dart
+final Map defaultData = {
+  "MyNewPreference": "DefaultPreference",
+};
+```
+
+``Create a new function in the UserPreferences class``
+```dart
+//Default Game Directory
+String _myNewPreference = "";
+get myNewPreference => _myNewPreference;
+void changeMyNewPreference(String value) => {
+  _myNewPreference = value,
+  savePreferencesInData(option: "MyNewPreference", value: value),
+};
+```
+- Now you can acess this preference using the ``final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);``

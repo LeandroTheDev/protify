@@ -19,7 +19,7 @@ This software is builded thinking in easily open your games and configure prefix
 - Download Games
 
 ### Considerations
-In some cases running a game using the steam works but using the protify maybe not work, i don't know why this happens, feel free to sugest new configurations and commands to improve the protify.
+In some cases running a game using the steam works but using the protify maybe not work, i don't know why this happens, feel free to [suggest](https://github.com/LeandroTheDev/protify/discussions/categories/ideas) new configurations and commands to improve the protify.
 
 In terminal log after starting the game/program you can simple click on the log you want to copy.
 
@@ -56,6 +56,10 @@ https://github.com/LeandroTheDev/protify/assets/106118473/970d2a94-3671-4a52-814
 - In your home directory anywhere you want, the protify will automatically setup everthing for you in the first launch, if you change the location remember to clear the data or manually change it in preferences page.
 > I can open this program with sudo privilegies?
 - No. this is not tested, protify is builded to be used in user ambient.
+
+### Contributing
+This project accept contributions and pull requests, feel free to check the [Contribution](https://github.com/LeandroTheDev/protify/blob/main/CONTRIBUTING.md)
+file for this project, this file will help you to contribute.
 
 ### Building
 To build this project is very simple, all you need is to download the [flutter](https://docs.flutter.dev/get-started/install) framework and his dependencies to build, then create a project using ``flutter create protify``, paste all the files from this project in there, build using the ``flutter build linux --release``, the release will be stored in ``build/linux/x64/release/bundle/``.
