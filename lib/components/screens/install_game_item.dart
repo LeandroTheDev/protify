@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:filesystem_picker/filesystem_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:protify/components/models/dialogs.dart';
@@ -17,6 +17,7 @@ import 'package:protify/components/widgets/screen_builder/steam_reaper_input.dar
 import 'package:protify/components/widgets/screen_builder/steam_wrapper_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
 import 'package:protify/data/user_preferences.dart';
+import 'package:protify/debug/logs.dart';
 import 'package:provider/provider.dart';
 
 class InstallGameScreen extends StatefulWidget {
@@ -107,17 +108,22 @@ class _InstallGameScreenState extends State<InstallGameScreen> {
         //Inform the user what he need to do
         await DialogsModel.showAlert(context, title: "Select Installer", content: "The iso sucessfully mounted, select the .exe installer now");
         //Get installer directory
-        item["SelectedItem"] = await FilesystemPicker.open(
-              context: context,
-              rootDirectory: mountDirectory,
-              fsType: FilesystemType.file,
-              folderIconColor: Theme.of(context).secondaryHeaderColor,
-            ) ??
-            "";
-        if (item["SelectedItem"] == "") {
+        item["SelectedItem"] = await FilePicker.platform.pickFiles(allowMultiple: false, dialogTitle: "Select the Game").then((file) {
+          if (file == null) {
+            DebugLogs.print("Canceled");
+            return null;
+          } else if (file.files.isEmpty) {
+            DebugLogs.print("Empty files");
+            return null;
+          }
+          return file.files[0].path;
+        });
+        // If not installer directory select dont proceed
+        if (item["SelectedItem"] == null)
           return;
-        }
-        proceedToInstallation();
+        // If selected proceed
+        else
+          proceedToInstallation();
       } catch (error) {
         DialogsModel.showAlert(context, title: "Error", content: "Cannot create prefix directory reason: $error");
         return;

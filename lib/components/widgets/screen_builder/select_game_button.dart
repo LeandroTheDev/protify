@@ -1,10 +1,8 @@
-import 'dart:io';
-
-import 'package:filesystem_picker/filesystem_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
-import 'package:protify/data/user_preferences.dart';
+import 'package:protify/debug/logs.dart';
 
 // ignore: must_be_immutable
 class SelectGameButton extends StatefulWidget {
@@ -17,7 +15,7 @@ class _SelectGameButtonState extends State<SelectGameButton> {
   @override
   Widget build(BuildContext context) {
     ScreenBuilderProvider provider = ScreenBuilderProvider.getProvider(context);
-    UserPreferences preferences = UserPreferences.getProvider(context);
+    // UserPreferences preferences = UserPreferences.getProvider(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,14 +29,18 @@ class _SelectGameButtonState extends State<SelectGameButton> {
         const SizedBox(height: 5),
         //Select Launcher Button
         ElevatedButton(
-          onPressed: () => FilesystemPicker.open(
-            context: context,
-            rootDirectory: Directory(preferences.defaultGameDirectory),
-            fsType: FilesystemType.file,
-            folderIconColor: Theme.of(context).secondaryHeaderColor,
-          ).then((selectedGame) => setState(
-                () => provider.changeData("SelectedItem", selectedGame),
-              )),
+          onPressed: () => FilePicker.platform.pickFiles(allowMultiple: false, dialogTitle: "Select the Game").then((file) {
+            if (file == null) {
+              DebugLogs.print("Canceled");
+              return;
+            } else if (file.files.isEmpty) {
+              DebugLogs.print("Empty files");
+              return;
+            }
+            setState(
+              () => provider.changeData("SelectedItem", file.files[0].path),
+            );
+          }),
           child: const Text("Select Game"),
         ),
       ],

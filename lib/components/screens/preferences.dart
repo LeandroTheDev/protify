@@ -1,6 +1,4 @@
-import 'dart:io';
-
-import 'package:filesystem_picker/filesystem_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:protify/components/models/dialogs.dart';
@@ -8,6 +6,7 @@ import 'package:protify/components/models/library.dart';
 import 'package:protify/components/widgets/library/library_provider.dart';
 import 'package:protify/data/save_datas.dart';
 import 'package:protify/data/user_preferences.dart';
+import 'package:protify/debug/logs.dart';
 import 'package:protify/pages/homepage.dart';
 import 'package:provider/provider.dart';
 
@@ -106,12 +105,13 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                           children: [
                             //Button
                             ElevatedButton(
-                              onPressed: () => FilesystemPicker.open(
-                                context: context,
-                                rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
-                                fsType: FilesystemType.folder,
-                                folderIconColor: Theme.of(context).secondaryHeaderColor,
-                              ).then((directory) => directory != null ? userPreferences.changeProtifyDirectory(directory) : () {}),
+                              onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
+                                if (directory == null) {
+                                  DebugLogs.print("Canceled");
+                                  return;
+                                }
+                                userPreferences.changeProtifyDirectory(directory);
+                              }),
                               child: const Text("Protify Directory"),
                             ),
                             //Info Button
@@ -133,12 +133,13 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                           children: [
                             //Button
                             ElevatedButton(
-                              onPressed: () => FilesystemPicker.open(
-                                context: context,
-                                rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
-                                fsType: FilesystemType.folder,
-                                folderIconColor: Theme.of(context).secondaryHeaderColor,
-                              ).then((directory) => directory != null ? userPreferences.changeDefaultProtonDirectory(directory) : () {}),
+                              onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
+                                if (directory == null) {
+                                  DebugLogs.print("Canceled");
+                                  return;
+                                }
+                                userPreferences.changeDefaultProtonDirectory(directory);
+                              }),
                               child: const Text("Default Proton Directory"),
                             ),
                             //Info Button
@@ -160,12 +161,13 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                           children: [
                             //Button
                             ElevatedButton(
-                              onPressed: () => FilesystemPicker.open(
-                                context: context,
-                                rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
-                                fsType: FilesystemType.folder,
-                                folderIconColor: Theme.of(context).secondaryHeaderColor,
-                              ).then((directory) => directory != null ? userPreferences.changeDefaultGameInstallDirectory(directory) : () {}),
+                              onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
+                                if (directory == null) {
+                                  DebugLogs.print("Canceled");
+                                  return;
+                                }
+                                userPreferences.changeDefaultGameInstallDirectory(directory);
+                              }),
                               child: const Text("Default Install Search Directory"),
                             ),
                             //Info Button
@@ -187,12 +189,13 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                           children: [
                             //Button
                             ElevatedButton(
-                              onPressed: () => FilesystemPicker.open(
-                                context: context,
-                                rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
-                                fsType: FilesystemType.folder,
-                                folderIconColor: Theme.of(context).secondaryHeaderColor,
-                              ).then((directory) => directory != null ? userPreferences.changeDefaultGameDirectory(directory) : () {}),
+                              onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
+                                if (directory == null) {
+                                  DebugLogs.print("Canceled");
+                                  return;
+                                }
+                                userPreferences.changeDefaultGameDirectory(directory);
+                              }),
                               child: const Text("Default Game Search Directory"),
                             ),
                             //Info Button
@@ -214,12 +217,13 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                           children: [
                             //Button
                             ElevatedButton(
-                              onPressed: () => FilesystemPicker.open(
-                                context: context,
-                                rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
-                                fsType: FilesystemType.folder,
-                                folderIconColor: Theme.of(context).secondaryHeaderColor,
-                              ).then((directory) => directory != null ? userPreferences.changeDefaultPrefixDirectory(directory) : () {}),
+                              onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
+                                if (directory == null) {
+                                  DebugLogs.print("Canceled");
+                                  return;
+                                }
+                                userPreferences.changeDefaultPrefixDirectory(directory);
+                              }),
                               child: const Text("Default Prefix Directory"),
                             ),
                             //Info Button
@@ -240,12 +244,13 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                           children: [
                             //Button
                             ElevatedButton(
-                              onPressed: () => FilesystemPicker.open(
-                                context: context,
-                                rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
-                                fsType: FilesystemType.folder,
-                                folderIconColor: Theme.of(context).secondaryHeaderColor,
-                              ).then((directory) => directory != null ? userPreferences.changeDefaultPrefixDirectory(directory) : () {}),
+                              onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
+                                if (directory == null) {
+                                  DebugLogs.print("Canceled");
+                                  return;
+                                }
+                                userPreferences.changeDefaultRuntimeDirectory(directory);
+                              }),
                               child: const Text("Default Runtime Directory"),
                             ),
                             //Info Button
@@ -267,12 +272,14 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                           children: [
                             //Button
                             ElevatedButton(
-                              onPressed: () => FilesystemPicker.open(
-                                context: context,
-                                rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
-                                fsType: FilesystemType.folder,
-                                folderIconColor: Theme.of(context).secondaryHeaderColor,
-                              ).then((directory) => directory != null ? userPreferences.changeDefaultPrefixDirectory(directory) : () {}),
+                              onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
+                                if (directory == null) {
+                                  DebugLogs.print("Canceled");
+                                  return;
+                                }
+                                userPreferences.changeDefaultWineprefixDirectory(directory);
+                              }),
+ 
                               child: const Text("Wineprefix Directory"),
                             ),
                             //Info Button
@@ -294,12 +301,13 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                           children: [
                             //Button
                             ElevatedButton(
-                              onPressed: () => FilesystemPicker.open(
-                                context: context,
-                                rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/"),
-                                fsType: FilesystemType.folder,
-                                folderIconColor: Theme.of(context).secondaryHeaderColor,
-                              ).then((directory) => directory != null ? userPreferences.changeSteamCompatibilityDirectory(directory) : () {}),
+                              onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
+                                if (directory == null) {
+                                  DebugLogs.print("Canceled");
+                                  return;
+                                }
+                                userPreferences.changeSteamCompatibilityDirectory(directory);
+                              }),
                               child: const Text("Steam Compatibility Directory"),
                             ),
                             //Info Button

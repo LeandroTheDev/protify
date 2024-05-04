@@ -1,9 +1,8 @@
-import 'dart:io';
-
-import 'package:filesystem_picker/filesystem_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
+import 'package:protify/debug/logs.dart';
 
 // ignore: must_be_immutable
 class SelectDllButton extends StatefulWidget {
@@ -30,14 +29,18 @@ class _SelectDllButtonState extends State<SelectDllButton> {
         const SizedBox(height: 5),
         //Select DLL Button
         ElevatedButton(
-          onPressed: () => FilesystemPicker.open(
-            context: context,
-            rootDirectory: Platform.isWindows ? Directory("\\") : Directory("/home/"),
-            fsType: FilesystemType.file,
-            folderIconColor: Theme.of(context).secondaryHeaderColor,
-          ).then((selectedDll) => setState(
-                () => provider.changeData("SelectedDll", selectedDll),
-              )),
+          onPressed: () => FilePicker.platform.pickFiles(allowMultiple: false, dialogTitle: "Select the Game").then((file) {
+            if (file == null) {
+              DebugLogs.print("Canceled");
+              return;
+            } else if (file.files.isEmpty) {
+              DebugLogs.print("Empty files");
+              return;
+            }
+            setState(
+              () => provider.changeData("SelectedDll", file.files[0].path),
+            );
+          }),
           child: const Text("Select Dll"),
         ),
       ],

@@ -15,24 +15,32 @@ class EmptyWidget extends StatelessWidget {
           children: [
             Text(
               "Your library is empty try adding a game to it",
-              style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Theme.of(context).secondaryHeaderColor,
+                  fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             //Add Game button
             SizedBox(
               height: 30,
-              child: ElevatedButton(onPressed: () => LibraryModel.addItemModal(context), child: const Text("Add First Game")),
+              child: ElevatedButton(
+                  onPressed: () => LibraryModel.addItemModal(context),
+                  child: const Text("Add First Game")),
             ),
             const SizedBox(height: 10),
             Text(
               "Or install one",
-              style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Theme.of(context).secondaryHeaderColor,
+                  fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             //Add Game button
             SizedBox(
               height: 30,
-              child: ElevatedButton(onPressed: () {}, child: const Text("Install Game")),
+              child: ElevatedButton(
+                  onPressed: () => LibraryModel.installItemModal(context),
+                  child: const Text("Install Game")),
             ),
           ],
         ),
