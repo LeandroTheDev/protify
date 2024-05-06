@@ -55,476 +55,498 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 5),
+                    //Username
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        //Spacer
-                        const SizedBox(height: 5),
-                        //Username
-                        Column(
-                          children: [
-                            //Input
-                            SizedBox(
-                              height: 60,
-                              width: windowSize.width / 2,
-                              child: TextField(
-                                controller: username,
-                                decoration: InputDecoration(
-                                  labelText: 'Username',
-                                  labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
-                                  ),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
-                                  ),
-                                ),
-                                style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
+                        //Input
+                        SizedBox(
+                          height: 60,
+                          width: windowSize.width / 2,
+                          child: TextField(
+                            controller: username,
+                            decoration: InputDecoration(
+                              labelText: 'Username',
+                              labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
                               ),
                             ),
-                            //Spacer
-                            const SizedBox(height: 10),
-                            //Confirm Button
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
-                              child: SizedBox(
-                                width: windowSize.width / 2 - 40,
-                                height: 30,
-                                child: ElevatedButton(
-                                  onPressed: () => userPreferences.changeUsername(username.text),
-                                  child: const Text("Confirm"),
-                                ),
-                              ),
-                            ),
-                          ],
+                            style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),
+                          ),
                         ),
                         //Spacer
-                        const SizedBox(height: 30),
-                        //Protify Directory
-                        Row(
-                          children: [
-                            //Button
-                            ElevatedButton(
-                              onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
-                                if (directory == null) {
-                                  DebugLogs.print("Canceled");
-                                  return;
-                                }
-                                userPreferences.changeProtifyDirectory(directory);
-                              }),
-                              child: const Text("Protify Directory"),
+                        const SizedBox(height: 10),
+                        //Confirm Button
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: SizedBox(
+                            width: windowSize.width / 2 - 40,
+                            height: 30,
+                            child: ElevatedButton(
+                              onPressed: () => userPreferences.changeUsername(username.text),
+                              child: const Text("Confirm"),
                             ),
-                            //Info Button
-                            IconButton(
-                              icon: const Icon(Icons.info),
-                              color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => DialogsModel.showAlert(
-                                context,
-                                title: "Protify Directory",
-                                content: "Where the protify launcher is located",
-                              ),
-                            ),
-                          ],
-                        ),
-                        //Spacer
-                        const SizedBox(height: 30),
-                        //Default Proton Directory
-                        Row(
-                          children: [
-                            //Button
-                            ElevatedButton(
-                              onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
-                                if (directory == null) {
-                                  DebugLogs.print("Canceled");
-                                  return;
-                                }
-                                userPreferences.changeDefaultProtonDirectory(directory);
-                              }),
-                              child: const Text("Default Proton Directory"),
-                            ),
-                            //Info Button
-                            IconButton(
-                              icon: const Icon(Icons.info),
-                              color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => DialogsModel.showAlert(
-                                context,
-                                title: "Proton Directory",
-                                content: "Where the protify will try to find the list of protons available",
-                              ),
-                            ),
-                          ],
-                        ),
-                        //Spacer
-                        const SizedBox(height: 30),
-                        //Default Install Directory
-                        Row(
-                          children: [
-                            //Button
-                            ElevatedButton(
-                              onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
-                                if (directory == null) {
-                                  DebugLogs.print("Canceled");
-                                  return;
-                                }
-                                userPreferences.changeDefaultGameInstallDirectory(directory);
-                              }),
-                              child: const Text("Default Install Search Directory"),
-                            ),
-                            //Info Button
-                            IconButton(
-                              icon: const Icon(Icons.info),
-                              color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => DialogsModel.showAlert(
-                                context,
-                                title: "Search Install Directory",
-                                content: "The main folder for finding games install in install game page",
-                              ),
-                            ),
-                          ],
-                        ),
-                        //Spacer
-                        const SizedBox(height: 30),
-                        //Default Game Directory
-                        Row(
-                          children: [
-                            //Button
-                            ElevatedButton(
-                              onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
-                                if (directory == null) {
-                                  DebugLogs.print("Canceled");
-                                  return;
-                                }
-                                userPreferences.changeDefaultGameDirectory(directory);
-                              }),
-                              child: const Text("Default Game Search Directory"),
-                            ),
-                            //Info Button
-                            IconButton(
-                              icon: const Icon(Icons.info),
-                              color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => DialogsModel.showAlert(
-                                context,
-                                title: "Search Game Directory",
-                                content: "The main folder for finding games in add game page",
-                              ),
-                            ),
-                          ],
-                        ),
-                        //Spacer
-                        const SizedBox(height: 30),
-                        //Default Prefix Directory
-                        Row(
-                          children: [
-                            //Button
-                            ElevatedButton(
-                              onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
-                                if (directory == null) {
-                                  DebugLogs.print("Canceled");
-                                  return;
-                                }
-                                userPreferences.changeDefaultPrefixDirectory(directory);
-                              }),
-                              child: const Text("Default Prefix Directory"),
-                            ),
-                            //Info Button
-                            IconButton(
-                              icon: const Icon(Icons.info),
-                              color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => DialogsModel.showAlert(
-                                context,
-                                title: "Default Prefix Directory",
-                                content: "Default prefixes will be stored in this folder",
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 30),
-                        //Default Runtime Directory
-                        Row(
-                          children: [
-                            //Button
-                            ElevatedButton(
-                              onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
-                                if (directory == null) {
-                                  DebugLogs.print("Canceled");
-                                  return;
-                                }
-                                userPreferences.changeDefaultRuntimeDirectory(directory);
-                              }),
-                              child: const Text("Default Runtime Directory"),
-                            ),
-                            //Info Button
-                            IconButton(
-                              icon: const Icon(Icons.info),
-                              color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => DialogsModel.showAlert(
-                                context,
-                                title: "Default Runtime Directory",
-                                content: "Default Runtimes will be stored in this folder",
-                              ),
-                            ),
-                          ],
-                        ),
-                        //Spacer
-                        const SizedBox(height: 30),
-                        //Wineprefix Directory
-                        Row(
-                          children: [
-                            //Button
-                            ElevatedButton(
-                              onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
-                                if (directory == null) {
-                                  DebugLogs.print("Canceled");
-                                  return;
-                                }
-                                userPreferences.changeDefaultWineprefixDirectory(directory);
-                              }),
- 
-                              child: const Text("Wineprefix Directory"),
-                            ),
-                            //Info Button
-                            IconButton(
-                              icon: const Icon(Icons.info),
-                              color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => DialogsModel.showAlert(
-                                context,
-                                title: "Wineprefix Directory",
-                                content: "In some cases the proton should use the wine folder for some reason, so setting this when this happens the wine folder will be created here and not in home folder.",
-                              ),
-                            ),
-                          ],
-                        ),
-                        //Spacer
-                        const SizedBox(height: 30),
-                        //Steam Compatibility Directory
-                        Row(
-                          children: [
-                            //Button
-                            ElevatedButton(
-                              onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
-                                if (directory == null) {
-                                  DebugLogs.print("Canceled");
-                                  return;
-                                }
-                                userPreferences.changeSteamCompatibilityDirectory(directory);
-                              }),
-                              child: const Text("Steam Compatibility Directory"),
-                            ),
-                            //Info Button
-                            IconButton(
-                              icon: const Icon(Icons.info),
-                              color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => DialogsModel.showAlert(
-                                context,
-                                title: "Steam Compatibility Directory",
-                                content: "Change the steam installation folder if is not located in default location \"~/.local/share/Steam\"",
-                              ),
-                            ),
-                          ],
-                        ),
-                        //Spacer
-                        const SizedBox(height: 30),
-                        //Start Window Height
-                        Column(
-                          children: [
-                            //Input
-                            SizedBox(
-                              height: 48,
-                              width: windowSize.width / 4,
-                              child: TextField(
-                                controller: startWindowHeight,
-                                decoration: InputDecoration(
-                                  labelText: 'Start Window Height',
-                                  labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
-                                  ),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
-                                  ),
-                                ),
-                                style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 14),
-                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                              ),
-                            ),
-                            //Spacer
-                            const SizedBox(height: 10),
-                            //Confirm Button
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
-                              child: SizedBox(
-                                width: windowSize.width / 4 - 20,
-                                height: 20,
-                                child: ElevatedButton(
-                                  onPressed: () => userPreferences.changeStartWindowHeight(double.parse(startWindowHeight.text)),
-                                  child: const Text("Confirm"),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        //Spacer
-                        const SizedBox(height: 30),
-                        //Start Window Height
-                        Column(
-                          children: [
-                            //Input
-                            SizedBox(
-                              height: 48,
-                              width: windowSize.width / 4,
-                              child: TextField(
-                                controller: startWindowWidth,
-                                decoration: InputDecoration(
-                                  labelText: 'Start Window Width',
-                                  labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
-                                  ),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
-                                  ),
-                                ),
-                                style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 14),
-                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                              ),
-                            ),
-                            //Spacer
-                            const SizedBox(height: 10),
-                            //Confirm Button
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
-                              child: SizedBox(
-                                width: windowSize.width / 4 - 20,
-                                height: 20,
-                                child: ElevatedButton(
-                                  onPressed: () => userPreferences.changeStartWindowWidth(double.parse(startWindowWidth.text)),
-                                  child: const Text("Confirm"),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        //Spacer
-                        const SizedBox(height: 30),
-                        //Default Category
-                        Row(
-                          children: [
-                            //Button
-                            ElevatedButton(
-                              onPressed: () => LibraryModel.selectCategory(context, categories: libraryProvider.itemsCategories, disableNew: true).then(
-                                // Update the Category
-                                (category) => userPreferences.changeDefaultCategory(category),
-                              ),
-                              child: const Text("Change Default Category"),
-                            ),
-                            //Info Button
-                            IconButton(
-                              icon: const Icon(Icons.info),
-                              color: Theme.of(context).secondaryHeaderColor,
-                              onPressed: () => DialogsModel.showAlert(
-                                context,
-                                title: "Default Category",
-                                content: "The default category to show up when opening the protify",
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        //Spacer
-                        const SizedBox(height: 30),
-                        //Clear Section
-                        FittedBox(
-                          child: Row(
-                            children: [
-                              //Clear Data
-                              ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
-                                ),
-                                onPressed: () => DialogsModel.showQuestion(context, title: "Clear Data", content: "Are you sure you want to erase all saved datas?").then(
-                                  //Clear data and reload data
-                                  (value) => value
-                                      //Clearing data
-                                      ? SaveDatas.clearData().then(
-                                          //Reloading data
-                                          (_) => UserPreferences.loadPreference(context).then(
-                                            //Reseting HomePage
-                                            (value) {
-                                              Navigator.pop(context);
-                                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
-                                              LibraryProvider.getProvider(context).changeScreenUpdate(true);
-                                              LibraryProvider.getProvider(context).updateScreen();
-                                            },
-                                          ),
-                                        )
-                                      : () {},
-                                ),
-                                child: const Text(
-                                  "Clear Data",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              ),
-                              //Spacer
-                              const SizedBox(width: 5),
-                              //Reset Preferences
-                              ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
-                                ),
-                                onPressed: () => DialogsModel.showQuestion(context, title: "Reset Preferences", content: "Are you sure you want to reset your preferences?").then(
-                                  //Clear data and reload data
-                                  (value) => value
-                                      //Clearing data
-                                      ? SaveDatas.clearPreferences().then(
-                                          //Reloading data
-                                          (_) => UserPreferences.loadPreference(context).then(
-                                            //Reseting HomePage
-                                            (value) {
-                                              Navigator.pop(context);
-                                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
-                                              LibraryProvider.getProvider(context).changeScreenUpdate(true);
-                                              LibraryProvider.getProvider(context).updateScreen();
-                                            },
-                                          ),
-                                        )
-                                      : () {},
-                                ),
-                                child: const Text(
-                                  "Reset Preferences",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              ),
-                              //Spacer
-                              const SizedBox(width: 5),
-                              //Reset Preferences
-                              ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
-                                ),
-                                onPressed: () => DialogsModel.showQuestion(context, title: "Clear Games", content: "Are you sure you want to remove all games from your library?").then(
-                                  //Clear games and reload launcher
-                                  (value) => value
-                                      //Clearing data
-                                      ? SaveDatas.clearGames().then(
-                                          //Reloading data
-                                          (_) {
-                                            Navigator.pop(context);
-                                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
-                                            LibraryProvider.getProvider(context).changeScreenUpdate(true);
-                                            LibraryProvider.getProvider(context).updateScreen();
-                                          },
-                                        )
-                                      : () {},
-                                ),
-                                child: const Text(
-                                  "Clear Games",
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                              ),
-                            ],
                           ),
                         ),
                       ],
+                    ),
+                    //Spacer
+                    const SizedBox(height: 30),
+                    //Protify Directory
+                    Row(
+                      children: [
+                        //Button
+                        ElevatedButton(
+                          onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
+                            if (directory == null) {
+                              DebugLogs.print("Canceled");
+                              return;
+                            }
+                            userPreferences.changeProtifyDirectory(directory);
+                          }),
+                          child: const Text("Protify Directory"),
+                        ),
+                        //Info Button
+                        IconButton(
+                          icon: const Icon(Icons.info),
+                          color: Theme.of(context).secondaryHeaderColor,
+                          onPressed: () => DialogsModel.showAlert(
+                            context,
+                            title: "Protify Directory",
+                            content: "Where the protify launcher is located",
+                          ),
+                        ),
+                      ],
+                    ),
+                    //Spacer
+                    const SizedBox(height: 30),
+                    //Default Launcher Directory
+                    Row(
+                      children: [
+                        //Button
+                        ElevatedButton(
+                          onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Launcher").then((directory) {
+                            if (directory == null) {
+                              DebugLogs.print("Canceled");
+                              return;
+                            }
+                            userPreferences.changeDefaultProtonDirectory(directory);
+                          }),
+                          child: const Text("Default Launcher Directory"),
+                        ),
+                        //Info Button
+                        IconButton(
+                          icon: const Icon(Icons.info),
+                          color: Theme.of(context).secondaryHeaderColor,
+                          onPressed: () => DialogsModel.showAlert(
+                            context,
+                            title: "Proton Directory",
+                            content: "Where the protify will try to find the list of protons available",
+                          ),
+                        ),
+                      ],
+                    ),
+                    //Spacer
+                    const SizedBox(height: 30),
+                    //Default Install Directory
+                    Row(
+                      children: [
+                        //Button
+                        ElevatedButton(
+                          onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Install Directory").then((directory) {
+                            if (directory == null) {
+                              DebugLogs.print("Canceled");
+                              return;
+                            }
+                            userPreferences.changeDefaultGameInstallDirectory(directory);
+                          }),
+                          child: const Text("Default Install Search Directory"),
+                        ),
+                        //Info Button
+                        IconButton(
+                          icon: const Icon(Icons.info),
+                          color: Theme.of(context).secondaryHeaderColor,
+                          onPressed: () => DialogsModel.showAlert(
+                            context,
+                            title: "Search Install Directory",
+                            content: "The main folder for finding games install in install game page",
+                          ),
+                        ),
+                      ],
+                    ),
+                    //Spacer
+                    const SizedBox(height: 30),
+                    //Default Game Directory
+                    Row(
+                      children: [
+                        //Button
+                        ElevatedButton(
+                          onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
+                            if (directory == null) {
+                              DebugLogs.print("Canceled");
+                              return;
+                            }
+                            userPreferences.changeDefaultGameDirectory(directory);
+                          }),
+                          child: const Text("Default Game Search Directory"),
+                        ),
+                        //Info Button
+                        IconButton(
+                          icon: const Icon(Icons.info),
+                          color: Theme.of(context).secondaryHeaderColor,
+                          onPressed: () => DialogsModel.showAlert(
+                            context,
+                            title: "Search Game Directory",
+                            content: "The main folder for finding games in add game page",
+                          ),
+                        ),
+                      ],
+                    ),
+                    //Spacer
+                    const SizedBox(height: 30),
+                    //Default Prefix Directory
+                    Row(
+                      children: [
+                        //Button
+                        ElevatedButton(
+                          onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
+                            if (directory == null) {
+                              DebugLogs.print("Canceled");
+                              return;
+                            }
+                            userPreferences.changeDefaultPrefixDirectory(directory);
+                          }),
+                          child: const Text("Default Prefix Directory"),
+                        ),
+                        //Info Button
+                        IconButton(
+                          icon: const Icon(Icons.info),
+                          color: Theme.of(context).secondaryHeaderColor,
+                          onPressed: () => DialogsModel.showAlert(
+                            context,
+                            title: "Default Prefix Directory",
+                            content: "Default prefixes will be stored in this folder",
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 30),
+                    //Default Runtime Directory
+                    Row(
+                      children: [
+                        //Button
+                        ElevatedButton(
+                          onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
+                            if (directory == null) {
+                              DebugLogs.print("Canceled");
+                              return;
+                            }
+                            userPreferences.changeDefaultRuntimeDirectory(directory);
+                          }),
+                          child: const Text("Default Runtime Directory"),
+                        ),
+                        //Info Button
+                        IconButton(
+                          icon: const Icon(Icons.info),
+                          color: Theme.of(context).secondaryHeaderColor,
+                          onPressed: () => DialogsModel.showAlert(
+                            context,
+                            title: "Default Runtime Directory",
+                            content: "Default Runtimes will be stored in this folder",
+                          ),
+                        ),
+                      ],
+                    ),
+                    //Spacer
+                    const SizedBox(height: 30),
+                    //Wineprefix Directory
+                    Row(
+                      children: [
+                        //Button
+                        ElevatedButton(
+                          onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Wineprefix Directory").then((directory) {
+                            if (directory == null) {
+                              DebugLogs.print("Canceled");
+                              return;
+                            }
+                            userPreferences.changeDefaultWineprefixDirectory(directory);
+                          }),
+                          child: const Text("Wineprefix Directory"),
+                        ),
+                        //Info Button
+                        IconButton(
+                          icon: const Icon(Icons.info),
+                          color: Theme.of(context).secondaryHeaderColor,
+                          onPressed: () => DialogsModel.showAlert(
+                            context,
+                            title: "Wineprefix Directory",
+                            content: "In some cases the proton should use the wine folder for some reason, so setting this when this happens the wine folder will be created here and not in home folder.",
+                          ),
+                        ),
+                      ],
+                    ),
+                    //Spacer
+                    const SizedBox(height: 30),
+                    //Steam Compatibility Directory
+                    Row(
+                      children: [
+                        //Button
+                        ElevatedButton(
+                          onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Steam Compatibility Directory").then((directory) {
+                            if (directory == null) {
+                              DebugLogs.print("Canceled");
+                              return;
+                            }
+                            userPreferences.changeSteamCompatibilityDirectory(directory);
+                          }),
+                          child: const Text("Steam Compatibility Directory"),
+                        ),
+                        //Info Button
+                        IconButton(
+                          icon: const Icon(Icons.info),
+                          color: Theme.of(context).secondaryHeaderColor,
+                          onPressed: () => DialogsModel.showAlert(
+                            context,
+                            title: "Steam Compatibility Directory",
+                            content: "Change the steam installation folder if is not located in default location \"~/.local/share/Steam\"",
+                          ),
+                        ),
+                      ],
+                    ),
+                    //Spacer
+                    const SizedBox(height: 30),
+                    //Steam Compatibility Directory
+                    Row(
+                      children: [
+                        //Button
+                        ElevatedButton(
+                          onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Default Shader Compile Directory").then((directory) {
+                            if (directory == null) {
+                              DebugLogs.print("Canceled");
+                              return;
+                            }
+                            userPreferences.changeSteamCompatibilityDirectory(directory);
+                          }),
+                          child: const Text("Default Shader Compile Directory"),
+                        ),
+                        //Info Button
+                        IconButton(
+                          icon: const Icon(Icons.info),
+                          color: Theme.of(context).secondaryHeaderColor,
+                          onPressed: () => DialogsModel.showAlert(
+                            context,
+                            title: "Shader Compile Directory",
+                            content: "Default Compilations from Shaders will be stored in this folder",
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    //Spacer
+                    const SizedBox(height: 30),
+                    //Start Window Height
+                    Column(
+                      children: [
+                        //Input
+                        SizedBox(
+                          height: 48,
+                          width: windowSize.width / 4,
+                          child: TextField(
+                            controller: startWindowHeight,
+                            decoration: InputDecoration(
+                              labelText: 'Start Window Height',
+                              labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
+                              ),
+                            ),
+                            style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 14),
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          ),
+                        ),
+                        //Spacer
+                        const SizedBox(height: 10),
+                        //Confirm Button
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: SizedBox(
+                            width: windowSize.width / 4 - 20,
+                            height: 20,
+                            child: ElevatedButton(
+                              onPressed: () => userPreferences.changeStartWindowHeight(double.parse(startWindowHeight.text)),
+                              child: const Text("Confirm"),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    //Spacer
+                    const SizedBox(height: 30),
+                    //Start Window Height
+                    Column(
+                      children: [
+                        //Input
+                        SizedBox(
+                          height: 48,
+                          width: windowSize.width / 4,
+                          child: TextField(
+                            controller: startWindowWidth,
+                            decoration: InputDecoration(
+                              labelText: 'Start Window Width',
+                              labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
+                              ),
+                            ),
+                            style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 14),
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          ),
+                        ),
+                        //Spacer
+                        const SizedBox(height: 10),
+                        //Confirm Button
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: SizedBox(
+                            width: windowSize.width / 4 - 20,
+                            height: 20,
+                            child: ElevatedButton(
+                              onPressed: () => userPreferences.changeStartWindowWidth(double.parse(startWindowWidth.text)),
+                              child: const Text("Confirm"),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    //Spacer
+                    const SizedBox(height: 30),
+                    //Default Category
+                    Row(
+                      children: [
+                        //Button
+                        ElevatedButton(
+                          onPressed: () => LibraryModel.selectCategory(context, categories: libraryProvider.itemsCategories, disableNew: true).then(
+                            // Update the Category
+                            (category) => userPreferences.changeDefaultCategory(category),
+                          ),
+                          child: const Text("Change Default Category"),
+                        ),
+                        //Info Button
+                        IconButton(
+                          icon: const Icon(Icons.info),
+                          color: Theme.of(context).secondaryHeaderColor,
+                          onPressed: () => DialogsModel.showAlert(
+                            context,
+                            title: "Default Category",
+                            content: "The default category to show up when opening the protify",
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    //Spacer
+                    const SizedBox(height: 30),
+                    //Clear Section
+                    FittedBox(
+                      child: Row(
+                        children: [
+                          //Clear Data
+                          ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
+                            ),
+                            onPressed: () => DialogsModel.showQuestion(context, title: "Clear Data", content: "Are you sure you want to erase all saved datas?").then(
+                              //Clear data and reload data
+                              (value) => value
+                                  //Clearing data
+                                  ? SaveDatas.clearData().then(
+                                      //Reloading data
+                                      (_) => UserPreferences.loadPreference(context).then(
+                                        //Reseting HomePage
+                                        (value) {
+                                          Navigator.pop(context);
+                                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+                                          LibraryProvider.getProvider(context).changeScreenUpdate(true);
+                                          LibraryProvider.getProvider(context).updateScreen();
+                                        },
+                                      ),
+                                    )
+                                  : () {},
+                            ),
+                            child: const Text(
+                              "Clear Data",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
+                          //Spacer
+                          const SizedBox(width: 5),
+                          //Reset Preferences
+                          ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
+                            ),
+                            onPressed: () => DialogsModel.showQuestion(context, title: "Reset Preferences", content: "Are you sure you want to reset your preferences?").then(
+                              //Clear data and reload data
+                              (value) => value
+                                  //Clearing data
+                                  ? SaveDatas.clearPreferences().then(
+                                      //Reloading data
+                                      (_) => UserPreferences.loadPreference(context).then(
+                                        //Reseting HomePage
+                                        (value) {
+                                          Navigator.pop(context);
+                                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+                                          LibraryProvider.getProvider(context).changeScreenUpdate(true);
+                                          LibraryProvider.getProvider(context).updateScreen();
+                                        },
+                                      ),
+                                    )
+                                  : () {},
+                            ),
+                            child: const Text(
+                              "Reset Preferences",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
+                          //Spacer
+                          const SizedBox(width: 5),
+                          //Reset Preferences
+                          ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
+                            ),
+                            onPressed: () => DialogsModel.showQuestion(context, title: "Clear Games", content: "Are you sure you want to remove all games from your library?").then(
+                              //Clear games and reload launcher
+                              (value) => value
+                                  //Clearing data
+                                  ? SaveDatas.clearGames().then(
+                                      //Reloading data
+                                      (_) {
+                                        Navigator.pop(context);
+                                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+                                        LibraryProvider.getProvider(context).changeScreenUpdate(true);
+                                        LibraryProvider.getProvider(context).updateScreen();
+                                      },
+                                    )
+                                  : () {},
+                            ),
+                            child: const Text(
+                              "Clear Games",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

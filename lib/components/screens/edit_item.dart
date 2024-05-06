@@ -10,6 +10,7 @@ import 'package:protify/components/widgets/screen_builder/select_game_button.dar
 import 'package:protify/components/widgets/screen_builder/select_prefix_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_launcher_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_runtime_button.dart';
+import 'package:protify/components/widgets/screen_builder/select_shader_compile_button.dart';
 import 'package:protify/components/widgets/screen_builder/steam_compatibility_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/steam_reaper_input.dart';
 import 'package:protify/components/widgets/screen_builder/steam_wrapper_checkbox.dart';
@@ -99,6 +100,10 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     const SizedBox(height: 15),
                     //Shader Compile
                     const NvidiaShaderCompileCheckbox(),
+                    //Spacer
+                    const SizedBox(height: 15),
+                    //Shader Compile
+                    const SelectShaderCompileButton(),
                     //Spacer
                     const SizedBox(height: 15),
                     //Reaper ID

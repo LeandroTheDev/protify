@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:protify/components/models/dialogs.dart';
-import 'package:protify/components/screens/game_log.dart';
+import 'package:protify/components/screens/item_log.dart';
 import 'package:protify/components/widgets/library/library_provider.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:protify/debug/logs.dart';
@@ -13,10 +13,12 @@ class LauncherModel {
   /// Generates the starting commands for running a game or program with Proton
   static String generateProtonStartCommand(BuildContext context, Map item) {
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
+    if (item["SelectedLauncher"] == null) throw "Empty launcher is not allowed for generating proton command";
     //Command Variables
-    final String protonDirectory = join(preferences.defaultProtonDirectory, item["SelectedLauncher"] ?? "");
+    final String protonDirectory = join(preferences.defaultProtonDirectory, item["SelectedLauncher"]);
     final String protonWineDirectory;
-    //Check Compatibility for protons
+
+    //Check Compatibility for olders protons
     if (Directory(join(protonDirectory, "dist")).existsSync()) {
       protonWineDirectory = join(protonDirectory, "dist", "bin", "wine64");
     } else {
@@ -75,9 +77,15 @@ class LauncherModel {
     String checkEnviroments = "";
     // Check Shaders Compile NVIDIA
     if (item["EnableShadersCompileNVIDIA"]) {
-      checkEnviroments += '__GL_SHADER_DISK_CACHE_PATH="${preferences.protifyDirectory}/shaders/${item["ItemName"]} __GL_SHADER_DISK_CACHE=1 __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1 ';
+      // Custom Shader Directory
+      if (item["ShaderCompileDirectory"] != null)
+        checkEnviroments += '__GL_SHADER_DISK_CACHE_PATH="${item["ShaderCompileDirectory"]} __GL_SHADER_DISK_CACHE=1 __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1 ';
+      // Default Shader Directory
+      else
+        checkEnviroments += '__GL_SHADER_DISK_CACHE_PATH="${join(preferences.defaultShaderCompileDirectory, item["ItemName"])} __GL_SHADER_DISK_CACHE=1 __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1 ';
     }
-    final String launchCommand = 'WINEPREFIX="${preferences.defaultWineprefixDirectory}" wine';
+    final String itemPrefix = item["SelectedPrefix"] ?? join(preferences.defaultPrefixDirectory, item["ItemName"]);
+    final String launchCommand = 'WINEPREFIX="$itemPrefix" wine';
     final String argumentsCommand = item["ArgumentsCommand"] ?? "";
     final String itemDirectory = item["LaunchDirectory"] ?? "";
     return '$checkEnviroments $launchCommand $itemDirectory $argumentsCommand';
@@ -117,7 +125,7 @@ class LauncherModel {
       backgroundColor: Theme.of(context).primaryColor,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return LaunchLogScreen(item: selectedItem);
+        return ItemLogScreen(item: selectedItem);
       },
     );
   }

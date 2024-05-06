@@ -7,7 +7,7 @@ import 'package:protify/components/screens/add_item.dart';
 import 'package:protify/components/screens/edit_item.dart';
 import 'package:protify/components/models/dialogs.dart';
 import 'package:protify/components/screens/install_dll_item.dart';
-import 'package:protify/components/screens/install_game_item.dart';
+import 'package:protify/components/screens/install_item.dart';
 import 'package:protify/components/screens/install_libs_item.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
 import 'package:protify/data/save_datas.dart';
@@ -127,7 +127,7 @@ class LibraryModel {
       context: context,
       backgroundColor: Theme.of(context).primaryColor,
       isScrollControlled: true,
-      builder: (BuildContext context) => const InstallGameScreen(),
+      builder: (BuildContext context) => const InstallItemScreen(),
     );
   }
 
@@ -149,7 +149,7 @@ class LibraryModel {
               width: MediaQuery.of(context).size.width * 0.5,
               child: AlertDialog(
                 backgroundColor: Theme.of(context).primaryColor,
-                title: Text("Select the Proton", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                title: Text("Select the Launcher", style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
                 content: SizedBox(
                   height: MediaQuery.of(context).size.width * 0.2,
                   width: MediaQuery.of(context).size.width * 0.5,

@@ -9,9 +9,10 @@ import 'package:protify/components/models/launcher.dart';
 import 'package:protify/components/widgets/screen_builder/arguments_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/launch_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/nvidia_shader_compile_checkbox.dart';
-import 'package:protify/components/widgets/screen_builder/select_game_button.dart';
+import 'package:protify/components/widgets/screen_builder/select_installation_game_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_launcher_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_runtime_button.dart';
+import 'package:protify/components/widgets/screen_builder/select_shader_compile_button.dart';
 import 'package:protify/components/widgets/screen_builder/steam_compatibility_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/steam_reaper_input.dart';
 import 'package:protify/components/widgets/screen_builder/steam_wrapper_checkbox.dart';
@@ -20,14 +21,14 @@ import 'package:protify/data/user_preferences.dart';
 import 'package:protify/debug/logs.dart';
 import 'package:provider/provider.dart';
 
-class InstallGameScreen extends StatefulWidget {
-  const InstallGameScreen({super.key});
+class InstallItemScreen extends StatefulWidget {
+  const InstallItemScreen({super.key});
 
   @override
-  State<InstallGameScreen> createState() => _InstallGameScreenState();
+  State<InstallItemScreen> createState() => _InstallGameScreenState();
 }
 
-class _InstallGameScreenState extends State<InstallGameScreen> {
+class _InstallGameScreenState extends State<InstallItemScreen> {
   installItem(BuildContext context) async {
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
     final installationTemporaryPrefix = join(preferences.protifyDirectory, "data", "temp_prefix");
@@ -216,7 +217,7 @@ class _InstallGameScreenState extends State<InstallGameScreen> {
                     //Spacer
                     const SizedBox(height: 15),
                     //Select Game
-                    const SelectGameButton(),
+                    const SelectInstallationGameButton(),
                     //Spacer
                     const SizedBox(height: 15),
                     //Steam Compatibility
@@ -225,6 +226,10 @@ class _InstallGameScreenState extends State<InstallGameScreen> {
                     const SizedBox(height: 15),
                     //Shader Compile
                     const NvidiaShaderCompileCheckbox(),
+                    //Spacer
+                    const SizedBox(height: 15),
+                    //Shader Compile
+                    const SelectShaderCompileButton(),
                     //Spacer
                     const SizedBox(height: 15),
                     //Reaper ID

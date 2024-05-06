@@ -28,9 +28,11 @@ https://github.com/LeandroTheDev/protify/assets/106118473/b177c297-b642-4af4-bae
 https://github.com/LeandroTheDev/protify/assets/106118473/970d2a94-3671-4a52-8145-ae6bba9ff891
 
 ### Dependencies
-- Install games with iso: sudo, mount
+You don't need all dependencies, only what you will use.
+- Install games from .iso: sudo, mount
 - Run games with sniper runtime: openssl-1.1
-- Run/install windows games: proton or wine
+- Run/Install windows games: proton or wine
+- Select files/folders: Any File Manager
 
 ### First steps
 - Download protify from [releases](https://github.com/LeandroTheDev/protify/releases)

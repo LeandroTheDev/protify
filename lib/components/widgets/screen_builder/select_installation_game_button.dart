@@ -6,13 +6,13 @@ import 'package:protify/data/user_preferences.dart';
 import 'package:protify/debug/logs.dart';
 
 // ignore: must_be_immutable
-class SelectGameButton extends StatefulWidget {
-  const SelectGameButton({super.key});
+class SelectInstallationGameButton extends StatefulWidget {
+  const SelectInstallationGameButton({super.key});
   @override
-  State<SelectGameButton> createState() => _SelectGameButtonState();
+  State<SelectInstallationGameButton> createState() => _SelectInstallationGameButtonState();
 }
 
-class _SelectGameButtonState extends State<SelectGameButton> {
+class _SelectInstallationGameButtonState extends State<SelectInstallationGameButton> {
   @override
   Widget build(BuildContext context) {
     ScreenBuilderProvider provider = ScreenBuilderProvider.getProvider(context);
@@ -33,8 +33,8 @@ class _SelectGameButtonState extends State<SelectGameButton> {
           onPressed: () => FilePicker.platform
               .pickFiles(
             allowMultiple: false,
-            dialogTitle: "Select the Game",
-            initialDirectory: preferences.defaultGameDirectory,
+            dialogTitle: "Select the Game Installation",
+            initialDirectory: preferences.defaultGameInstallDirectory,
           )
               .then((file) {
             if (file == null) {

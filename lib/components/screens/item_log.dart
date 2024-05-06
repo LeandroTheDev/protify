@@ -8,15 +8,15 @@ import 'package:protify/components/models/launcher.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
 
-class LaunchLogScreen extends StatefulWidget {
+class ItemLogScreen extends StatefulWidget {
   final Map item;
-  const LaunchLogScreen({super.key, required this.item});
+  const ItemLogScreen({super.key, required this.item});
 
   @override
-  State<LaunchLogScreen> createState() => LaunchLogScreenState();
+  State<ItemLogScreen> createState() => LaunchLogScreenState();
 }
 
-class LaunchLogScreenState extends State<LaunchLogScreen> {
+class LaunchLogScreenState extends State<ItemLogScreen> {
   final ScrollController scrollController = ScrollController();
   bool running = false;
   List gameLog = [];

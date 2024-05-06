@@ -1,18 +1,17 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:protify/debug/logs.dart';
 
 // ignore: must_be_immutable
-class SelectGameButton extends StatefulWidget {
-  const SelectGameButton({super.key});
+class SelectShaderCompileButton extends StatefulWidget {
+  const SelectShaderCompileButton({super.key});
   @override
-  State<SelectGameButton> createState() => _SelectGameButtonState();
+  State<SelectShaderCompileButton> createState() => _SelectShaderCompileButtonState();
 }
 
-class _SelectGameButtonState extends State<SelectGameButton> {
+class _SelectShaderCompileButtonState extends State<SelectShaderCompileButton> {
   @override
   Widget build(BuildContext context) {
     ScreenBuilderProvider provider = ScreenBuilderProvider.getProvider(context);
@@ -21,34 +20,30 @@ class _SelectGameButtonState extends State<SelectGameButton> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        //Selected Launcher
+        //Selected Prefix
         Text(
-          provider.datas["SelectedItem"] == null ? "No Game Selected" : basename(provider.datas["SelectedItem"]),
+          provider.datas["SelectedShaderCompile"] ?? "Default Shader Compile Directory",
           style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
         ),
         //Spacer
         const SizedBox(height: 5),
-        //Select Launcher Button
+        //Select Prefix Button
         ElevatedButton(
           onPressed: () => FilePicker.platform
-              .pickFiles(
-            allowMultiple: false,
-            dialogTitle: "Select the Game",
-            initialDirectory: preferences.defaultGameDirectory,
+              .getDirectoryPath(
+            dialogTitle: "Select the Shader Compile Directory",
+            initialDirectory: preferences.defaultPrefixDirectory,
           )
-              .then((file) {
-            if (file == null) {
+              .then((directory) {
+            if (directory == null) {
               DebugLogs.print("Canceled");
-              return;
-            } else if (file.files.isEmpty) {
-              DebugLogs.print("Empty files");
               return;
             }
             setState(
-              () => provider.changeData("SelectedItem", file.files[0].path),
+              () => provider.changeData("SelectedShaderCompile", directory),
             );
           }),
-          child: const Text("Select Game"),
+          child: const Text("Select Shader Compile Directory"),
         ),
       ],
     );

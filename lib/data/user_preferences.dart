@@ -77,6 +77,7 @@ class UserPreferences with ChangeNotifier {
       "DefaultWinePrefixDirectory": join(protifyDirectory, "prefixes", "Wine"),
       "DefaultProtonDirectory": join(protifyDirectory, "protons"),
       "SteamCompatibilityDirectory": "/home/$username/.local/share/Steam",
+      "DefaultShaderCompileDirectory": join(protifyDirectory, "shaders"),
       "StartWindowHeight": 600.0,
       "StartWindowWidth": 800.0,
       "DefaultCategory": "Uncategorized",
@@ -97,6 +98,7 @@ class UserPreferences with ChangeNotifier {
     userPreference.changeDefaultWineprefixDirectory(storedPreference["DefaultWinePrefixDirectory"] ?? defaultData["DefaultWinePrefixDirectory"]);
     userPreference.changeDefaultProtonDirectory(storedPreference["DefaultProtonDirectory"] ?? defaultData["DefaultProtonDirectory"]);
     userPreference.changeSteamCompatibilityDirectory(storedPreference["SteamCompatibilityDirectory"] ?? defaultData["SteamCompatibilityDirectory"]);
+    userPreference.changeShaderCompileDirectory(storedPreference["DefaultShaderCompileDirectory"] ?? defaultData["DefaultShaderCompileDirectory"]);
     userPreference.changeStartWindowHeight(storedPreference["StartWindowHeight"] ?? defaultData["StartWindowHeight"]);
     userPreference.changeStartWindowWidth(storedPreference["StartWindowWidth"] ?? defaultData["StartWindowWidth"]);
     userPreference.changeDefaultCategory(storedPreference["DefaultCategory"] ?? defaultData["DefaultCategory"]);
@@ -205,6 +207,14 @@ class UserPreferences with ChangeNotifier {
   void changeSteamCompatibilityDirectory(String value) => {
         _steamCompatibilityDirectory = value,
         savePreferencesInData(option: "SteamCompatibilityDirectory", value: value),
+      };
+
+  //Default Steam Compatibility Directory
+  String _shaderCompileDirectory = "";
+  get defaultShaderCompileDirectory => _shaderCompileDirectory;
+  void changeShaderCompileDirectory(String value) => {
+        _shaderCompileDirectory = value,
+        savePreferencesInData(option: "DefaultShaderCompileDirectory", value: value),
       };
 
   //Start Window Height
