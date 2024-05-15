@@ -10,6 +10,7 @@ import 'package:protify/components/widgets/library/selected_game.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:protify/debug/logs.dart';
+import 'package:protify/pages/store.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
@@ -136,11 +137,7 @@ class _HomePageState extends State<HomePage> {
                         FittedBox(
                           child: IconButton(
                             onPressed: () {
-                              DialogsModel.showAlert(
-                                context,
-                                title: "Not Implemented",
-                                content: "This features is not implemented yet",
-                              );
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const StorePage()));
                             },
                             icon: Icon(
                               Icons.library_books,

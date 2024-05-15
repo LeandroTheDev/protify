@@ -4,9 +4,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:protify/components/models/dialogs.dart';
+import 'package:protify/components/models/download.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
-import 'package:web_socket_channel/io.dart';
 
 class ConnectionModel with ChangeNotifier {
   String _httpAddress = "localhost:6161";
@@ -151,7 +151,7 @@ class ConnectionModel with ChangeNotifier {
   }
 
   ///Returns true if no error occurs, fatal erros return to home screen
-  static bool errorTreatment(BuildContext context, Response response) {
+  static bool errorTreatment(BuildContext context, Response response, {bool ignoreDialog = false}) {
     late final String message;
     try {
       message = jsonDecode(response.body)["MESSAGE"];
@@ -161,31 +161,31 @@ class ConnectionModel with ChangeNotifier {
     switch (response.statusCode) {
       //Temporary Banned
       case 413:
-        DialogsModel.showAlert(context, title: "Alert", content: message);
+        if (!ignoreDialog) DialogsModel.showAlert(context, title: "Alert", content: message);
         return false;
       //Url Not Found
       case 404:
-        DialogsModel.showAlert(context, title: "Alert", content: message);
+        if (!ignoreDialog) DialogsModel.showAlert(context, title: "Alert", content: message);
         return false;
       //Invalid Datas
       case 403:
-        DialogsModel.showAlert(context, title: "Alert", content: message);
+        if (!ignoreDialog) DialogsModel.showAlert(context, title: "Alert", content: message);
         return false;
       //Wrong Credentials
       case 401:
-        DialogsModel.showAlert(context, title: "Alert", content: message);
+        if (!ignoreDialog) DialogsModel.showAlert(context, title: "Alert", content: message);
         return false;
       //Server Crashed
       case 500:
-        DialogsModel.showAlert(context, title: "Alert", content: message);
+        if (!ignoreDialog) DialogsModel.showAlert(context, title: "Alert", content: message);
         return false;
       //No connection with the server
       case 504:
-        DialogsModel.showAlert(context, title: "Alert", content: "Cannot connect to the servers");
+        if (!ignoreDialog) DialogsModel.showAlert(context, title: "Alert", content: "Cannot connect to the servers");
         return false;
       //User Cancelled
       case 101:
-        DialogsModel.showAlert(context, title: "Alert", content: message);
+        if (!ignoreDialog) DialogsModel.showAlert(context, title: "Alert", content: message);
         return false;
     }
     return true;
@@ -197,42 +197,8 @@ class ConnectionModel with ChangeNotifier {
     BuildContext context,
     int itemId,
   ) {
-    final ConnectionModel connection = Provider.of<ConnectionModel>(context, listen: false);
-    final IOWebSocketChannel serverChannel = IOWebSocketChannel.connect(
-      "ws://127.0.0.1:6262",
-      headers: {
-        "username": connection.accountUsername,
-        "token": connection.accountToken,
-        "id": connection.accountId.toString(),
-      },
-    );
-    sendMessageToSocket(String message) {
-      //Send the socket to the server
-      serverChannel.sink.add(message);
-    }
-
-    //Broadcast download
-    serverChannel.stream.asBroadcastStream().listen(null).onData((data) {
-      final Map response = jsonDecode(data);
-      final String message = response["MESSAGE"];
-      switch (message) {
-        case "AUTHENTICATED":
-          sendMessageToSocket(jsonEncode({
-            "ACTION": "GET_ITEM_INFO",
-            "ID": itemId.toString(),
-          }));
-          return;
-        case "GAME_INFO":
-          sendMessageToSocket(jsonEncode({
-            "ACTION": "GET_ITEM_PART",
-            "PART": 1,
-          }));
-          return;
-      }
-    });
-    sendMessageToSocket(jsonEncode({
-      "ACTION": "DOWNLOAD_ITEM",
-      "ID": itemId.toString(),
-    }));
+    final DownloadModel downloadModel = Provider.of<DownloadModel>(context, listen: false);
+    // Initializes the download system
+    downloadModel.startDownload(context, itemId);
   }
 }

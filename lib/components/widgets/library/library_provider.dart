@@ -54,7 +54,7 @@ class LibraryProvider extends ChangeNotifier {
   void changeScreenUpdate(bool value) => _screenUpdate = value;
   void updateScreen([bool? value]) {
     notifyListeners();
-    DebugLogs.print("Library Screen Refreshed");
+    DebugLogs.print("[Library] Screen Refreshed");
   }
 
   String _selectedItemCategory = "Uncategorized";
@@ -73,14 +73,14 @@ class LibraryProvider extends ChangeNotifier {
   void clearItemSelection() {
     _itemIndex = null;
     _itemSelected = null;
-    DebugLogs.print("Library Data Selection Clean");
+    DebugLogs.print("[Library] Data Selection Clean");
   }
 
   /// Change datas to the default datas
   void clearDatas() {
     _items = [];
     _itemsCategories = {};
-    DebugLogs.print("Library Data Clean");
+    DebugLogs.print("[Library] Data Clean");
   }
 
   /// Returns the provider for getting the datas

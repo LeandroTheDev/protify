@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:protify/components/models/connection.dart';
+import 'package:protify/debug/logs.dart';
 import 'package:protify/pages/item.dart';
 
 class StorePage extends StatefulWidget {
@@ -19,8 +20,10 @@ class _StorePageState extends State<StorePage> {
   Map<int, Map?> showcase = {};
 
   Future getShowcase() async {
+    DebugLogs.print("[Store] Requesting store showcases...");
     //Communicate with the server
     final responseShowcase = await ConnectionModel.sendMessage(context, address: "/store_showcase", requestType: "GET");
+    // In cases the widget is disposed
     if (!context.mounted) return;
 
     //Check for errors
@@ -29,20 +32,30 @@ class _StorePageState extends State<StorePage> {
       final List body = jsonDecode(responseShowcase.body)["CONTENT"];
       for (int i = 0; i < body.length; i++) setState(() => showcase[body[i]] = null);
 
+      DebugLogs.print("[Store] Showcases received quantity: ${showcase.length}");
+
+      DebugLogs.print("[Store] Downloading items informations...");
+
       //Getting the items info
       for (int i = 0; i < showcase.length; i++) {
         //Getting the item info
         ConnectionModel.sendMessage(context, address: "/get_item_info&item=1", requestType: "GET").then((response) {
-          if (ConnectionModel.errorTreatment(context, response)) {
+          if (ConnectionModel.errorTreatment(context, response, ignoreDialog: true)) {
             //Updating the info
             final body = jsonDecode(response.body)["CONTENT"];
             setState(() => showcase[body["ID"]] = body);
-          } else
+
+            DebugLogs.print("[Store] Item updated: $i");
+          } else {
+            DebugLogs.print("[Store] Cannot update the item: $i, reason: ${jsonDecode(response.body)["MESSAGE"]}");
             setState(() => failed = true);
+          }
         });
       }
-    } else
+    } else {
+      DebugLogs.print("[Store] Cannot receive showcase, reason: ${jsonDecode(responseShowcase.body)["MESSAGE"]}");
       setState(() => failed = true);
+    }
   }
 
   @override
@@ -69,12 +82,24 @@ class _StorePageState extends State<StorePage> {
                 //Back to home screen
                 onPressed: () => Navigator.pushNamedAndRemoveUntil(context, 'home', (route) => false),
                 //Back icon
-                icon: const Icon(Icons.arrow_back),
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Theme.of(context).secondaryHeaderColor,
+                ),
               ),
             ],
           ),
-          items.isEmpty && !failed
-              ? const Center(child: CircularProgressIndicator())
+          items.isEmpty
+              ? failed
+                  // Failed Icon
+                  ? Expanded(
+                      child: Center(
+                          child: Icon(
+                      Icons.error_outline,
+                      color: Theme.of(context).secondaryHeaderColor,
+                    )))
+                  // Loading widget
+                  : const Expanded(child: Center(child: CircularProgressIndicator()))
               //Showcase
               : SizedBox(
                   width: screenSize.width * 0.9,

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:protify/components/models/connection.dart';
+import 'package:protify/components/models/download.dart';
 import 'package:protify/components/widgets/library/library_provider.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
 import 'package:protify/data/save_datas.dart';
@@ -36,6 +37,7 @@ void main() async {
     ChangeNotifierProvider(create: (_) => ConnectionModel()),
     ChangeNotifierProvider(create: (_) => ScreenBuilderProvider()),
     ChangeNotifierProvider(create: (_) => LibraryProvider()),
+    ChangeNotifierProvider(create: (_) => DownloadModel()),
   ], child: const Protify()));
 }
 
