@@ -26,9 +26,9 @@ class _SteamWrapperCheckboxState extends State<SteamWrapperCheckbox> {
             },
           ),
           //Fill Color
-          fillColor: MaterialStateProperty.resolveWith(
+          fillColor: WidgetStateProperty.resolveWith(
             (states) {
-              if (states.contains(MaterialState.selected)) {
+              if (states.contains(WidgetState.selected)) {
                 return Theme.of(context).colorScheme.secondary;
               }
               return null;

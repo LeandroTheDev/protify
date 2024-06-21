@@ -15,6 +15,7 @@ import 'package:protify/components/widgets/screen_builder/steam_compatibility_ch
 import 'package:protify/components/widgets/screen_builder/steam_reaper_input.dart';
 import 'package:protify/components/widgets/screen_builder/steam_wrapper_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
+import 'package:protify/components/widgets/screen_builder/wine_compatibility_checkbox.dart';
 import 'package:protify/data/save_datas.dart';
 
 class EditItemScreen extends StatefulWidget {
@@ -94,6 +95,10 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     const SelectPrefixButton(),
                     //Spacer
                     const SizedBox(height: 15),
+                    //Wine Compatibility
+                    const WineCompatibilityCheckbox(),
+                    //Spacer
+                    const SizedBox(height: 15),
                     //Steam Compatibility
                     const SteamCompatibilityCheckbox(),
                     //Spacer
@@ -105,11 +110,11 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     //Shader Compile
                     const SelectShaderCompileButton(),
                     //Spacer
-                    const SizedBox(height: 15),
+                    ScreenBuilderProvider.getListenProvider(context).datas["EnableNvidiaCompile"] == true ? const SizedBox(height: 15) : const SizedBox(),
                     //Reaper ID
                     const SteamReaperInput(),
                     //Spacer
-                    const SizedBox(height: 15),
+                    ScreenBuilderProvider.getListenProvider(context).datas["SelectedRuntime"] != null ? const SizedBox(height: 15) : const SizedBox(),
                     //Select Runtime
                     const SelectRuntimeButton(),
                     //Spacer

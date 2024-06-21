@@ -19,6 +19,7 @@ class ItemLogScreen extends StatefulWidget {
 class LaunchLogScreenState extends State<ItemLogScreen> {
   final ScrollController scrollController = ScrollController();
   bool running = false;
+  bool disposed = false;
   List gameLog = [];
   List futureLog = [];
   Timer? logShower;
@@ -35,6 +36,7 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
     //Check if timer is already created
     if (logShower != null) return;
     logShower = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      if (disposed) return;
       //Update gamelog
       setState(() => gameLog.add(futureLog[0]));
       //Add animation
@@ -204,6 +206,7 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
   @override
   void dispose() {
     super.dispose();
+    disposed = true;
     //Check listeners and cancel
     if (stdOut != null) {
       stdOut!.cancel();

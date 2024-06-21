@@ -30,7 +30,11 @@ class LauncherModel {
     final String itemDirectory = item["SelectedItem"] ?? "";
     final String launchCommand = item["LaunchCommand"] ?? "";
     final String argumentsCommand = item["ArgumentsCommand"] ?? "";
-    String checkEnviroments = 'STEAM_RUNTIME=3 STEAM_COMPAT_DATA_PATH="$itemPrefix" WINEPREFIX="${preferences.defaultWineprefixDirectory}" ';
+    String checkEnviroments = 'STEAM_RUNTIME=3 STEAM_COMPAT_DATA_PATH="$itemPrefix" ';
+    // Check Wine Compatibility
+    if (item["EnableWineCompatibility"] ?? false) {
+      checkEnviroments += 'WINEPREFIX="${preferences.defaultWineprefixDirectory}" ';
+    }
     // Check Steam Compatibility
     if (item["EnableSteamCompatibility"] ?? false) {
       checkEnviroments += 'STEAM_COMPAT_CLIENT_INSTALL_PATH="${preferences.steamCompatibilityDirectory}" ';

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:protify/components/widgets/library/item_info.dart';
 import 'package:protify/components/widgets/library/library_provider.dart';
 
-class GridGame extends StatelessWidget {
-  const GridGame({super.key});
+class GridGames extends StatelessWidget {
+  const GridGames({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,17 +26,19 @@ class GridGame extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
               onTap: () {
-                libraryProvider.changeItemIndex(index);
+                int originalIndex = libraryProvider.getItemOriginalIndex(index);
+                libraryProvider.changeItemIndex(originalIndex);
                 // Update selection
-                libraryProvider.changeItemSelected(libraryProvider.items[index]);
+                libraryProvider.changeItemSelected(libraryProvider.items[originalIndex]);
                 libraryProvider.hideItemInfo();
                 libraryProvider.updateScreen();
               },
               onSecondaryTap: libraryProvider.itemInfo == null
                   ? () {
+                      int originalIndex = libraryProvider.getItemOriginalIndex(index);
                       libraryProvider.hideItemInfo();
                       // Update selection
-                      libraryProvider.changeItemIndex(index);
+                      libraryProvider.changeItemIndex(originalIndex);
                       // Create the gameInfo widget
                       libraryProvider.changeItemInfo(context, ItemInfoWidget.build(context));
                     }

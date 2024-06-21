@@ -463,7 +463,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                           //Clear Data
                           ElevatedButton(
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
+                              backgroundColor: WidgetStateProperty.all<Color>(Colors.red[200]!),
                             ),
                             onPressed: () => DialogsModel.showQuestion(context, title: "Clear Data", content: "Are you sure you want to erase all saved datas?").then(
                               //Clear data and reload data
@@ -493,7 +493,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                           //Reset Preferences
                           ElevatedButton(
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
+                              backgroundColor: WidgetStateProperty.all<Color>(Colors.red[200]!),
                             ),
                             onPressed: () => DialogsModel.showQuestion(context, title: "Reset Preferences", content: "Are you sure you want to reset your preferences?").then(
                               //Clear data and reload data
@@ -523,7 +523,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                           //Reset Preferences
                           ElevatedButton(
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(Colors.red[200]!),
+                              backgroundColor: WidgetStateProperty.all<Color>(Colors.red[200]!),
                             ),
                             onPressed: () => DialogsModel.showQuestion(context, title: "Clear Games", content: "Are you sure you want to remove all games from your library?").then(
                               //Clear games and reload launcher

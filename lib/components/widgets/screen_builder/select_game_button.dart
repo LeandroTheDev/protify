@@ -13,6 +13,8 @@ class SelectGameButton extends StatefulWidget {
 }
 
 class _SelectGameButtonState extends State<SelectGameButton> {
+  bool busy = false;
+
   @override
   Widget build(BuildContext context) {
     ScreenBuilderProvider provider = ScreenBuilderProvider.getProvider(context);
@@ -30,24 +32,31 @@ class _SelectGameButtonState extends State<SelectGameButton> {
         const SizedBox(height: 5),
         //Select Launcher Button
         ElevatedButton(
-          onPressed: () => FilePicker.platform
+          onPressed: () {
+            // If is already clicked ignore subsequent
+            if(busy) return;
+            busy = true;
+            
+            FilePicker.platform
               .pickFiles(
             allowMultiple: false,
             dialogTitle: "Select the Game",
             initialDirectory: preferences.defaultGameDirectory,
           )
               .then((file) {
+                busy = false;
             if (file == null) {
-              DebugLogs.print("Canceled");
+              DebugLogs.print("[Select Game] Canceled");
               return;
             } else if (file.files.isEmpty) {
-              DebugLogs.print("Empty files");
+              DebugLogs.print("[Select Game] Empty files");
               return;
             }
             setState(
               () => provider.changeData("SelectedItem", file.files[0].path),
             );
-          }),
+          });
+          },
           child: const Text("Select Game"),
         ),
       ],

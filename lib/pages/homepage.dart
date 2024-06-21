@@ -72,7 +72,8 @@ class _HomePageState extends State<HomePage> {
       if (libraryProvider.items.isNotEmpty)
         return Column(
           children: [
-            const GridGame(),
+            //Game Banners
+            const GridGames(),
             //Bottom Buttons
             Container(
               padding: const EdgeInsets.all(8.0),

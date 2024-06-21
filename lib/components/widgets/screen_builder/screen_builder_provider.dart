@@ -12,6 +12,7 @@ class ScreenBuilderProvider extends ChangeNotifier {
     if (value == null) _datas.remove(key);
 
     _datas[key] = value;
+    notifyListeners();
   }
 
   /// Reset all datas from Widgets
@@ -27,6 +28,10 @@ class ScreenBuilderProvider extends ChangeNotifier {
   /// Returns the provider for getting the datas
   static ScreenBuilderProvider getProvider(BuildContext context) {
     return Provider.of<ScreenBuilderProvider>(context, listen: false);
+  }
+
+  static ScreenBuilderProvider getListenProvider(BuildContext context) {
+    return Provider.of<ScreenBuilderProvider>(context, listen: true);
   }
 
   /// Construct the data into a map

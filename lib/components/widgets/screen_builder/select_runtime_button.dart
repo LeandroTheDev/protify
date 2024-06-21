@@ -25,11 +25,16 @@ class _SelectRuntimeButtonState extends State<SelectRuntimeButton> {
         const SizedBox(height: 5),
         //Select Launcher Button
         ElevatedButton(
-          onPressed: () => LibraryModel.selectRuntime(context).then(
-            (selectedRuntime) => setState(
-              () => provider.changeData("SelectedRuntime", selectedRuntime),
-            ),
-          ),
+          onPressed: () => LibraryModel.selectRuntime(context).then((selectedRuntime) {
+            if (selectedRuntime == "none")
+              setState(
+                () => provider.changeData("SelectedRuntime", null),
+              );
+            else
+              setState(
+                () => provider.changeData("SelectedRuntime", selectedRuntime),
+              );
+          }),
           child: const Text("Select Runtime"),
         ),
       ],

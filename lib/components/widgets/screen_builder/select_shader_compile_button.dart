@@ -17,35 +17,40 @@ class _SelectShaderCompileButtonState extends State<SelectShaderCompileButton> {
     ScreenBuilderProvider provider = ScreenBuilderProvider.getProvider(context);
     UserPreferences preferences = UserPreferences.getProvider(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        //Selected Prefix
-        Text(
-          provider.datas["SelectedShaderCompile"] ?? "Default Shader Compile Directory",
-          style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
-        ),
-        //Spacer
-        const SizedBox(height: 5),
-        //Select Prefix Button
-        ElevatedButton(
-          onPressed: () => FilePicker.platform
-              .getDirectoryPath(
-            dialogTitle: "Select the Shader Compile Directory",
-            initialDirectory: preferences.defaultPrefixDirectory,
+    //Dependencies
+    bool isVisible = ScreenBuilderProvider.getListenProvider(context).datas["EnableNvidiaCompile"] == true;
+
+    return isVisible
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //Selected Prefix
+              Text(
+                provider.datas["SelectedShaderCompile"] ?? "Default Shader Compile Directory",
+                style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+              ),
+              //Spacer
+              const SizedBox(height: 5),
+              //Select Prefix Button
+              ElevatedButton(
+                onPressed: () => FilePicker.platform
+                    .getDirectoryPath(
+                  dialogTitle: "Select the Shader Compile Directory",
+                  initialDirectory: preferences.defaultPrefixDirectory,
+                )
+                    .then((directory) {
+                  if (directory == null) {
+                    DebugLogs.print("Canceled");
+                    return;
+                  }
+                  setState(
+                    () => provider.changeData("SelectedShaderCompile", directory),
+                  );
+                }),
+                child: const Text("Select Shader Compile Directory"),
+              ),
+            ],
           )
-              .then((directory) {
-            if (directory == null) {
-              DebugLogs.print("Canceled");
-              return;
-            }
-            setState(
-              () => provider.changeData("SelectedShaderCompile", directory),
-            );
-          }),
-          child: const Text("Select Shader Compile Directory"),
-        ),
-      ],
-    );
+        : const SizedBox();
   }
 }

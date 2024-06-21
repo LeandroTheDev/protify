@@ -58,6 +58,8 @@ You don't need all dependencies, only what you will use.
 - In your home directory anywhere you want, the protify will automatically setup everthing for you in the first launch, if you change the location remember to clear the data or manually change it in preferences page.
 > I can open this program with sudo privilegies?
 - No. this is not tested, protify is builded to be used in user ambient.
+> I am getting the error ``Wine cannot find the FreeType font library``
+- You need the lib32-freetype package, download it from your distro repository
 
 ### Contributing
 This project accept contributions and pull requests, feel free to check the [Contribution](https://github.com/LeandroTheDev/protify/blob/main/CONTRIBUTING.md)
