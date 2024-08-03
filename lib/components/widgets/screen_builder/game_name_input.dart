@@ -15,6 +15,8 @@ class _GameNameInputState extends State<GameNameInput> {
     TextEditingController gameName = TextEditingController();
     gameName.text = provider.datas["ItemName"] ?? "";
     gameName.addListener(() => provider.changeData("ItemName", gameName.text));
+    provider.addListener(() => provider.shouldRefreshInstances ? gameName.text = provider.datas["ItemName"] : null);
+
     return SizedBox(
       height: 60,
       child: TextField(
@@ -26,7 +28,7 @@ class _GameNameInputState extends State<GameNameInput> {
             borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
           ),
           enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary), // Cor da borda inferior quando o campo não está focado
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
           ),
         ),
         style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),

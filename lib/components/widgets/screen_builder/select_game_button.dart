@@ -34,28 +34,41 @@ class _SelectGameButtonState extends State<SelectGameButton> {
         ElevatedButton(
           onPressed: () {
             // If is already clicked ignore subsequent
-            if(busy) return;
+            if (busy) return;
             busy = true;
-            
+
             FilePicker.platform
-              .pickFiles(
-            allowMultiple: false,
-            dialogTitle: "Select the Game",
-            initialDirectory: preferences.defaultGameDirectory,
-          )
-              .then((file) {
-                busy = false;
-            if (file == null) {
-              DebugLogs.print("[Select Game] Canceled");
-              return;
-            } else if (file.files.isEmpty) {
-              DebugLogs.print("[Select Game] Empty files");
-              return;
-            }
-            setState(
-              () => provider.changeData("SelectedItem", file.files[0].path),
-            );
-          });
+                .pickFiles(
+              allowMultiple: false,
+              dialogTitle: "Select the Game",
+              initialDirectory: preferences.defaultGameDirectory,
+            )
+                .then((file) {
+              busy = false;
+              if (file == null) {
+                DebugLogs.print("[Select Game] Canceled");
+                return;
+              } else if (file.files.isEmpty) {
+                DebugLogs.print("[Select Game] Empty files");
+                return;
+              }
+              setState(
+                () {
+                  if (provider.datas["ItemName"] == null || provider.datas["ItemName"] == "") {
+                    // Checking for extensions
+                    List<String> nameParts = file.files[0].name.split('.');
+                    if (nameParts.length > 1)
+                      // Removing extension
+                      provider.changeData("ItemName", nameParts.sublist(0, nameParts.length - 1).join('.'));
+                    else
+                      provider.changeData("ItemName", file.files[0].name);
+
+                    provider.triggerRefreshInstance();
+                  }
+                  provider.changeData("SelectedItem", file.files[0].path);
+                },
+              );
+            });
           },
           child: const Text("Select Game"),
         ),

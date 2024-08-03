@@ -194,14 +194,15 @@ class LibraryModel {
       }
       //Empty treatment
       else {
-        DialogsModel.showAlert(context, title: "Alert", content: "No protons can be found, add one.");
+        // DialogsModel.showAlert(context, title: "Alert", content: "No protons can be found, add one.");
+        return await chooseProton(protons);
       }
     }
     //No proton folder treatment
     else {
-      DialogsModel.showAlert(context, title: "Error", content: "Cannot find the folder for protons in protify folder, check if the folder exist if not create one and add your protons there.");
+      // DialogsModel.showAlert(context, title: "Error", content: "Cannot find the folder for protons in protify folder, check if the folder exist if not create one and add your protons there.");
+      return await chooseProton(protons);
     }
-    return "none";
   }
 
   /// Show a dialog to select the protons located in the folder

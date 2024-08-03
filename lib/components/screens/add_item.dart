@@ -6,6 +6,7 @@ import 'package:protify/components/widgets/screen_builder/arguments_command_inpu
 import 'package:protify/components/widgets/screen_builder/game_name_input.dart';
 import 'package:protify/components/widgets/screen_builder/launch_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/nvidia_shader_compile_checkbox.dart';
+import 'package:protify/components/widgets/screen_builder/prime_run.dart';
 import 'package:protify/components/widgets/screen_builder/select_game_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_prefix_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_launcher_button.dart';
@@ -114,6 +115,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     ScreenBuilderProvider.getListenProvider(context).datas["EnableNvidiaCompile"] == true ? const SizedBox(height: 15) : const SizedBox(),
                     //Reaper ID
                     const SteamReaperInput(),
+                    //Prime run
+                    const NvidiaPrimeRunCheckbox(),
+                    //Spacer
+                    const SizedBox(height: 15),
                     //Spacer
                     ScreenBuilderProvider.getListenProvider(context).datas["SelectedRuntime"] != null ? const SizedBox(height: 15) : const SizedBox(),
                     //Select Runtime

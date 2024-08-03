@@ -3,9 +3,21 @@ import 'package:provider/provider.dart';
 
 class ScreenBuilderProvider extends ChangeNotifier {
   Map<String, dynamic> _datas = {};
+  bool _shouldRefreshInstances = false;
 
   /// Stores all datas from Widgets
   get datas => _datas;
+
+  /// Triggered every time some action that needs to refresh specific components
+  /// for example: game changed, you want to refresh the game name after changing the data
+  get shouldRefreshInstances => _shouldRefreshInstances;
+
+  /// Refresh all components that use shouldRefreshInstances, the trigger persist for 50ms
+  void triggerRefreshInstance() {
+    _shouldRefreshInstances = true;
+    // Resetting variable
+    Future.delayed(Durations.short1).then((_) => _shouldRefreshInstances = false);
+  }
 
   /// Update a data from key and value
   void changeData(String key, dynamic value) {

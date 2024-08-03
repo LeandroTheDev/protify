@@ -29,6 +29,7 @@ class InstallItemScreen extends StatefulWidget {
 }
 
 class _InstallGameScreenState extends State<InstallItemScreen> {
+  bool firstLoad = true;
   installItem(BuildContext context) async {
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
     final installationTemporaryPrefix = join(preferences.protifyDirectory, "data", "temp_prefix");
@@ -150,8 +151,6 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenBuilderProvider.resetProviderDatas(context);
-
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: Padding(
@@ -227,11 +226,9 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
                     //Shader Compile
                     const NvidiaShaderCompileCheckbox(),
                     //Spacer
-                    const SizedBox(height: 15),
+                    ScreenBuilderProvider.getListenProvider(context).datas["EnableNvidiaCompile"] == true ? const SizedBox(height: 15) : const SizedBox(),
                     //Shader Compile
                     const SelectShaderCompileButton(),
-                    //Spacer
-                    const SizedBox(height: 15),
                     //Reaper ID
                     const SteamReaperInput(),
                     //Spacer

@@ -98,10 +98,11 @@ class _HomePageState extends State<HomePage> {
                     height: 30,
                     width: screenSize.width > 380.0 ? null : 30,
                     child: ElevatedButton(
-                        onPressed: () => {
-                              libraryProvider.hideItemInfo(),
-                              LibraryModel.installItemModal(context),
-                            },
+                        onPressed: () {
+                          libraryProvider.hideItemInfo();
+                          ScreenBuilderProvider.resetProviderDatas(context);
+                          LibraryModel.installItemModal(context);
+                        },
                         child: const Text("Install Game")),
                   ),
                 ],
