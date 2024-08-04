@@ -33,6 +33,7 @@ You don't need all dependencies, only what you will use.
 - Run games with sniper runtime: openssl-1.1
 - Run/Install windows games: proton or wine
 - Select files/folders: Any File Manager
+- Kill instance: ps
 
 ### First steps
 - Download protify from [releases](https://github.com/LeandroTheDev/protify/releases)

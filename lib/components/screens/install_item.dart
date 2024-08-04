@@ -67,6 +67,7 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
         } catch (_) {}
         //Create new prefix
         prefixDirectory.createSync();
+        item["SelectedPrefix"] = installationTemporaryPrefix;
         final Directory mountDirectory = Directory(join(preferences.protifyDirectory, "data", "temp_mount"));
         // Checking if prefix folder exist
         if (!mountDirectory.existsSync()) {
@@ -139,6 +140,7 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
         } catch (_) {}
         //Create new prefix
         prefixDirectory.createSync();
+        item["SelectedPrefix"] = installationTemporaryPrefix;
         proceedToInstallation();
       } catch (error) {
         DialogsModel.showAlert(context, title: "Error", content: "Cannot create prefix directory reason: $error");

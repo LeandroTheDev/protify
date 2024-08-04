@@ -64,6 +64,17 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
     });
   }
 
+  /// Will check if the inserted code is successfully
+  checkSuccessCodes(int code) {
+    switch (code) {
+      case 0:
+        return true;
+      case 3:
+        return true;
+    }
+    return false;
+  }
+
   startCommand(BuildContext context) async {
     running = true;
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
@@ -99,7 +110,7 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
       //Waiting for process
       final exitCode = await process!.exitCode;
       //Process Finished
-      if (exitCode == 0) {
+      if (checkSuccessCodes(exitCode)) {
         addLog('[Protify] Success Launching Process');
         //Check for creation symbolic links
         if (widget.item["CreateItemShortcut"] != null) {
@@ -107,8 +118,8 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
           symbolicLinkTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
             //Check if exist
             if (Directory(preferences.defaultGameDirectory).existsSync()) {
-              process = await Process.start('/bin/bash', ['-c', 'ln -s "${preferences.defaultGameDirectory}" "${widget.item["CreateGameShortcut"]}"']);
-              addLog('[Protify] Successfully created symbolic in prefix');
+              process = await Process.start('/bin/bash', ['-c', 'ln -s "${preferences.defaultGameDirectory}" "${widget.item["CreateItemShortcut"]}"']);
+              addLog('[Protify] Successfully created symbolic in prefix to ${preferences.defaultGameDirectory}');
               timer.cancel();
             }
             //If not exist
