@@ -3,6 +3,7 @@
 .flutter-plugins
 .flutter-plugins-dependencies
 .metadata
+macos/
 windows/
 web/
 android/
