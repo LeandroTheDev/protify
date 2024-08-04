@@ -1,1 +1,0 @@
-this file is used to find protify folder, do not delete it or will cause problems when first launching the protify or clearing data

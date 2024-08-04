@@ -3,7 +3,6 @@ import 'package:protify/components/models/dialogs.dart';
 import 'package:protify/components/models/launcher.dart';
 import 'package:protify/components/widgets/screen_builder/arguments_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/launch_command_input.dart';
-import 'package:protify/components/widgets/screen_builder/nvidia_shader_compile_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/select_game_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_prefix_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_launcher_button.dart';
@@ -101,9 +100,7 @@ class _InstallLibsScreenState extends State<InstallLibsScreen> {
                     const SteamCompatibilityCheckbox(),
                     //Spacer
                     const SizedBox(height: 15),
-                    //Shader Compile
-                    const NvidiaShaderCompileCheckbox(),
-                    //Spacer
+                    //Spacer      
                     const SizedBox(height: 15),
                     //Reaper ID
                     const SteamReaperInput(),

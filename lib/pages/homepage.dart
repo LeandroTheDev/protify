@@ -6,7 +6,7 @@ import 'package:protify/components/widgets/library/category_list.dart';
 import 'package:protify/components/widgets/library/empty_widget.dart';
 import 'package:protify/components/widgets/library/grid_game.dart';
 import 'package:protify/components/widgets/library/library_provider.dart';
-import 'package:protify/components/widgets/library/selected_game.dart';
+import 'package:protify/components/widgets/library/selected_item.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:protify/debug/logs.dart';
@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
     Widget rightSide() {
       final screenSize = MediaQuery.of(context).size;
       //Selected game
-      if (libraryProvider.itemSelected != null) return const SelectedGame();
+      if (libraryProvider.itemSelected != null) return const SelectedItem();
       //Show Game Grid
       if (libraryProvider.items.isNotEmpty)
         return Column(

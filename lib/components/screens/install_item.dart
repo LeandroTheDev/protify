@@ -8,11 +8,9 @@ import 'package:protify/components/models/dialogs.dart';
 import 'package:protify/components/models/launcher.dart';
 import 'package:protify/components/widgets/screen_builder/arguments_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/launch_command_input.dart';
-import 'package:protify/components/widgets/screen_builder/nvidia_shader_compile_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/select_installation_game_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_launcher_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_runtime_button.dart';
-import 'package:protify/components/widgets/screen_builder/select_shader_compile_button.dart';
 import 'package:protify/components/widgets/screen_builder/steam_compatibility_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/steam_reaper_input.dart';
 import 'package:protify/components/widgets/screen_builder/steam_wrapper_checkbox.dart';
@@ -221,14 +219,6 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
                     const SizedBox(height: 15),
                     //Steam Compatibility
                     const SteamCompatibilityCheckbox(),
-                    //Spacer
-                    const SizedBox(height: 15),
-                    //Shader Compile
-                    const NvidiaShaderCompileCheckbox(),
-                    //Spacer
-                    ScreenBuilderProvider.getListenProvider(context).datas["EnableNvidiaCompile"] == true ? const SizedBox(height: 15) : const SizedBox(),
-                    //Shader Compile
-                    const SelectShaderCompileButton(),
                     //Reaper ID
                     const SteamReaperInput(),
                     //Spacer

@@ -16,11 +16,11 @@ class UserPreferences with ChangeNotifier {
     return items;
   }
 
-  /// Remove a specific game by the index, needs the games, if context is not provided,
+  /// Remove a specific game by the index, needs the items array to remove it, if context is not provided,
   /// the message asking will not appear
   static Future<List> removeItem(int index, List items, [context]) async {
     if (context != null) {
-      final result = await DialogsModel.showQuestion(context, title: "Remove Game", content: "Do you wish to remove this game from your library?");
+      final result = await DialogsModel.showQuestion(context, title: "Remove ${items[index]["ItemName"]}", content: "Do you wish to remove ${items[index]["ItemName"]} from your library?");
       if (!result) return items;
     }
     //Removing

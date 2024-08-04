@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path/path.dart';
+import 'package:protify/components/models/dialogs.dart';
 import 'package:protify/components/models/launcher.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
@@ -186,7 +188,47 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
                   width: MediaQuery.of(context).size.width / 4,
                   height: 30,
                   child: ElevatedButton(
-                    onPressed: () => {process!.kill(ProcessSignal.sigkill)},
+                    onPressed: () async {
+                      process!.kill(ProcessSignal.sigkill);
+                      // Getting the item executable
+                      final String executableName = basename(widget.item["SelectedItem"]);
+                      // Checking executables with the item name
+                      final executableFinderProcess = await Process.start('/bin/bash', ['-c', "ps aux | grep '$executableName'"]);
+                      //Receive executables info
+                      executableFinderProcess.stdout.transform(utf8.decoder).listen((data) {
+                        final executablesLines = data.split("\n");
+
+                        /// Stores the executable pid and name [[123, "test.exe"]]
+                        final List PIDs = [];
+                        String warningText = "Process finded with the name: ${widget.item["ItemName"]}";
+
+                        // Swiping all executables from that name
+                        for (var line in executablesLines) {
+                          // Getting the parts of that line dividing it by spaces
+                          final parts = line.split(RegExp(r'\s+'));
+                          // Check if the line exist
+                          if (parts.length > 1) {
+                            // Saving the PID and Name
+                            PIDs.add([int.parse(parts[1]), parts[10]]);
+                            // warningText += "\n${parts[1]} -- ${parts[10]}";
+                            warningText += "\n${parts[1]}";
+                          }
+                        }
+
+                        warningText += "\nKill all?";
+                        DialogsModel.showQuestion(context, title: "Killing ${widget.item["ItemName"]}", content: warningText, buttonTitle: "Yes", buttonTitle2: "No").then((result) {
+                          if (!result) return;
+                          // Swiping all pids to kill
+                          for (int i = 0; i < PIDs.length; i++) {
+                            // Getting the pid
+                            int processPID = PIDs[i][0];
+                            // Killing it
+                            Process.run('kill', ['-9', processPID.toString()]);
+                            addLog("[Protify] process killed: $processPID");
+                          }
+                        });
+                      });
+                    },
                     child: const Text(
                       "Kill",
                     ),

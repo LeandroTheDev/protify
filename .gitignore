@@ -8,5 +8,7 @@ web/
 android/
 ios/
 build/
+linux/
+upload_template
 protify.iml
 pubspec.lock

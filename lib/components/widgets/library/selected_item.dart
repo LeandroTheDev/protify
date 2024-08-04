@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:protify/components/models/launcher.dart';
 import 'package:protify/components/models/library.dart';
 import 'package:protify/components/widgets/library/library_provider.dart';
+import 'package:protify/data/user_preferences.dart';
+import 'package:protify/debug/logs.dart';
 
-class SelectedGame extends StatelessWidget {
-  const SelectedGame({super.key});
+class SelectedItem extends StatelessWidget {
+  const SelectedItem({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -141,6 +143,45 @@ class SelectedGame extends StatelessWidget {
                 ),
               )
             : const SizedBox(),
+        const Spacer(),
+        // Remove item
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            width: screenSize.width * 0.7 - 23,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                //Remove Item
+                SizedBox(
+                  width: screenSize.width * 0.15 < 56 ? 56 : screenSize.width * 0.15,
+                  height: screenSize.height * 0.07,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      final int previousQuantity = libraryProvider.items.length;
+                      UserPreferences.removeItem(libraryProvider.itemIndex, libraryProvider.items, context).then((items) {
+                        // Check if the games was removed
+                        if (previousQuantity > items.length) {
+                          DebugLogs.print("[Library] Item removed: ${libraryProvider.itemIndex}");
+                          libraryProvider.clearItemSelection();
+                          libraryProvider.updateScreen();                          
+                        }
+                      });
+                    },
+                    child: const FittedBox(
+                      child: Text(
+                        "Remove",
+                        style: TextStyle(fontSize: 999),
+                      ),
+                    ),
+                  ),
+                ),
+                //Empty
+                const SizedBox(),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }

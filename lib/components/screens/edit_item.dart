@@ -108,16 +108,16 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     const NvidiaShaderCompileCheckbox(),
                     //Spacer
                     const SizedBox(height: 15),
-                    //Prime run
-                    const NvidiaPrimeRunCheckbox(),
-                    //Spacer
-                    const SizedBox(height: 15),
                     //Shader Compile
                     const SelectShaderCompileButton(),
                     //Spacer
                     ScreenBuilderProvider.getListenProvider(context).datas["EnableNvidiaCompile"] == true ? const SizedBox(height: 15) : const SizedBox(),
                     //Reaper ID
                     const SteamReaperInput(),
+                    //Prime run
+                    const NvidiaPrimeRunCheckbox(),
+                    //Spacer
+                    const SizedBox(height: 15),
                     //Spacer
                     ScreenBuilderProvider.getListenProvider(context).datas["SelectedRuntime"] != null ? const SizedBox(height: 15) : const SizedBox(),
                     //Select Runtime
