@@ -468,17 +468,20 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             onPressed: () => DialogsModel.showQuestion(context, title: "Clear Data", content: "Are you sure you want to erase all saved datas?").then(
                               //Clear data and reload data
                               (value) => value
-                                  //Clearing data
-                                  ? SaveDatas.clearData().then(
-                                      //Reloading data
-                                      (_) => UserPreferences.loadPreference(context).then(
-                                        //Reseting HomePage
-                                        (value) {
-                                          Navigator.pop(context);
-                                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
-                                          LibraryProvider.getProvider(context).changeScreenUpdate(true);
-                                          LibraryProvider.getProvider(context).updateScreen();
-                                        },
+                                  //Clearing preferences
+                                  ? SaveDatas.removeData("preferences").then(
+                                      // Cleaning items
+                                      (_) => SaveDatas.removeData("items").then(
+                                        //Reloading data
+                                        (_) => UserPreferences.loadPreference(context).then(
+                                          //Reseting HomePage
+                                          (value) {
+                                            Navigator.pop(context);
+                                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
+                                            LibraryProvider.getProvider(context).changeScreenUpdate(true);
+                                            LibraryProvider.getProvider(context).updateScreen();
+                                          },
+                                        ),
                                       ),
                                     )
                                   : () {},
@@ -499,7 +502,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                               //Clear data and reload data
                               (value) => value
                                   //Clearing data
-                                  ? SaveDatas.clearPreferences().then(
+                                  ? SaveDatas.removeData("preferences").then(
                                       //Reloading data
                                       (_) => UserPreferences.loadPreference(context).then(
                                         //Reseting HomePage
@@ -525,11 +528,11 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             style: ButtonStyle(
                               backgroundColor: WidgetStateProperty.all<Color>(Colors.red[200]!),
                             ),
-                            onPressed: () => DialogsModel.showQuestion(context, title: "Clear Games", content: "Are you sure you want to remove all games from your library?").then(
+                            onPressed: () => DialogsModel.showQuestion(context, title: "Clear Items", content: "Are you sure you want to remove all items from your library?").then(
                               //Clear games and reload launcher
                               (value) => value
                                   //Clearing data
-                                  ? SaveDatas.clearGames().then(
+                                  ? SaveDatas.removeData("items").then(
                                       //Reloading data
                                       (_) {
                                         Navigator.pop(context);

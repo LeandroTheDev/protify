@@ -96,14 +96,14 @@ class LibraryProvider extends ChangeNotifier {
   void clearItemSelection() {
     _itemIndex = null;
     _itemSelected = null;
-    DebugLogs.print("[Library] Data Selection Clean");
+    DebugLogs.print("[Library] Item Selection Clean");
   }
 
-  /// Change datas to the default datas
-  void clearDatas() {
+  /// Reset memory datas to default
+  void memoryClean() {
     _items = [];
     _itemsCategories = {};
-    DebugLogs.print("[Library] Data Clean");
+    DebugLogs.print("[Library] Memory Clean");
   }
 
   /// Returns the provider for getting the datas

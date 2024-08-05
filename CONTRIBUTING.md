@@ -139,7 +139,7 @@ static String generateProtonStartCommand(BuildContext context, Map item) {
 
 ## New Preferences
 - Go to /data/user_preferences.dart
-- Find the functionn ``loadPreferences``
+- Find the function ``loadPreferences``
 - Find the defaultData variable
 
 ``Add your new preference here``

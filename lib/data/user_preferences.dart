@@ -6,13 +6,13 @@ import 'package:protify/components/models/connection.dart';
 import 'package:protify/components/models/dialogs.dart';
 import 'package:protify/data/save_datas.dart';
 import 'package:path/path.dart';
+import 'package:protify/debug/logs.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class UserPreferences with ChangeNotifier {
   /// Returns a list of all games saved in device
   static Future<List> getItems() async {
-    final items = jsonDecode(await SaveDatas.readData("items", "string") ?? "[]");
+    final items = jsonDecode(await SaveDatas.readData("items", "user") ?? "[]");
     return items;
   }
 
@@ -26,7 +26,7 @@ class UserPreferences with ChangeNotifier {
     //Removing
     items.removeAt(index);
     //Update new data
-    await SaveDatas.saveData('items', jsonEncode(items));
+    SaveDatas.saveData("items", "user", jsonEncode(items));
     return items;
   }
 
@@ -63,6 +63,10 @@ class UserPreferences with ChangeNotifier {
       DialogsModel.showAlert(context, title: "Error", content: "Cannot find the protify_finder.txt in protify/lib, check if exists, or if /home/$username exists");
       protifyDirectory = "/home/$username/protify";
     }
+
+    StorageInstance.instanceDirectory = join(protifyDirectory, "data");
+    DebugLogs.print("[Protify] Data directory: ${StorageInstance.instanceDirectory}");
+
     //Object Creation
     final Map defaultData = {
       "Language": "english",
@@ -84,165 +88,164 @@ class UserPreferences with ChangeNotifier {
     };
 
     //Load preferences
-    final Map storedPreference = jsonDecode(await SaveDatas.readData("preferences", "string") ?? "{}");
+    final Map storedPreference = jsonDecode(await SaveDatas.readData("preferences", "user") ?? "{}");
     // Updating Providers
-    userPreference.changeLanguage(storedPreference["Language"] ?? defaultData["Language"]);
-    connection.changeHttpAddress(storedPreference["HttpAddress"] ?? defaultData["HttpAddress"]);
-    connection.changeSocketAddress(storedPreference["SocketAddress"] ?? defaultData["SocketAddress"]);
-    userPreference.changeUsername(storedPreference["Username"] ?? defaultData["Username"]);
-    userPreference.changeProtifyDirectory(storedPreference["ProtifyDirectory"] ?? defaultData["ProtifyDirectory"]);
-    userPreference.changeDefaultGameInstallDirectory(storedPreference["DefaultGameInstallDirectory"] ?? defaultData["DefaultGameInstallDirectory"]);
-    userPreference.changeDefaultGameDirectory(storedPreference["DefaultGameDirectory"] ?? defaultData["DefaultGameDirectory"]);
-    userPreference.changeDefaultPrefixDirectory(storedPreference["DefaultPrefixDirectory"] ?? defaultData["DefaultPrefixDirectory"]);
-    userPreference.changeDefaultRuntimeDirectory(storedPreference["DefaultRuntimeDirectory"] ?? defaultData["DefaultRuntimeDirectory"]);
-    userPreference.changeDefaultWineprefixDirectory(storedPreference["DefaultWinePrefixDirectory"] ?? defaultData["DefaultWinePrefixDirectory"]);
-    userPreference.changeDefaultProtonDirectory(storedPreference["DefaultProtonDirectory"] ?? defaultData["DefaultProtonDirectory"]);
-    userPreference.changeSteamCompatibilityDirectory(storedPreference["SteamCompatibilityDirectory"] ?? defaultData["SteamCompatibilityDirectory"]);
-    userPreference.changeShaderCompileDirectory(storedPreference["DefaultShaderCompileDirectory"] ?? defaultData["DefaultShaderCompileDirectory"]);
-    userPreference.changeStartWindowHeight(storedPreference["StartWindowHeight"] ?? defaultData["StartWindowHeight"]);
-    userPreference.changeStartWindowWidth(storedPreference["StartWindowWidth"] ?? defaultData["StartWindowWidth"]);
-    userPreference.changeDefaultCategory(storedPreference["DefaultCategory"] ?? defaultData["DefaultCategory"]);
+    await userPreference.changeLanguage(storedPreference["Language"] ?? defaultData["Language"]);
+    await connection.changeHttpAddress(storedPreference["HttpAddress"] ?? defaultData["HttpAddress"]);
+    await connection.changeSocketAddress(storedPreference["SocketAddress"] ?? defaultData["SocketAddress"]);
+    await userPreference.changeUsername(storedPreference["Username"] ?? defaultData["Username"]);
+    await userPreference.changeProtifyDirectory(storedPreference["ProtifyDirectory"] ?? defaultData["ProtifyDirectory"]);
+    await userPreference.changeDefaultGameInstallDirectory(storedPreference["DefaultGameInstallDirectory"] ?? defaultData["DefaultGameInstallDirectory"]);
+    await userPreference.changeDefaultGameDirectory(storedPreference["DefaultGameDirectory"] ?? defaultData["DefaultGameDirectory"]);
+    await userPreference.changeDefaultPrefixDirectory(storedPreference["DefaultPrefixDirectory"] ?? defaultData["DefaultPrefixDirectory"]);
+    await userPreference.changeDefaultRuntimeDirectory(storedPreference["DefaultRuntimeDirectory"] ?? defaultData["DefaultRuntimeDirectory"]);
+    await userPreference.changeDefaultWineprefixDirectory(storedPreference["DefaultWinePrefixDirectory"] ?? defaultData["DefaultWinePrefixDirectory"]);
+    await userPreference.changeDefaultProtonDirectory(storedPreference["DefaultProtonDirectory"] ?? defaultData["DefaultProtonDirectory"]);
+    await userPreference.changeSteamCompatibilityDirectory(storedPreference["SteamCompatibilityDirectory"] ?? defaultData["SteamCompatibilityDirectory"]);
+    await userPreference.changeShaderCompileDirectory(storedPreference["DefaultShaderCompileDirectory"] ?? defaultData["DefaultShaderCompileDirectory"]);
+    await userPreference.changeStartWindowHeight(storedPreference["StartWindowHeight"] ?? defaultData["StartWindowHeight"]);
+    await userPreference.changeStartWindowWidth(storedPreference["StartWindowWidth"] ?? defaultData["StartWindowWidth"]);
+    await userPreference.changeDefaultCategory(storedPreference["DefaultCategory"] ?? defaultData["DefaultCategory"]);
   }
 
   /// Save a preference option in data storage
-  static void savePreferencesInData({required String option, required value}) {
+  static Future savePreferencesInData({required String option, required value}) {
     //Reading preferences
-    SaveDatas.readData("preferences", "string").then(
+    return SaveDatas.readData("preferences", "user").then(
       //Saving DefaultGameDirectory Preference
-      (preferences) {
+      (preferences) async {
         preferences ??= "{}";
         final updatedPreferences = jsonDecode(preferences);
         //Updating the value
         updatedPreferences[option] = value;
         //Saving the value
-        SaveDatas.saveData("preferences", jsonEncode(updatedPreferences));
+        return SaveDatas.saveData("preferences", "user", jsonEncode(updatedPreferences));
       },
     );
   }
 
   /// Update game category with a index and the category
   static Future<List> updateItemCategory(int index, String category) async {
-    final SharedPreferences preferences = await SharedPreferences.getInstance();
     // Get all games
-    final games = jsonDecode(preferences.getString("items")!);
+    final games = jsonDecode(await StorageInstance.getInstance().readValue("items", "user") ?? "[]");
     // Change the specific game index and his category
     games[index]["Category"] = category;
     // Save the new category
-    await preferences.setString("items", jsonEncode(games));
+    StorageInstance().setValue("items", "user", jsonEncode(games));
     return games;
   }
 
   //Language
   String _language = "english";
   get language => _language;
-  void changeLanguage(String value) => {
+  Future changeLanguage(String value) async => {
         _language = value,
-        savePreferencesInData(option: "Language", value: value),
+        await savePreferencesInData(option: "Language", value: value),
       };
 
   //Username
   String _username = "";
   get username => _username;
-  void changeUsername(String value) => {
+  Future changeUsername(String value) async => {
         _username = value,
-        savePreferencesInData(option: "Username", value: value),
+        await savePreferencesInData(option: "Username", value: value),
       };
 
   //Default Game Directory
   String _protifyDirectory = "";
   get protifyDirectory => _protifyDirectory;
-  void changeProtifyDirectory(String value) => {
+  Future changeProtifyDirectory(String value) async => {
         _protifyDirectory = value,
-        savePreferencesInData(option: "ProtifyDirectory", value: value),
+        await savePreferencesInData(option: "ProtifyDirectory", value: value),
       };
 
   //Default Game Directory
   String _defaultGameInstallDirectory = "";
   get defaultGameInstallDirectory => _defaultGameInstallDirectory;
-  void changeDefaultGameInstallDirectory(String value) => {
+  Future changeDefaultGameInstallDirectory(String value) async => {
         _defaultGameInstallDirectory = value,
-        savePreferencesInData(option: "DefaultGameInstallDirectory", value: value),
+        await savePreferencesInData(option: "DefaultGameInstallDirectory", value: value),
       };
 
   //Default Game Directory
   String _defaultGameDirectory = "";
   get defaultGameDirectory => _defaultGameDirectory;
-  void changeDefaultGameDirectory(String value) => {
+  Future changeDefaultGameDirectory(String value) async => {
         _defaultGameDirectory = value,
-        savePreferencesInData(option: "DefaultGameDirectory", value: value),
+        await savePreferencesInData(option: "DefaultGameDirectory", value: value),
       };
 
   //Default Proton Directory
   String _defaultProtonDirectory = "";
   get defaultProtonDirectory => _defaultProtonDirectory;
-  void changeDefaultProtonDirectory(String value) => {
+  Future changeDefaultProtonDirectory(String value) async => {
         _defaultProtonDirectory = value,
-        savePreferencesInData(option: "DefaultProtonDirectory", value: value),
+        await savePreferencesInData(option: "DefaultProtonDirectory", value: value),
       };
   //Default Prefix Directory
   String _defaultPrefixDirectory = "";
   get defaultPrefixDirectory => _defaultPrefixDirectory;
-  void changeDefaultPrefixDirectory(String value) => {
+  Future changeDefaultPrefixDirectory(String value) async => {
         _defaultPrefixDirectory = value,
-        savePreferencesInData(option: "DefaultPrefixDirectory", value: value),
+        await savePreferencesInData(option: "DefaultPrefixDirectory", value: value),
       };
   //Default Prefix Directory
   String _defaultRuntimeDirectory = "";
   get defaultRuntimeDirectory => _defaultRuntimeDirectory;
-  void changeDefaultRuntimeDirectory(String value) => {
+  Future changeDefaultRuntimeDirectory(String value) async => {
         _defaultRuntimeDirectory = value,
-        savePreferencesInData(option: "DefaultRuntimeDirectory", value: value),
+        await savePreferencesInData(option: "DefaultRuntimeDirectory", value: value),
       };
   //Default Wine Prefix Directory
   String _defaultWineprefixDirectory = "";
   get defaultWineprefixDirectory => _defaultWineprefixDirectory;
-  void changeDefaultWineprefixDirectory(String value) => {
+  Future changeDefaultWineprefixDirectory(String value) async => {
         _defaultWineprefixDirectory = value,
-        savePreferencesInData(option: "DefaultWineprefixDirectory", value: value),
+        await savePreferencesInData(option: "DefaultWineprefixDirectory", value: value),
       };
 
   //Default Steam Compatibility Directory
   String _steamCompatibilityDirectory = "";
   get steamCompatibilityDirectory => _steamCompatibilityDirectory;
-  void changeSteamCompatibilityDirectory(String value) => {
+  Future changeSteamCompatibilityDirectory(String value) async => {
         _steamCompatibilityDirectory = value,
-        savePreferencesInData(option: "SteamCompatibilityDirectory", value: value),
+        await savePreferencesInData(option: "SteamCompatibilityDirectory", value: value),
       };
 
   //Default Steam Compatibility Directory
   String _shaderCompileDirectory = "";
   get defaultShaderCompileDirectory => _shaderCompileDirectory;
-  void changeShaderCompileDirectory(String value) => {
+  Future changeShaderCompileDirectory(String value) async => {
         _shaderCompileDirectory = value,
-        savePreferencesInData(option: "DefaultShaderCompileDirectory", value: value),
+        await savePreferencesInData(option: "DefaultShaderCompileDirectory", value: value),
       };
 
   //Start Window Height
   double _startWindowHeight = 600.0;
   get startWindowHeight => _startWindowHeight;
-  void changeStartWindowHeight(double value) => {
+  Future changeStartWindowHeight(double value) async => {
         //Minimum Height
         if (value < 230) {value = 230},
         _startWindowHeight = value,
-        savePreferencesInData(option: "StartWindowHeight", value: value),
+        await savePreferencesInData(option: "StartWindowHeight", value: value),
       };
 
   //Start Window Width
   double _startWindowWidth = 800.0;
   get startWindowWidth => _startWindowWidth;
-  void changeStartWindowWidth(double value) => {
+  Future changeStartWindowWidth(double value) async => {
         //Minimum Width
         if (value < 230) {value = 230},
         _startWindowWidth = value,
-        savePreferencesInData(option: "StartWindowWidth", value: value),
+        await savePreferencesInData(option: "StartWindowWidth", value: value),
       };
 
   //Default Category when load
   String _defaultCategory = "";
   get defaultCategory => _defaultCategory;
-  void changeDefaultCategory(String value) => {
+  Future changeDefaultCategory(String value) async => {
         _defaultCategory = value,
-        savePreferencesInData(option: "DefaultCategory", value: value),
+        await savePreferencesInData(option: "DefaultCategory", value: value),
       };
 
   static UserPreferences getProvider(BuildContext context) {

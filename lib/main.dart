@@ -15,7 +15,7 @@ import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final preferences = jsonDecode(await SaveDatas.readData('preferences', 'string') ?? "{}");
+  final preferences = jsonDecode(await SaveDatas.readData('preferences', 'user') ?? "{}");
   await windowManager.ensureInitialized();
   //Declaring the Window Options
   WindowOptions windowOptions = WindowOptions(

@@ -9,7 +9,6 @@ dependencies:
   flutter:
     sdk: flutter
   window_manager: ^0.3.7 # Control the Window
-  shared_preferences: ^2.2.2 # Saving Datas
   path: ^1.8.3 # Folder Managment
   process_run: ^0.14.1+3 # Command Line
   file_picker: ^8.0.3 # Folder Picker

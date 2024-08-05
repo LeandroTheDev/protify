@@ -31,10 +31,10 @@ class _HomePageState extends State<HomePage> {
     final LibraryProvider libraryProvider = LibraryProvider.getProviderListenable(context);
 
     if (libraryProvider.screenUpdate) {
-      DebugLogs.print("Home Page Loaded");
+      DebugLogs.print("[Library] Home Page Loaded");
       // Clear previous datas
       libraryProvider.clearItemSelection();
-      libraryProvider.clearDatas();
+      libraryProvider.memoryClean();
       // Block homepage update
       libraryProvider.changeScreenUpdate(false);
       // Load Items

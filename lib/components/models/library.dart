@@ -35,7 +35,7 @@ class LibraryModel {
       );
       return;
     }
-    return SaveDatas.readData("items", "string").then(
+    return SaveDatas.readData("items", "user").then(
       (stringGames) {
         final List items = jsonDecode(stringGames ?? "[]");
         if (items[index] == null) {
@@ -67,7 +67,7 @@ class LibraryModel {
       );
       return;
     }
-    return SaveDatas.readData("items", "string").then(
+    return SaveDatas.readData("items", "user").then(
       (stringGames) {
         final List items = jsonDecode(stringGames ?? "[]");
         if (items[index] == null) {
@@ -99,7 +99,7 @@ class LibraryModel {
       );
       return;
     }
-    return SaveDatas.readData("items", "string").then(
+    return SaveDatas.readData("items", "user").then(
       (stringGames) {
         final List items = jsonDecode(stringGames ?? "[]");
         if (items[index] == null) {

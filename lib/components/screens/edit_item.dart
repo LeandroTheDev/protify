@@ -133,13 +133,13 @@ class _EditItemScreenState extends State<EditItemScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          SaveDatas.readData("items", "string").then((stringItems) {
+                          SaveDatas.readData("items", "user").then((stringItems) {
                             // Check if doesnt exist items
                             final items = jsonDecode(stringItems ?? "[]");
                             // Edit new game
                             items[libraryProvider.itemIndex] = ScreenBuilderProvider.buildData(context);
                             // Save the game
-                            SaveDatas.saveData("items", jsonEncode(items));
+                            SaveDatas.saveData("items", "user", jsonEncode(items));
                             libraryProvider.changeItemSelected(items[libraryProvider.itemIndex]);
                             libraryProvider.changeItems(items);
                             Navigator.pop(context);

@@ -134,7 +134,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          SaveDatas.readData("items", "string").then((stringItem) {
+                          SaveDatas.readData("items", "user").then((stringItem) {
                             // Check if doesnt exist games
                             final items = jsonDecode(stringItem ?? "[]");
                             // Create default variables and build the data
@@ -144,7 +144,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                             // Add the new game
                             items.add(item);
                             // Save the game
-                            SaveDatas.saveData("items", jsonEncode(items));
+                            SaveDatas.saveData("items", "user", jsonEncode(items));
                             Navigator.pop(context);
                             LibraryProvider.getProvider(context).changeScreenUpdate(true);
                             LibraryProvider.getProvider(context).updateScreen();

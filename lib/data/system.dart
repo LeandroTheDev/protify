@@ -17,7 +17,7 @@ class ProtifySystem with ChangeNotifier {
   ///Save items downloading state
   static void saveItemDownloadState(BuildContext context) {
     //Saving the value
-    SaveDatas.saveData("preferences", jsonEncode(Provider.of<ProtifySystem>(context, listen: false).itemsDownloading));
+    SaveDatas.saveData("downloads", "user", jsonEncode(Provider.of<ProtifySystem>(context, listen: false).itemsDownloading));
   }
 
   ///Function to start downloading the item
