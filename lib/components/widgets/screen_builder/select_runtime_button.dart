@@ -35,7 +35,7 @@ class _SelectRuntimeButtonState extends State<SelectRuntimeButton> {
                 () => provider.changeData("SelectedRuntime", selectedRuntime),
               );
           }),
-          child: const Text("Select Runtime"),
+          child: const Text("Select Steam Runtime"),
         ),
       ],
     );

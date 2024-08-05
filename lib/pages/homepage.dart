@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
           ),
         );
       // Refresh screen after 50 ms
-      Future.delayed(Durations.short1).then((_) => setState(() {}));
+      Future.delayed(Durations.short4).then((_) => setState(() {}));
     }
     // If preferences is loaded and the loading dialog is still up, we need to close it
     else if (DialogsModel.isLoading) {

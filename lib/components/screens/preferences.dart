@@ -103,7 +103,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         ElevatedButton(
                           onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
                             if (directory == null) {
-                              DebugLogs.print("Canceled");
+                              DebugLogs.print("[Protify] Protify Directory Canceled");
                               return;
                             }
                             userPreferences.changeProtifyDirectory(directory);
@@ -131,7 +131,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         ElevatedButton(
                           onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Launcher").then((directory) {
                             if (directory == null) {
-                              DebugLogs.print("Canceled");
+                              DebugLogs.print("[Protify] Launcher Directory Canceled");
                               return;
                             }
                             userPreferences.changeDefaultProtonDirectory(directory);
@@ -159,7 +159,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         ElevatedButton(
                           onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Install Directory").then((directory) {
                             if (directory == null) {
-                              DebugLogs.print("Canceled");
+                              DebugLogs.print("[Protify] Install Directory Canceled");
                               return;
                             }
                             userPreferences.changeDefaultGameInstallDirectory(directory);
@@ -187,7 +187,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         ElevatedButton(
                           onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
                             if (directory == null) {
-                              DebugLogs.print("Canceled");
+                              DebugLogs.print("[Protify] Game Directory Canceled");
                               return;
                             }
                             userPreferences.changeDefaultGameDirectory(directory);
@@ -215,7 +215,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         ElevatedButton(
                           onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
                             if (directory == null) {
-                              DebugLogs.print("Canceled");
+                              DebugLogs.print("[Protify] Prefix Directory Canceled");
                               return;
                             }
                             userPreferences.changeDefaultPrefixDirectory(directory);
@@ -242,7 +242,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         ElevatedButton(
                           onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Game").then((directory) {
                             if (directory == null) {
-                              DebugLogs.print("Canceled");
+                              DebugLogs.print("[Protify] Runtime Directory Canceled");
                               return;
                             }
                             userPreferences.changeDefaultRuntimeDirectory(directory);
@@ -270,7 +270,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         ElevatedButton(
                           onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Wineprefix Directory").then((directory) {
                             if (directory == null) {
-                              DebugLogs.print("Canceled");
+                              DebugLogs.print("[Protify] Wineprefix Directory Canceled");
                               return;
                             }
                             userPreferences.changeDefaultWineprefixDirectory(directory);
@@ -298,7 +298,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                         ElevatedButton(
                           onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Steam Compatibility Directory").then((directory) {
                             if (directory == null) {
-                              DebugLogs.print("Canceled");
+                              DebugLogs.print("[Protify] Steam Compatibility Directory Canceled");
                               return;
                             }
                             userPreferences.changeSteamCompatibilityDirectory(directory);
@@ -319,14 +319,14 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                     ),
                     //Spacer
                     const SizedBox(height: 30),
-                    //Steam Compatibility Directory
+                    //Shader Compile Directory
                     Row(
                       children: [
                         //Button
                         ElevatedButton(
                           onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Default Shader Compile Directory").then((directory) {
                             if (directory == null) {
-                              DebugLogs.print("Canceled");
+                              DebugLogs.print("[Protify] Shader Compile Directory Canceled");
                               return;
                             }
                             userPreferences.changeSteamCompatibilityDirectory(directory);
@@ -341,6 +341,34 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             context,
                             title: "Shader Compile Directory",
                             content: "Default Compilations from Shaders will be stored in this folder",
+                          ),
+                        ),
+                      ],
+                    ),
+                    //Spacer
+                    const SizedBox(height: 30),
+                    //EAC Runtime Directory
+                    Row(
+                      children: [
+                        //Button
+                        ElevatedButton(
+                          onPressed: () => FilePicker.platform.getDirectoryPath(dialogTitle: "Select the Default EAC Runtime Directory").then((directory) {
+                            if (directory == null) {
+                              DebugLogs.print("[Protify] EAC Runtime Directory Canceled");
+                              return;
+                            }
+                            userPreferences.changeSteamCompatibilityDirectory(directory);
+                          }),
+                          child: const Text("Default EAC Runtime Directory"),
+                        ),
+                        //Info Button
+                        IconButton(
+                          icon: const Icon(Icons.info),
+                          color: Theme.of(context).secondaryHeaderColor,
+                          onPressed: () => DialogsModel.showAlert(
+                            context,
+                            title: "EAC Runtime Directory",
+                            content: "Default EAC Runtime directory for using with Easy Anti Cheat compatibility.",
                           ),
                         ),
                       ],

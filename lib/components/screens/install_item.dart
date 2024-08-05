@@ -8,12 +8,11 @@ import 'package:protify/components/models/dialogs.dart';
 import 'package:protify/components/models/launcher.dart';
 import 'package:protify/components/widgets/screen_builder/arguments_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/launch_command_input.dart';
+import 'package:protify/components/widgets/screen_builder/pos_launch_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/select_installation_game_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_launcher_button.dart';
-import 'package:protify/components/widgets/screen_builder/select_runtime_button.dart';
+import 'package:protify/components/widgets/screen_builder/select_prefix_button.dart';
 import 'package:protify/components/widgets/screen_builder/steam_compatibility_checkbox.dart';
-import 'package:protify/components/widgets/screen_builder/steam_reaper_input.dart';
-import 'package:protify/components/widgets/screen_builder/steam_wrapper_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:protify/debug/logs.dart';
@@ -30,8 +29,8 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
   bool firstLoad = true;
   installItem(BuildContext context) async {
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
-    final installationTemporaryPrefix = join(preferences.protifyDirectory, "data", "temp_prefix");
     final item = ScreenBuilderProvider.buildData(context);
+    bool isTemporaryDirectory = false;
 
     // Validation Game Select
     if (item["SelectedItem"] == null) {
@@ -52,22 +51,30 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
       return;
     }
 
+    // Default prefix directory if not selected
+    if (item["SelectedPrefix"] == null) {
+      item["SelectedPrefix"] = join(preferences.protifyDirectory, "data", "temp_prefix");
+      isTemporaryDirectory = true;
+    }
+
     proceedToInstallation() {
-      item["CreateItemShortcut"] = join(installationTemporaryPrefix, "pfx", "drive_c", "Games Search Directory");
+      item["CreateItemShortcut"] = join(item["SelectedPrefix"], "pfx", "drive_c", "Games Search Directory");
       LauncherModel.launchItem(context, item);
     }
 
     //.iso files
     if (item["SelectedItem"].endsWith(".iso")) {
       try {
-        final Directory prefixDirectory = Directory(installationTemporaryPrefix);
-        try {
-          //Remove old prefix
-          prefixDirectory.deleteSync(recursive: true);
-        } catch (_) {}
+        final Directory prefixDirectory = Directory(item["SelectedPrefix"]);
+        // Only deletes if is temporary directory
+        if (isTemporaryDirectory) {
+          try {
+            //Remove old prefix
+            prefixDirectory.deleteSync(recursive: true);
+          } catch (_) {}
+        }
         //Create new prefix
         prefixDirectory.createSync();
-        item["SelectedPrefix"] = installationTemporaryPrefix;
         final Directory mountDirectory = Directory(join(preferences.protifyDirectory, "data", "temp_mount"));
         // Checking if prefix folder exist
         if (!mountDirectory.existsSync()) {
@@ -130,17 +137,18 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
         return;
       }
     }
-    //.exe files
+    //.exe/.msi files
     else {
       try {
-        final Directory prefixDirectory = Directory(installationTemporaryPrefix);
-        try {
-          //Remove old prefix
-          prefixDirectory.deleteSync(recursive: true);
-        } catch (_) {}
+        final Directory prefixDirectory = Directory(item["SelectedPrefix"]);
+        if (isTemporaryDirectory) {
+          try {
+            //Remove old prefix
+            prefixDirectory.deleteSync(recursive: true);
+          } catch (_) {}
+        }
         //Create new prefix
         prefixDirectory.createSync();
-        item["SelectedPrefix"] = installationTemporaryPrefix;
         proceedToInstallation();
       } catch (error) {
         DialogsModel.showAlert(context, title: "Error", content: "Cannot create prefix directory reason: $error");
@@ -196,7 +204,7 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
                           onPressed: () => DialogsModel.showAlert(
                             context,
                             title: "Installation",
-                            content: "Allows you to install games or programs using proton/wine in a separated temporary prefix folder, and select the installation location to the Default Game Directory using the symbolic links created in windows C folder",
+                            content: "Allows you to install games or programs using proton/wine in a separated temporary prefix or a selected one, also the folder Default Game Directory will be created in C: folder using the symbolic link in the preference: Default Install Search Directory",
                           ),
                         ),
                       ],
@@ -211,6 +219,10 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
                     const LaunchCommandInput(),
                     //Spacer
                     const SizedBox(height: 15),
+                    //Launch Command
+                    const PosLaunchCommandInput(),
+                    //Spacer
+                    const SizedBox(height: 15),
                     //Arguments Command
                     const ArgumentsCommandInput(),
                     //Spacer
@@ -219,18 +231,12 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
                     const SelectInstallationGameButton(),
                     //Spacer
                     const SizedBox(height: 15),
+                    //Select Prefix
+                    const SelectPrefixButton(),
+                    //Spacer
+                    const SizedBox(height: 15),
                     //Steam Compatibility
                     const SteamCompatibilityCheckbox(),
-                    //Reaper ID
-                    const SteamReaperInput(),
-                    //Spacer
-                    const SizedBox(height: 15),
-                    //Select Runtime
-                    const SelectRuntimeButton(),
-                    //Spacer
-                    const SizedBox(height: 15),
-                    //Steam Wrapper
-                    const SteamWrapperCheckbox(),
                     //Spacer
                     const SizedBox(height: 15),
                     //Installation Button

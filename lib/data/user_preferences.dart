@@ -31,7 +31,7 @@ class UserPreferences with ChangeNotifier {
   }
 
   /// Load all preferences into provider context
-  static Future loadPreference(BuildContext context) async {    
+  static Future loadPreference(BuildContext context) async {
     // Provider Declarations
     final UserPreferences userPreference = Provider.of<UserPreferences>(context, listen: false);
     final ConnectionModel connection = Provider.of<ConnectionModel>(context, listen: false);
@@ -81,14 +81,19 @@ class UserPreferences with ChangeNotifier {
       "DefaultWinePrefixDirectory": join(protifyDirectory, "prefixes", "Wine"),
       "DefaultProtonDirectory": join(protifyDirectory, "protons"),
       "SteamCompatibilityDirectory": "/home/$username/.local/share/Steam",
+      "EACRuntimeDirectory": join(protifyDirectory, "runtimes", "Proton EasyAntiCheat Runtime"),
       "DefaultShaderCompileDirectory": join(protifyDirectory, "shaders"),
       "StartWindowHeight": 600.0,
       "StartWindowWidth": 800.0,
       "DefaultCategory": "Uncategorized",
     };
 
+    DebugLogs.print("[Protify] Reading stored preferences...", onlyFile: true);
+
     //Load preferences
     final Map storedPreference = jsonDecode(await SaveDatas.readData("preferences", "user") ?? "{}");
+
+    DebugLogs.print("[Protify] Preferences has been read, starting to create preferences from default or reading into memory", onlyFile: true);
     // Updating Providers
     await userPreference.changeLanguage(storedPreference["Language"] ?? defaultData["Language"]);
     await connection.changeHttpAddress(storedPreference["HttpAddress"] ?? defaultData["HttpAddress"]);
@@ -102,6 +107,7 @@ class UserPreferences with ChangeNotifier {
     await userPreference.changeDefaultWineprefixDirectory(storedPreference["DefaultWinePrefixDirectory"] ?? defaultData["DefaultWinePrefixDirectory"]);
     await userPreference.changeDefaultProtonDirectory(storedPreference["DefaultProtonDirectory"] ?? defaultData["DefaultProtonDirectory"]);
     await userPreference.changeSteamCompatibilityDirectory(storedPreference["SteamCompatibilityDirectory"] ?? defaultData["SteamCompatibilityDirectory"]);
+    await userPreference.changeEacRuntimeDefaultDirectory(storedPreference["EACRuntimeDirectory"] ?? defaultData["EACRuntimeDirectory"]);
     await userPreference.changeShaderCompileDirectory(storedPreference["DefaultShaderCompileDirectory"] ?? defaultData["DefaultShaderCompileDirectory"]);
     await userPreference.changeStartWindowHeight(storedPreference["StartWindowHeight"] ?? defaultData["StartWindowHeight"]);
     await userPreference.changeStartWindowWidth(storedPreference["StartWindowWidth"] ?? defaultData["StartWindowWidth"]);
@@ -118,6 +124,9 @@ class UserPreferences with ChangeNotifier {
         final updatedPreferences = jsonDecode(preferences);
         //Updating the value
         updatedPreferences[option] = value;
+
+        DebugLogs.print("[Protify] Saving: $option, with value of $value", onlyFile: true);
+
         //Saving the value
         return SaveDatas.saveData("preferences", "user", jsonEncode(updatedPreferences));
       },
@@ -213,6 +222,14 @@ class UserPreferences with ChangeNotifier {
       };
 
   //Default Steam Compatibility Directory
+  String _eacRuntimeDefaultDirectory = "";
+  get eacRuntimeDefaultDirectory => _eacRuntimeDefaultDirectory;
+  Future changeEacRuntimeDefaultDirectory(String value) async => {
+        _eacRuntimeDefaultDirectory = value,
+        await savePreferencesInData(option: "EacRuntimeDefaultDirectory", value: value),
+      };
+
+  //Default Shader Compile Directory
   String _shaderCompileDirectory = "";
   get defaultShaderCompileDirectory => _shaderCompileDirectory;
   Future changeShaderCompileDirectory(String value) async => {

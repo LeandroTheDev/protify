@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 class LauncherModel {
   /// Generates the starting commands for running a game or program with Proton
   static String generateProtonStartCommand(BuildContext context, Map item) {
+    DebugLogs.print("[Launcher] Generating Proton");
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
     if (item["SelectedLauncher"] == null) throw "Empty launcher is not allowed for generating proton command";
     //Command Variables
@@ -42,11 +43,13 @@ class LauncherModel {
     if (item["EnableSteamCompatibility"] ?? false) {
       checkEnviroments += 'STEAM_COMPAT_CLIENT_INSTALL_PATH="${preferences.steamCompatibilityDirectory}" ';
     }
-    // Pos Launch Commands
-    checkEnviroments += "$posLaunchCommand ";
-    // Check Prime Run
-    if (item["EnablePrimeRunNvidia"] ?? false) {
-      checkEnviroments += 'prime-run ';
+    // Check Steam Compatibility
+    if (item["EnableEACRuntime"] ?? false) {
+      if (item["SelectedEACRuntime"] != null) {
+        checkEnviroments += 'PROTON_EAC_RUNTIME="${join(preferences.defaultPrefixDirectory, item["SelectedEACRuntime"])}" ';
+      } else {
+        checkEnviroments += 'PROTON_EAC_RUNTIME="${preferences.eacRuntimeDefaultDirectory}" ';
+      }
     }
     // Check Shaders Compile NVIDIA
     if (item["EnableNvidiaCompile"] ?? false) {
@@ -66,6 +69,13 @@ class LauncherModel {
       checkEnviroments += '__GL_SHADER_DISK_CACHE_PATH="${preferences.protifyDirectory}/shaders/${item["ItemName"]}" __GL_SHADER_DISK_CACHE=1 __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1 ';
     }
 
+    // Pos Launch Commands
+    checkEnviroments += "$posLaunchCommand ";
+    // Check Prime Run
+    if (item["EnablePrimeRunNvidia"] ?? false) {
+      checkEnviroments += 'prime-run ';
+    }
+
     // Sensive commands that can break game launch if not launched together
     if (item["SelectedReaperID"] != null) {
       checkEnviroments += '"${join("/home/bobs/.local/share/Steam/", "ubuntu12_32", "reaper")}" SteamLaunch AppId=${item["SelectedReaperID"]} -- ';
@@ -80,12 +90,19 @@ class LauncherModel {
     }
 
     //Proton full command
+    DebugLogs.print("[Launcher] Proton full command: ${'$launchCommand $checkEnviroments "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$itemDirectory" $argumentsCommand'}");
     return '$launchCommand $checkEnviroments "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$itemDirectory" $argumentsCommand';
   }
 
   /// Generates the starting commands for running a game or program with Wine
   static String generateWineStartCommand(BuildContext context, Map item) {
+    DebugLogs.print("[Launcher] Generating Wine");
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
+    final String itemPrefix = item["SelectedPrefix"] ?? join(preferences.defaultPrefixDirectory, item["ItemName"]);
+    final String launchCommand = 'WINEPREFIX="$itemPrefix" wine';
+    final String posLaunchCommand = item["PosLaunchCommand"] ?? "";
+    final String argumentsCommand = item["ArgumentsCommand"] ?? "";
+    final String itemDirectory = item["LaunchDirectory"] ?? "";
     // Check Steam Compatibility
     String checkEnviroments = "";
     // Check Shaders Compile NVIDIA
@@ -97,25 +114,25 @@ class LauncherModel {
       else
         checkEnviroments += '__GL_SHADER_DISK_CACHE_PATH="${join(preferences.defaultShaderCompileDirectory, item["ItemName"])} __GL_SHADER_DISK_CACHE=1 __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1 ';
     }
-    final String itemPrefix = item["SelectedPrefix"] ?? join(preferences.defaultPrefixDirectory, item["ItemName"]);
-    final String launchCommand = 'WINEPREFIX="$itemPrefix" wine';
-    final String argumentsCommand = item["ArgumentsCommand"] ?? "";
-    final String itemDirectory = item["LaunchDirectory"] ?? "";
-    return '$checkEnviroments $launchCommand $itemDirectory $argumentsCommand';
+    DebugLogs.print("[Launcher] Wine full command: ${'$launchCommand $checkEnviroments $posLaunchCommand $itemDirectory $argumentsCommand'}");
+    return '$launchCommand $checkEnviroments $posLaunchCommand $itemDirectory $argumentsCommand';
   }
 
-  /// Generates the starting commands for running a game or program with Wine
+  /// Generates the starting commands for running a game or program with Shell
   static String generateShellStartCommand(BuildContext context, Map item) {
+    DebugLogs.print("[Launcher] Generating Shell");
     final String launchCommand = item["LaunchCommand"] ?? "";
+    final String posLaunchCommand = item["PosLaunchCommand"] ?? "";
     final String argumentsCommand = item["ArgumentsCommand"] ?? "";
     final String itemDirectory = item["LaunchDirectory"] ?? "";
-    return '$launchCommand $itemDirectory $argumentsCommand';
+    DebugLogs.print("[Launcher] Shell full command: ${'$launchCommand $posLaunchCommand $itemDirectory $argumentsCommand'}");
+    return '$launchCommand $posLaunchCommand $itemDirectory $argumentsCommand';
   }
 
   /// Start the game and show the logs, if item is not specified it will get from the library provider instead
   static void launchItem(BuildContext context, [Map? item]) {
     late final Map selectedItem;
-    DebugLogs.print("Launcher command called");
+    DebugLogs.print("[Launcher] Initializing the item launcher");
     final LibraryProvider libraryProvider = LibraryProvider.getProvider(context);
     if (libraryProvider.itemSelected == null && item == null) {
       DialogsModel.showAlert(

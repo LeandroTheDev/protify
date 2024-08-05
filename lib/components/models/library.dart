@@ -206,14 +206,17 @@ class LibraryModel {
   }
 
   /// Show a dialog to select the protons located in the folder
-  static Future<String?> selectRuntime(BuildContext context) async {
+  static Future<String?> selectRuntime(BuildContext context, {noRuntimeToDefaultRuntime = false}) async {
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
     Future<String?> chooseRuntime(List<String> runtimes) async {
       Completer<String?> completer = Completer<String?>();
       showDialog(
         context: context,
         builder: (BuildContext context) {
-          runtimes.add("No Runtime");
+          if (noRuntimeToDefaultRuntime)
+            runtimes.add("Default");
+          else
+            runtimes.add("No Runtime");
           return Center(
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.5,
@@ -228,7 +231,7 @@ class LibraryModel {
                     itemBuilder: (context, index) => TextButton(
                       onPressed: () {
                         Navigator.of(context).pop();
-                        if (runtimes[index] == "No Runtime") {
+                        if (runtimes[index] == "No Runtime" || runtimes[index] == "Default") {
                           completer.complete(null);
                         } else {
                           completer.complete(runtimes[index]);

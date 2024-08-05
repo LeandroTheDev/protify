@@ -68,6 +68,8 @@ class ScreenBuilderProvider extends ChangeNotifier {
       "ArgumentsCommand": item["ArgumentsCommand"] ?? "",
       "EnableWineCompatibility": item["EnableWineCompatibility"] ?? false,
       "EnableNvidiaCompile": item["EnableNvidiaCompile"] ?? false,
+      "EnablePrimeRunNvidia": item["EnablePrimeRunNvidia"] ?? false,
+      "EnableEACRuntime": item["EnableEACRuntime"] ?? false,
       "EnableSteamCompatibility": item["EnableSteamCompatibility"] ?? false,
       "EnableSteamWrapper": item["EnableSteamWrapper"] ?? false,
       "SelectedReaperID": item["SelectedReaperID"] == "" ? null : item["SelectedReaperID"], // Because this is from a input it can be any empty string
@@ -75,6 +77,7 @@ class ScreenBuilderProvider extends ChangeNotifier {
       "SelectedPrefix": item["SelectedPrefix"],
       "SelectedLauncher": item["SelectedLauncher"],
       "SelectedRuntime": item["SelectedRuntime"],
+      "SelectedEACRuntime": item["SelectedEACRuntime"],
     });
   }
 

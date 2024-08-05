@@ -3,18 +3,20 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:protify/components/widgets/library/library_provider.dart';
 import 'package:protify/components/widgets/screen_builder/arguments_command_input.dart';
+import 'package:protify/components/widgets/screen_builder/eac_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/game_name_input.dart';
 import 'package:protify/components/widgets/screen_builder/launch_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/nvidia_shader_compile_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/pos_launch_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/prime_run_checkbox.dart';
+import 'package:protify/components/widgets/screen_builder/select_eac_runtime_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_game_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_prefix_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_launcher_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_runtime_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_shader_compile_button.dart';
 import 'package:protify/components/widgets/screen_builder/steam_compatibility_checkbox.dart';
-import 'package:protify/components/widgets/screen_builder/steam_reaper_input.dart';
+import 'package:protify/components/widgets/screen_builder/steam_reaper_id_input.dart';
 import 'package:protify/components/widgets/screen_builder/steam_wrapper_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
 import 'package:protify/components/widgets/screen_builder/wine_compatibility_checkbox.dart';
@@ -117,18 +119,24 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     const SelectShaderCompileButton(),
                     //Spacer
                     ScreenBuilderProvider.getListenProvider(context).datas["EnableNvidiaCompile"] == true ? const SizedBox(height: 15) : const SizedBox(),
-                    //Reaper ID
-                    const SteamReaperInput(),
                     //Prime run
                     const NvidiaPrimeRunCheckbox(),
-                    //Spacer
+                    // Spacer
                     const SizedBox(height: 15),
-                    //Spacer
-                    ScreenBuilderProvider.getListenProvider(context).datas["SelectedRuntime"] != null ? const SizedBox(height: 15) : const SizedBox(),
+                    // Easy Anti Cheat
+                    const EacCheckbox(),
+                    // Spacer
+                    ScreenBuilderProvider.getListenProvider(context).datas["EnableEACRuntime"] != false ? const SizedBox(height: 15) : const SizedBox(),
+                    //Select Runtime
+                    const SelectEACRuntimeButton(),
+                    // Spacer
+                    const SizedBox(height: 15),
                     //Select Runtime
                     const SelectRuntimeButton(),
-                    //Spacer
+                    // Spacer
                     const SizedBox(height: 15),
+                    //Reaper ID
+                    ScreenBuilderProvider.getListenProvider(context).datas["SelectedRuntime"] != null ? const SteamReaperInputID() : const SizedBox(),
                     //Steam Wrapper
                     const SteamWrapperCheckbox(),
                     //Spacer
