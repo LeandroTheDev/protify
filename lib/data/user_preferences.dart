@@ -31,7 +31,7 @@ class UserPreferences with ChangeNotifier {
   }
 
   /// Load all preferences into provider context
-  static Future loadPreference(BuildContext context) async {
+  static Future loadPreference(BuildContext context) async {    
     // Provider Declarations
     final UserPreferences userPreference = Provider.of<UserPreferences>(context, listen: false);
     final ConnectionModel connection = Provider.of<ConnectionModel>(context, listen: false);

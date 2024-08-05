@@ -61,6 +61,8 @@ You don't need all dependencies, only what you will use.
 - No. this is not tested, protify is builded to be used in user ambient.
 > I am getting the error ``Wine cannot find the FreeType font library``
 - You need the lib32-freetype package, download it from your distro repository
+> How can i erase the protify data without entering in protify?
+- All datas are stored in protify/data/items or preferences, etc
 
 ### Contributing
 This project accept contributions and pull requests, feel free to check the [Contribution](https://github.com/LeandroTheDev/protify/blob/main/CONTRIBUTING.md)

@@ -29,6 +29,7 @@ class LauncherModel {
     final String itemPrefix = item["SelectedPrefix"] ?? join(preferences.defaultPrefixDirectory, item["ItemName"]);
     final String itemDirectory = item["SelectedItem"] ?? "";
     final String launchCommand = item["LaunchCommand"] ?? "";
+    final String posLaunchCommand = item["PosLaunchCommand"] ?? "";
     final String argumentsCommand = item["ArgumentsCommand"] ?? "";
     String checkEnviroments = "";
     checkEnviroments += 'STEAM_RUNTIME=3 STEAM_COMPAT_DATA_PATH="$itemPrefix" ';
@@ -41,6 +42,8 @@ class LauncherModel {
     if (item["EnableSteamCompatibility"] ?? false) {
       checkEnviroments += 'STEAM_COMPAT_CLIENT_INSTALL_PATH="${preferences.steamCompatibilityDirectory}" ';
     }
+    // Pos Launch Commands
+    checkEnviroments += "$posLaunchCommand ";
     // Check Prime Run
     if (item["EnablePrimeRunNvidia"] ?? false) {
       checkEnviroments += 'prime-run ';

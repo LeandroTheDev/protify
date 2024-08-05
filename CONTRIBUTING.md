@@ -9,14 +9,14 @@ provider function screenBuilder.resetDatas()
 Creating methods to do something will be in ``components/models/something.dart``, launcher.dart will only do launcher things, the library.dart will do only library things,
 follow this parameters to know what to do.
 
-All models needs to be static, models is for making the code cleanier, its receive the parameters and make things with that, consider not making manipulate code in the
+All models needs to be static, models is for making the code cleanier, its receive the parameters and make things with that, consider not manipulate code in the
 widget itself, make a model for that.
 
 # Creating
 ## Shared Widgets
-- Create a file: ``components/widgets/screen_builder/my_custom_button.dart``
+- Create your new widget in: [components/widgets/screen_builder/my_custom_button.dart](https://github.com/LeandroTheDev/protify/tree/main/lib/components/widgets/screen_builder)
 
-``Create a stateful widget or stateless depending on what you want``
+``Create a stateful widget or stateless depending on what you want, gerenally will be Stateful because you probably want to update the widget``
 ```dart
 import 'package:flutter/material.dart';
 
@@ -71,7 +71,7 @@ Column(
   ],
 );
 ```
-- Now your custom widget can be used in all screens in ``components/screens/``, check this example adding this custom button in ``add_item.dart``
+- Now your custom widget can be used in all screens on [components/screens/](https://github.com/LeandroTheDev/protify/tree/main/lib/components/screens), check this example adding this custom button in the screen: ``add_item.dart``
 ```dart
 ...
 //Select Game
@@ -88,7 +88,7 @@ const SelectPrefixButton(),
 ```
 
 ## Custom Screen
-If you want to create a screen in normals cases you can simple create a Modal Widget for that, consider always creating the widgets in [Shared Widget](https://github.com/LeandroTheDev/protify/blob/main/CONTRIBUTING.md#shared-widgets-1) for standardization, create your screen in ``/components/screens/your_screen.dart``
+If you want to create a screen in normal cases you can simple create a Modal Widget for that, consider always creating the widgets in [Shared Widget](https://github.com/LeandroTheDev/protify/blob/main/CONTRIBUTING.md#shared-widgets-1) for standardization, also create your screen in [/components/screens/your_screen.dart](https://github.com/LeandroTheDev/protify/tree/main/lib/components/widgets/screen_builder)
 ```dart
 import 'package:flutter/material.dart';
 
@@ -105,7 +105,7 @@ class MyCustomScreen extends StatelessWidget {
 }
 ```
 - To show up this screen you need a model for that, consider creating a new model if the screen doesn't belongs to library or others models
-in ``components/models/my_screen.dart``, for standardization if the context of your screen fits into an existing file, place the modal in this file
+in [components/models/my_screen.dart](https://github.com/LeandroTheDev/protify/tree/main/lib/components/models), for standardization if the context of your screen fits into an existing file, place the modal in this file
 ```dart
 /// Create a modal for custom screen
 static Future showCustomScreen(BuildContext context) {
@@ -137,8 +137,20 @@ static String generateProtonStartCommand(BuildContext context, Map item) {
 }
 ```
 
+- Now you need to read that value when opening the screen [edit_item.dart](https://github.com/LeandroTheDev/protify/blob/main/lib/components/screens/edit_item.dart) or whatever screen that uses this new option, go to [screen_builder_provider](https://github.com/LeandroTheDev/protify/blob/main/lib/components/widgets/screen_builder/screen_builder_provider.dart), and add new option for readData function
+
+```dart
+static void readData(BuildContext context, Map item) {
+  final ScreenBuilderProvider provider = ScreenBuilderProvider.getProvider(context);
+  provider.setData({
+    ...
+    "SelectedReaperID": item["SelectedReaperID"] == "" ? null : item["SelectedReaperID"],
+  });
+}
+```
+
 ## New Preferences
-- Go to /data/user_preferences.dart
+- Go to [/data/user_preferences.dart](https://github.com/LeandroTheDev/protify/blob/main/lib/data/user_preferences.dart)
 - Find the function ``loadPreferences``
 - Find the defaultData variable
 
@@ -151,12 +163,23 @@ final Map defaultData = {
 
 ``Create a new function in the UserPreferences class``
 ```dart
-//Default Game Directory
+//Default My New Preference
 String _myNewPreference = "";
 get myNewPreference => _myNewPreference;
-void changeMyNewPreference(String value) => {
+Future changeMyNewPreference(String value) async => {
   _myNewPreference = value,
-  savePreferencesInData(option: "MyNewPreference", value: value),
+  await savePreferencesInData(option: "MyNewPreference", value: value),
 };
 ```
-- Now you can acess this preference using the ``final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);``
+- Now you can access this preference using the ``final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);``
+
+# Debugging
+Personal recommendation: VSCODE with Flutter extension.
+
+To start debugging first download the protify from [release](https://github.com/LeandroTheDev/protify/releases) or build it ``flutter build linux`` and get that build and place somewhere you like ``/home/you/programs/protify``, if you choose to build it them you need to create a file with name ``protify_finder.txt`` inside the ``protify/lib``, with everthing setup correctly you can start debugging using ``flutter run``.
+
+### Adding logs
+Recommended way to add logs is using the DebugLogs class, this will automatically use the debug print from flutter framework with the timestamp of your device.
+```dart
+DebugLogs.print("[Context] Debbuging variable: 123");
+```

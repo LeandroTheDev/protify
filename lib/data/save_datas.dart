@@ -6,14 +6,14 @@ import 'package:path/path.dart';
 class SaveDatas {
   /// Save datas of type: string, bool, int and double
   static Future saveData(String fileName, String dataName, dynamic dataValue) async {
-    final StorageInstance preferences = StorageInstance.getInstance();
-    await preferences.setValue(fileName, dataName, dataValue);
+    final StorageInstance storageInstance = StorageInstance.getInstance();
+    await storageInstance.setValue(fileName, dataName, dataValue);
   }
 
   /// Read data based in name and type, the types consist in: 'string', 'int', 'bool', 'double'
   static Future<dynamic> readData(String fileName, String dataName) async {
-    final StorageInstance preferences = StorageInstance.getInstance();
-    return preferences.readValue(fileName, dataName);
+    final StorageInstance storageInstance = StorageInstance.getInstance();
+    return storageInstance.readValue(fileName, dataName);
   }
 
   /// Remove a file data based on fileName

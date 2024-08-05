@@ -130,4 +130,56 @@ class DialogsModel {
         });
     return completer.future;
   }
+
+  /// If this variable is true this means the loading widget is enabled
+  static bool isLoading = false;
+
+  /// Simple show a loading dialog to the user, if no buttonTitle
+  /// is provided the dialog will not return in case of manually clicked
+  static Future showLoading(
+    BuildContext context, {
+    String title = "Loading",
+    String content = "This will take a while...",
+    String? buttonTitle,
+  }) {
+    isLoading = true;
+    Completer<void> completer = Completer<void>();
+    showDialog(
+      context: context, 
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: AlertDialog(
+              backgroundColor: Theme.of(context).primaryColor,
+              title: Text(title, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(content, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                  const SizedBox(height: 20),
+                  CircularProgressIndicator(
+                    color: Theme.of(context).secondaryHeaderColor,
+                  ),
+                ],
+              ),
+              actions: [
+                buttonTitle != null
+                    ? TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          completer.complete();
+                        },
+                        child: Text(buttonTitle, style: TextStyle(color: Theme.of(context).secondaryHeaderColor)),
+                      )
+                    : const SizedBox(),
+              ],
+            ),
+          ),
+        );
+      },
+    ).then((_) => isLoading = false);
+    return completer.future;
+  }
 }

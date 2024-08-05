@@ -26,7 +26,7 @@ class _ArgumentsCommandInputState extends State<ArgumentsCommandInput> {
             borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
           ),
           enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary), // Cor da borda inferior quando o campo não está focado
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
           ),
         ),
         style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 20),

@@ -32,7 +32,7 @@ class _SteamReaperInputState extends State<SteamReaperInput> {
                   borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
                 ),
                 enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary), // Cor da borda inferior quando o campo não está focado
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
                 ),
               ),
               inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))],

@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
 
-class LaunchCommandInput extends StatefulWidget {
-  const LaunchCommandInput({super.key});
+class PosLaunchCommandInput extends StatefulWidget {
+  const PosLaunchCommandInput({super.key});
 
   @override
-  State<LaunchCommandInput> createState() => _LaunchCommandInputState();
+  State<PosLaunchCommandInput> createState() => _PosLaunchCommandInputState();
 }
 
-class _LaunchCommandInputState extends State<LaunchCommandInput> {
+class _PosLaunchCommandInputState extends State<PosLaunchCommandInput> {
   @override
   Widget build(BuildContext context) {
     ScreenBuilderProvider provider = ScreenBuilderProvider.getProvider(context);
-    TextEditingController launchCommand = TextEditingController();
-    launchCommand.text = provider.datas["LaunchCommand"] ?? "";
-    launchCommand.addListener(() => provider.changeData("LaunchCommand", launchCommand.text));
+    TextEditingController posLaunchCommand = TextEditingController();
+    posLaunchCommand.text = provider.datas["PosLaunchCommand"] ?? "";
+    posLaunchCommand.addListener(() => provider.changeData("PosLaunchCommand", posLaunchCommand.text));
     return SizedBox(
       height: 60,
       child: TextField(
-        controller: launchCommand,
+        controller: posLaunchCommand,
         decoration: InputDecoration(
-          labelText: 'Launch Command',
+          labelText: 'Pos Launch Command',
           labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),

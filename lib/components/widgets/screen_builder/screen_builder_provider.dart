@@ -64,7 +64,9 @@ class ScreenBuilderProvider extends ChangeNotifier {
     provider.setData({
       "ItemName": item["ItemName"] == "" ? null : item["ItemName"], // Because this is from a input it can be any empty string
       "LaunchCommand": item["LaunchCommand"] ?? "",
+      "PosLaunchCommand": item["PosLaunchCommand"] ?? "",
       "ArgumentsCommand": item["ArgumentsCommand"] ?? "",
+      "EnableWineCompatibility": item["EnableWineCompatibility"] ?? false,
       "EnableNvidiaCompile": item["EnableNvidiaCompile"] ?? false,
       "EnableSteamCompatibility": item["EnableSteamCompatibility"] ?? false,
       "EnableSteamWrapper": item["EnableSteamWrapper"] ?? false,

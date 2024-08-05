@@ -8,6 +8,7 @@ import 'package:protify/components/widgets/library/grid_game.dart';
 import 'package:protify/components/widgets/library/library_provider.dart';
 import 'package:protify/components/widgets/library/selected_item.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
+import 'package:protify/data/save_datas.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:protify/debug/logs.dart';
 import 'package:protify/pages/store.dart';
@@ -29,6 +30,26 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
     final LibraryProvider libraryProvider = LibraryProvider.getProviderListenable(context);
+
+    // Loading dialog if the preferences is not loaded yet
+    if (StorageInstance.instanceDirectory == null) {
+      DebugLogs.print("[Library] Preferences is not loaded yet...");
+      // Show the loading dialog
+      if (!DialogsModel.isLoading)
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => DialogsModel.showLoading(context, title: "Loading Items...", buttonTitle: "Cancel").then(
+            (_) => Navigator.pop(context),
+          ),
+        );
+      // Refresh screen after 50 ms
+      Future.delayed(Durations.short1).then((_) => setState(() {}));
+    }
+    // If preferences is loaded and the loading dialog is still up, we need to close it
+    else if (DialogsModel.isLoading) {
+      Navigator.pop(context);
+      // Indicating that the screen needs update
+      libraryProvider.changeScreenUpdate(true);
+    }
 
     if (libraryProvider.screenUpdate) {
       DebugLogs.print("[Library] Home Page Loaded");
