@@ -76,9 +76,11 @@ class LauncherModel {
       checkEnviroments += 'prime-run ';
     }
 
-    // Sensive commands that can break game launch if not launched together
-    if (item["SelectedReaperID"] != null) {
-      checkEnviroments += '"${join("/home/bobs/.local/share/Steam/", "ubuntu12_32", "reaper")}" SteamLaunch AppId=${item["SelectedReaperID"]} -- ';
+    // Check Steam Reaper ID, only if runtime was selected
+    if (item["SelectedRuntime"] != null) {
+      if (item["SelectedReaperID"] != null) {
+        checkEnviroments += '"${join("/home/bobs/.local/share/Steam/", "ubuntu12_32", "reaper")}" SteamLaunch AppId=${item["SelectedReaperID"]} -- ';
+      }
     }
     // Check Steam Wrapper
     if (item["EnableSteamWrapper"] ?? false) {

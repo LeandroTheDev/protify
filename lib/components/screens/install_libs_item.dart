@@ -3,13 +3,11 @@ import 'package:protify/components/models/dialogs.dart';
 import 'package:protify/components/models/launcher.dart';
 import 'package:protify/components/widgets/screen_builder/arguments_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/launch_command_input.dart';
+import 'package:protify/components/widgets/screen_builder/pos_launch_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/select_game_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_prefix_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_launcher_button.dart';
-import 'package:protify/components/widgets/screen_builder/select_runtime_button.dart';
 import 'package:protify/components/widgets/screen_builder/steam_compatibility_checkbox.dart';
-import 'package:protify/components/widgets/screen_builder/steam_reaper_input.dart';
-import 'package:protify/components/widgets/screen_builder/steam_wrapper_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
 
 class InstallLibsScreen extends StatefulWidget {
@@ -84,6 +82,10 @@ class _InstallLibsScreenState extends State<InstallLibsScreen> {
                     const LaunchCommandInput(),
                     //Spacer
                     const SizedBox(height: 15),
+                    //Launch Command
+                    const PosLaunchCommandInput(),
+                    //Spacer
+                    const SizedBox(height: 15),
                     //Arguments Command
                     const ArgumentsCommandInput(),
                     //Spacer
@@ -98,20 +100,6 @@ class _InstallLibsScreenState extends State<InstallLibsScreen> {
                     const SizedBox(height: 15),
                     //Steam Compatibility
                     const SteamCompatibilityCheckbox(),
-                    //Spacer
-                    const SizedBox(height: 15),
-                    //Spacer      
-                    const SizedBox(height: 15),
-                    //Reaper ID
-                    const SteamReaperInput(),
-                    //Spacer
-                    const SizedBox(height: 15),
-                    //Select Runtime
-                    const SelectRuntimeButton(),
-                    //Spacer
-                    const SizedBox(height: 15),
-                    //Steam Wrapper
-                    const SteamWrapperCheckbox(),
                     //Spacer
                     const SizedBox(height: 15),
                     //Installation Button
