@@ -70,12 +70,8 @@ class _HomePageState extends State<HomePage> {
         if (!loaded) {
           loaded = true;
           // Load Preferences
-          UserPreferences.loadPreference(context).then(
-            (value) => {
-              libraryProvider.changeSelectedItemCategory(preferences.defaultCategory),
-              libraryProvider.updateScreen(),
-            },
-          );
+          libraryProvider.changeSelectedItemCategory(preferences.defaultCategory);
+          libraryProvider.updateScreen();
         }
         //Subsequent loads
         else {

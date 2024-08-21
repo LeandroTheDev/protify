@@ -31,9 +31,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
     if (!loaded) {
       loaded = true;
       username.text = userPreferences.username;
-      startWindowHeight.text = userPreferences.startWindowHeight.toString();
-      startWindowWidth.text = userPreferences.startWindowWidth.toString();
     }
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -369,89 +368,6 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                             context,
                             title: "EAC Runtime Directory",
                             content: "Default EAC Runtime directory for using with Easy Anti Cheat compatibility.",
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    //Spacer
-                    const SizedBox(height: 30),
-                    //Start Window Height
-                    Column(
-                      children: [
-                        //Input
-                        SizedBox(
-                          height: 48,
-                          width: windowSize.width / 4,
-                          child: TextField(
-                            controller: startWindowHeight,
-                            decoration: InputDecoration(
-                              labelText: 'Start Window Height',
-                              labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
-                              ),
-                            ),
-                            style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 14),
-                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          ),
-                        ),
-                        //Spacer
-                        const SizedBox(height: 10),
-                        //Confirm Button
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: SizedBox(
-                            width: windowSize.width / 4 - 20,
-                            height: 20,
-                            child: ElevatedButton(
-                              onPressed: () => userPreferences.changeStartWindowHeight(double.parse(startWindowHeight.text)),
-                              child: const Text("Confirm"),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    //Spacer
-                    const SizedBox(height: 30),
-                    //Start Window Height
-                    Column(
-                      children: [
-                        //Input
-                        SizedBox(
-                          height: 48,
-                          width: windowSize.width / 4,
-                          child: TextField(
-                            controller: startWindowWidth,
-                            decoration: InputDecoration(
-                              labelText: 'Start Window Width',
-                              labelStyle: TextStyle(color: Theme.of(context).secondaryHeaderColor),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Theme.of(context).secondaryHeaderColor),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),
-                              ),
-                            ),
-                            style: TextStyle(color: Theme.of(context).secondaryHeaderColor, fontSize: 14),
-                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          ),
-                        ),
-                        //Spacer
-                        const SizedBox(height: 10),
-                        //Confirm Button
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: SizedBox(
-                            width: windowSize.width / 4 - 20,
-                            height: 20,
-                            child: ElevatedButton(
-                              onPressed: () => userPreferences.changeStartWindowWidth(double.parse(startWindowWidth.text)),
-                              child: const Text("Confirm"),
-                            ),
                           ),
                         ),
                       ],

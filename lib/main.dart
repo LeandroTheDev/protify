@@ -1,35 +1,16 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:protify/components/models/connection.dart';
 import 'package:protify/components/models/download.dart';
 import 'package:protify/components/widgets/library/library_provider.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
-import 'package:protify/data/save_datas.dart';
 import 'package:protify/data/system.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:protify/pages/homepage.dart';
 import 'package:protify/pages/store.dart';
 import 'package:provider/provider.dart';
-import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final preferences = jsonDecode(await SaveDatas.readData('preferences', 'user') ?? "{}");
-  await windowManager.ensureInitialized();
-  //Declaring the Window Options
-  WindowOptions windowOptions = WindowOptions(
-    size: Size(preferences["StartWindowWidth"] ?? 800.0, preferences["StartWindowHeight"] ?? 600.0),
-    center: true,
-    backgroundColor: Colors.transparent,
-    minimumSize: const Size(226, 226),
-    titleBarStyle: TitleBarStyle.normal,
-  );
-  //Updating Window Option
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.show();
-    await windowManager.focus();
-  });
   runApp(MultiProvider(providers: [
     //Declaring the Provider
     ChangeNotifierProvider(create: (_) => UserPreferences()),
@@ -47,9 +28,15 @@ class Protify extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // Load Preferences
+    UserPreferences.loadPreference(context);
+
+    // Initializing the GUI
     return MaterialApp(
+      // Remove awful banner while debugging
       debugShowCheckedModeBanner: false,
       title: 'Protify',
+      // Setting default theme colors
       theme: ThemeData(
         primaryColor: const Color.fromARGB(255, 116, 116, 116),
         secondaryHeaderColor: const Color.fromARGB(255, 209, 209, 209),
