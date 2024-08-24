@@ -35,12 +35,16 @@ class _HomePageState extends State<HomePage> {
     if (StorageInstance.instanceDirectory == null) {
       DebugLogs.print("[Library] Preferences is not loaded yet...");
       // Show the loading dialog
-      if (!DialogsModel.isLoading)
+      if (!DialogsModel.isLoading) {
+        // Because of post frame callback this variable maybe
+        // take a long time to be setted to true, so we set now
+        // to not cause multiples dialogs appearing
+        DialogsModel.isLoading = true;
+        // The post frame is necessary because this page is not yet fully loaded when we call this dialog
         WidgetsBinding.instance.addPostFrameCallback(
-          (_) => DialogsModel.showLoading(context, title: "Loading Items...", buttonTitle: "Cancel").then(
-            (_) => Navigator.pop(context),
-          ),
+          (_) => DialogsModel.showLoading(context, title: "Loading Items...", buttonTitle: "Cancel"),
         );
+      }
       // Refresh screen after 50 ms
       Future.delayed(Durations.short4).then((_) => setState(() {}));
     }
@@ -51,6 +55,7 @@ class _HomePageState extends State<HomePage> {
       libraryProvider.changeScreenUpdate(true);
     }
 
+    // Checking if the screen needs to be updated
     if (libraryProvider.screenUpdate) {
       DebugLogs.print("[Library] Home Page Loaded");
       // Clear previous datas
@@ -62,10 +67,10 @@ class _HomePageState extends State<HomePage> {
       UserPreferences.getItems().then((items) {
         libraryProvider.changeItems(items);
         //Swipe all games and add the category to it
-        for (int i = 0; i < libraryProvider.items.length; i++) {
+        for (int i = 0; i < libraryProvider.items.length; i++)
           //Add the index
           libraryProvider.addItemCategory(libraryProvider.items[i]["Category"] ?? "Uncategorized", i);
-        }
+
         // Protify first load
         if (!loaded) {
           loaded = true;

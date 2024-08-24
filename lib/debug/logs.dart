@@ -15,24 +15,28 @@ class DebugLogs {
   static void print(String log, {onlyFile = false}) {
     String message = "${DebugTime.logDate()} $log";
 
-    // Check if storage instance exist
-    if (StorageInstance.instanceDirectory != null) {
-      // Create the file if necessary
-      if (logFile == null) {
-        logFile = File(join(StorageInstance.instanceDirectory!, "log"));
+    try {
+      // Check if storage instance exist
+      if (StorageInstance.instanceDirectory != null) {
+        // Create the file if necessary
+        if (logFile == null) {
+          logFile = File(join(StorageInstance.instanceDirectory!, "log"));
 
-        // Remove old file if exist
-        if (logFile!.existsSync()) {
-          logFile!.deleteSync();
+          // Remove old file if exist
+          if (logFile!.existsSync()) {
+            logFile!.deleteSync();
+          }
+
+          // First message creation
+          logFile!.writeAsStringSync(message, mode: FileMode.write);
+        } else {
+          // Add new log message
+          logFile!.writeAsStringSync("\n$message", mode: FileMode.append);
         }
-
-        // First message creation
-        logFile!.writeAsStringSync(message, mode: FileMode.write);
-      } else {
-        // Add new log message
-        logFile!.writeAsStringSync("\n$message", mode: FileMode.append);
       }
-    }
+    } 
+    // Exception will occurs if the file is deleted
+    catch (_) {}
 
     // Show the mensage on debug terminal
     if (!onlyFile) debugPrint(message);

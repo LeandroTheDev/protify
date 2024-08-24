@@ -29,7 +29,8 @@ https://github.com/LeandroTheDev/protify/assets/106118473/970d2a94-3671-4a52-814
 
 ### Dependencies
 You don't need all dependencies, only what you will use.
-- Install games from .iso: sudo, mount
+- Open protify: whoami
+- Install games from .iso: sudo, mount 
 - Run games with sniper runtime: openssl-1.1
 - Run/Install windows games: proton or wine
 - Select files/folders: Any File Manager

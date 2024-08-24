@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart';
-import 'package:protify/components/system/User.dart';
+import 'package:protify/components/system/user.dart';
 import 'package:protify/debug/logs.dart';
 
 class SystemDirectory {
   /// Retrieves the system home directory
   static Future<String> GetDefaultSystemDirectory() async {
     if (Platform.isLinux)
-      return join("home", await SystemUser.GetUsername());
+      return join("/home", await SystemUser.GetUsername());
     else if (Platform.isWindows) {
       // Invalid global variable check
       if (Platform.environment['USERPROFILE'] == null) {
@@ -23,11 +23,11 @@ class SystemDirectory {
     }
   }
 
-  static GetProtifyDirectory() async {
+  static Future<String> GetProtifyDirectory() async {
     // Linux
     if (Platform.isLinux) {
       // Getting the file directory
-      Process process = await Process.start('/bin/bash', ['-c', 'find "${GetDefaultSystemDirectory()}" -type f -name protify_finder.txt']);
+      Process process = await Process.start('/bin/bash', ['-c', 'find "${await GetDefaultSystemDirectory()}" -type f -name protify_finder.txt']);
       // Getting the directories finded by the process
       List directories = await process.stdout.transform(utf8.decoder).toList();
       // Check if the file exist

@@ -61,8 +61,13 @@ class LibraryProvider extends ChangeNotifier {
     _itemsCategories[value]!.add(itemIndex);
   }
 
-  bool _screenUpdate = true;
-  get screenUpdate => _screenUpdate;
+  // This needs to have the variable set to false, so when protify launches it 
+  // the homepage does not try to read preferences before it loads  
+  bool _screenUpdate = false;
+  /// This is the variable that will tell if the screen needs refresh
+  /// some actions will change this variable, means all the GUI's in the context
+  /// will need to refresh their values.
+  bool get screenUpdate => _screenUpdate;
 
   /// Tell the context to update the screen in next update
   void changeScreenUpdate(bool value) => _screenUpdate = value;

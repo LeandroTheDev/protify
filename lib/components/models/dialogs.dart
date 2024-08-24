@@ -131,7 +131,9 @@ class DialogsModel {
     return completer.future;
   }
 
-  /// If this variable is true this means the loading widget is enabled
+  /// If this variable is true this means the loading widget is enabled,
+  /// you don't need to set this manually its automatically changes when loading
+  /// dialogs appear
   static bool isLoading = false;
 
   /// Simple show a loading dialog to the user, if no buttonTitle

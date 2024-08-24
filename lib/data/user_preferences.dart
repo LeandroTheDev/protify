@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:protify/components/models/connection.dart';
 import 'package:protify/components/models/dialogs.dart';
-import 'package:protify/components/system/Directory.dart';
-import 'package:protify/components/system/User.dart';
+import 'package:protify/components/system/directory.dart';
+import 'package:protify/components/system/user.dart';
 import 'package:protify/data/save_datas.dart';
 import 'package:path/path.dart';
 import 'package:protify/debug/logs.dart';
@@ -38,8 +38,16 @@ class UserPreferences with ChangeNotifier {
     final ConnectionModel connection = Provider.of<ConnectionModel>(context, listen: false);
 
     //Default variables
-    final username = SystemUser.GetUsername();
-    String protifyDirectory = SystemDirectory.GetProtifyDirectory();
+    final String username = await SystemUser.GetUsername().catchError((error) {
+      // This will not work because the loading dialog will cover it
+      DialogsModel.showAlert(context, title: "ERROR", content: "Cannot get the system username, reason: $error");
+      return "Protify User";
+    });
+    final String protifyDirectory = await SystemDirectory.GetProtifyDirectory().catchError((error) {
+      // This will not work because the loading dialog will cover it
+      // DialogsModel.showAlert(context, title: "ERROR", content: "Cannot get the protify directory, reason: $error");
+      return "/home/$username/";
+    });
 
     StorageInstance.instanceDirectory = join(protifyDirectory, "data");
     DebugLogs.print("[Protify] Data directory: ${StorageInstance.instanceDirectory}");
@@ -98,7 +106,7 @@ class UserPreferences with ChangeNotifier {
         //Updating the value
         updatedPreferences[option] = value;
 
-        DebugLogs.print("[Protify] Saving: $option, with value of $value", onlyFile: true);
+        DebugLogs.print("[Configuration] Saving: $option, with value of $value", onlyFile: true);
 
         //Saving the value
         return SaveDatas.saveData("preferences", "user", jsonEncode(updatedPreferences));
