@@ -33,6 +33,7 @@ class LauncherModel {
     final String posLaunchCommand = item["PosLaunchCommand"] ?? "";
     final String argumentsCommand = item["ArgumentsCommand"] ?? "";
     String checkEnviroments = "";
+    checkEnviroments += 'cd "${dirname(itemDirectory)}" && ';
     checkEnviroments += 'STEAM_RUNTIME=3 STEAM_COMPAT_DATA_PATH="$itemPrefix" ';
 
     // Check Wine Compatibility
@@ -107,6 +108,7 @@ class LauncherModel {
     final String itemDirectory = item["LaunchDirectory"] ?? "";
     // Check Steam Compatibility
     String checkEnviroments = "";
+    checkEnviroments += 'cd "${dirname(itemDirectory)}" && ';
     // Check Shaders Compile NVIDIA
     if (item["EnableShadersCompileNVIDIA"]) {
       // Custom Shader Directory

@@ -1,6 +1,5 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:protify/components/models/dialogs.dart';
 import 'package:protify/components/models/library.dart';
 import 'package:protify/components/widgets/library/library_provider.dart';
@@ -328,7 +327,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                               DebugLogs.print("[Protify] Shader Compile Directory Canceled");
                               return;
                             }
-                            userPreferences.changeSteamCompatibilityDirectory(directory);
+                            userPreferences.changeShaderCompileDirectory(directory);
                           }),
                           child: const Text("Default Shader Compile Directory"),
                         ),
@@ -356,7 +355,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
                               DebugLogs.print("[Protify] EAC Runtime Directory Canceled");
                               return;
                             }
-                            userPreferences.changeSteamCompatibilityDirectory(directory);
+                            userPreferences.changeEacRuntimeDefaultDirectory(directory);
                           }),
                           child: const Text("Default EAC Runtime Directory"),
                         ),

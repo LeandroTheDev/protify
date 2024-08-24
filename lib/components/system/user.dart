@@ -33,5 +33,14 @@ class SystemUser {
     }
   }
 
-  static GetUserDefaultDirectory() {}
+  static Future<String> GetUserDefaultDirectory() async {
+    if (Platform.isLinux) {
+      return "/home/${await GetUsername()}/";
+    } else if (Platform.isWindows) {
+      return Directory.current.path;
+    } else {
+      DebugLogs.print("[FATAL] Operational System is not compatible");
+      throw "Operational System is not compatible";
+    }
+  }
 }

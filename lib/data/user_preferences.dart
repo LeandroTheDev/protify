@@ -19,7 +19,7 @@ class UserPreferences with ChangeNotifier {
 
   /// Remove a specific game by the index, needs the items array to remove it, if context is not provided,
   /// the message asking will not appear
-  static Future<List> removeItem(int index, List items, [context]) async {
+  static Future<List> removeItem(int index, List items, [BuildContext? context]) async {
     if (context != null) {
       final result = await DialogsModel.showQuestion(context, title: "Remove ${items[index]["ItemName"]}", content: "Do you wish to remove ${items[index]["ItemName"]} from your library?");
       if (!result) return items;
@@ -33,34 +33,47 @@ class UserPreferences with ChangeNotifier {
 
   /// Load all preferences into provider context
   static Future loadPreference(BuildContext context) async {
+    DebugLogs.print("[Protify] Loading preferences...");
+
     // Provider Declarations
     final UserPreferences userPreference = Provider.of<UserPreferences>(context, listen: false);
     final ConnectionModel connection = Provider.of<ConnectionModel>(context, listen: false);
 
-    //Default variables
+    // Default variables
+    final String userDirectory = await SystemUser.GetUserDefaultDirectory().catchError((error) {
+      Navigator.pop(context);
+      DialogsModel.showAlert(
+        context,
+        title: "ERROR",
+        content: "Cannot get the default directory, reason: $error",
+      );
+      throw "Cannot get the default directory, reason: $error";
+    });
     final String username = await SystemUser.GetUsername().catchError((error) {
       // This will not work because the loading dialog will cover it
       DialogsModel.showAlert(context, title: "ERROR", content: "Cannot get the system username, reason: $error");
       return "Protify User";
     });
-    final String protifyDirectory = await SystemDirectory.GetProtifyDirectory().catchError((error) {
+    final String protifyDirectory = await SystemDirectory.GetProtifyDirectory().catchError((error) async {
       // This will not work because the loading dialog will cover it
       // DialogsModel.showAlert(context, title: "ERROR", content: "Cannot get the protify directory, reason: $error");
-      return "/home/$username/";
+      return userDirectory;
     });
 
-    StorageInstance.instanceDirectory = join(protifyDirectory, "data");
-    DebugLogs.print("[Protify] Data directory: ${StorageInstance.instanceDirectory}");
+    DebugLogs.print("[Protify] Directories has been read");
 
-    //Object Creation
+    StorageInstance.instanceDirectory = join(protifyDirectory, "data");
+    DebugLogs.print("[Protify] Protify directory: $protifyDirectory, Data directory: ${StorageInstance.instanceDirectory}");
+
+    // Default datas
     final Map defaultData = {
       "Language": "english",
       "HttpAddress": "localhost:6161",
       "SocketAddress": "localhost:6262",
       "Username": username,
       "ProtifyDirectory": protifyDirectory,
-      "DefaultGameInstallDirectory": SystemUser.GetUserDefaultDirectory(),
-      "DefaultGameDirectory": SystemUser.GetUserDefaultDirectory(),
+      "DefaultGameInstallDirectory": userDirectory,
+      "DefaultGameDirectory": userDirectory,
       "DefaultPrefixDirectory": join(protifyDirectory, "prefixes"),
       "DefaultRuntimeDirectory": join(protifyDirectory, "runtimes"),
       "DefaultWinePrefixDirectory": join(protifyDirectory, "prefixes", "Wine"),
