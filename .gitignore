@@ -13,3 +13,7 @@ linux/
 upload_template
 protify.iml
 pubspec.lock
+data/
+prefixes/
+protons/
+runtimes/
