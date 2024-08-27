@@ -82,15 +82,19 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
     final String command;
     //Check if we are running a proton game
 
-    //Wine Command
-    if (widget.item["SelectedLauncher"] == "Wine") {
+    // Winetricks Command
+    if (widget.item["SelectedLauncher"] == "Winetricks") {
+      command = LauncherModel.generateWinetricksCommand(context, widget.item);
+    }
+    // Wine Command
+    else if (widget.item["SelectedLauncher"] == "Wine") {
       command = LauncherModel.generateWineStartCommand(context, widget.item);
     }
-    //Proton Command
+    // Proton Command
     else if (widget.item["SelectedLauncher"] != null) {
       command = LauncherModel.generateProtonStartCommand(context, widget.item);
     }
-    //Shell Command
+    // Shell Command
     else {
       command = LauncherModel.generateShellStartCommand(context, widget.item);
     }
@@ -185,7 +189,7 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
               children: [
                 // Close Log
                 SizedBox(
-                  width: MediaQuery.of(context).size.width / 4,
+                  width: MediaQuery.of(context).size.width / 4 > 200 ? 200 : MediaQuery.of(context).size.width / 4,
                   height: 30,
                   child: ElevatedButton(
                     onPressed: () => Navigator.pop(context),
@@ -196,11 +200,10 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
                 ),
                 // Kill Process
                 SizedBox(
-                  width: MediaQuery.of(context).size.width / 4,
+                  width: MediaQuery.of(context).size.width / 4 > 200 ? 200 : MediaQuery.of(context).size.width / 4,
                   height: 30,
                   child: ElevatedButton(
                     onPressed: () async {
-                      process!.kill(ProcessSignal.sigkill);
                       // Getting the item executable
                       final String executableName = basename(widget.item["SelectedItem"]);
                       // Checking executables with the item name
@@ -229,6 +232,7 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
                         warningText += "\nKill all?";
                         DialogsModel.showQuestion(context, title: "Killing ${widget.item["ItemName"]}", content: warningText, buttonTitle: "Yes", buttonTitle2: "No").then((result) {
                           if (!result) return;
+                          process!.kill(ProcessSignal.sigkill);
                           // Swiping all pids to kill
                           for (int i = 0; i < PIDs.length; i++) {
                             // Getting the pid

@@ -133,6 +133,19 @@ class LauncherModel {
     return '$launchCommand $posLaunchCommand $itemDirectory $argumentsCommand';
   }
 
+  /// Generates the command for starting the winetricks inside the prefix
+  static String generateWinetricksCommand(BuildContext context, Map item) {
+    final UserPreferences preferences = UserPreferences.getProvider(context);
+
+    // Getting the prefix directory
+    String prefixDirectory;
+    if (item["SelectedLauncher"] == "Wine")
+      prefixDirectory = item["SelectedPrefix"] ?? join(preferences.defaultPrefixDirectory, item["ItemName"]);
+    else
+      prefixDirectory = item["SelectedPrefix"] ?? join(preferences.defaultPrefixDirectory, item["ItemName"], "pfx");
+    return 'WINEPREFIX="$prefixDirectory" winetricks';
+  }
+
   /// Start the game and show the logs, if item is not specified it will get from the library provider instead
   static void launchItem(BuildContext context, [Map? item]) {
     late final Map selectedItem;

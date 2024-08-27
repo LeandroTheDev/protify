@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:protify/components/models/launcher.dart';
 import 'package:protify/components/screens/add_item.dart';
 import 'package:protify/components/screens/edit_item.dart';
 import 'package:protify/components/models/dialogs.dart';
@@ -30,7 +31,7 @@ class LibraryModel {
     if (index == null) {
       DialogsModel.showAlert(
         context,
-        title: "Error Loading Game",
+        title: "Error Loading Item",
         content: "Cannot load the game, index is bugged",
       );
       return;
@@ -41,8 +42,8 @@ class LibraryModel {
         if (items[index] == null) {
           DialogsModel.showAlert(
             context,
-            title: "Error Loading Game",
-            content: "Cannot load the game, the data is corrupted",
+            title: "Error Loading Item",
+            content: "Cannot load the item, the data is corrupted",
           );
           return null;
         }
@@ -62,7 +63,7 @@ class LibraryModel {
     if (index == null) {
       DialogsModel.showAlert(
         context,
-        title: "Error Loading Game",
+        title: "Error Loading Item",
         content: "Cannot load the game, index is bugged",
       );
       return;
@@ -73,8 +74,8 @@ class LibraryModel {
         if (items[index] == null) {
           DialogsModel.showAlert(
             context,
-            title: "Error Loading Game",
-            content: "Cannot load the game, the data is corrupted",
+            title: "Error Loading Item",
+            content: "Cannot load the item, the data is corrupted",
           );
           return null;
         }
@@ -94,7 +95,7 @@ class LibraryModel {
     if (index == null) {
       DialogsModel.showAlert(
         context,
-        title: "Error Loading Game",
+        title: "Error Loading Item",
         content: "Cannot load the game, index is bugged",
       );
       return;
@@ -105,8 +106,8 @@ class LibraryModel {
         if (items[index] == null) {
           DialogsModel.showAlert(
             context,
-            title: "Error Loading Game",
-            content: "Cannot load the game, the data is corrupted",
+            title: "Error Loading Item",
+            content: "Cannot load the item, the data is corrupted",
           );
           return null;
         }
@@ -119,6 +120,47 @@ class LibraryModel {
         );
       },
     );
+  }
+
+  static void runWinetricksIntoPrefix(BuildContext context, int? index) {
+    if (index == null) {
+      DialogsModel.showAlert(
+        context,
+        title: "Error opening Winetricks",
+        content: "Cannot load the item, index is bugged",
+      );
+      return;
+    }
+
+    DialogsModel.showQuestion(
+      context,
+      title: "Winetricks",
+      content: "Execute winetricks inside the prefix?",
+    ).then((value) async {
+      if (!value) return;
+
+      // Showing loading
+      DialogsModel.showLoading(context, title: "Loading Item");
+      // Loading items
+      final List items = jsonDecode(await SaveDatas.readData("items", "user") ?? "[]");
+      // Closing loading dialog
+      Navigator.pop(context);
+
+      // Invalid Index treatment
+      if (items[index] == null) {
+        DialogsModel.showAlert(
+          context,
+          title: "Error Loading Item",
+          content: "Cannot load the item, the data is corrupted",
+        );
+        return null;
+      }
+
+      final item = items[index];
+      item["SelectedLauncher"] = "Winetricks";
+
+      LauncherModel.launchItem(context, items[index]);
+    });
   }
 
   /// Create a modal for installing a new item

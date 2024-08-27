@@ -17,7 +17,7 @@ class SelectedItem extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        //Back Button
+        // Back Button
         IconButton(
           onPressed: () => {libraryProvider.clearItemSelection(), libraryProvider.updateScreen()},
           icon: Icon(
@@ -25,7 +25,7 @@ class SelectedItem extends StatelessWidget {
             color: Theme.of(context).secondaryHeaderColor,
           ),
         ),
-        //Game Title
+        // Game Title
         Padding(
           padding: const EdgeInsets.only(left: 4),
           child: Container(
@@ -43,7 +43,7 @@ class SelectedItem extends StatelessWidget {
             ),
           ),
         ),
-        //Title Buttons
+        // Title Buttons
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: SizedBox(
@@ -83,7 +83,7 @@ class SelectedItem extends StatelessWidget {
             ),
           ),
         ),
-        //Library
+        // Library
         libraryProvider.itemSelected["SelectedLauncher"] != null
             ? Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -113,7 +113,7 @@ class SelectedItem extends StatelessWidget {
                 ),
               )
             : const SizedBox(),
-        //Dlls
+        // Dlls
         libraryProvider.itemSelected["SelectedLauncher"] != null
             ? Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -133,6 +133,36 @@ class SelectedItem extends StatelessWidget {
                           child: const FittedBox(
                             child: Text(
                               "Dll",
+                              style: TextStyle(fontSize: 999),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : const SizedBox(),
+        // Winetricks
+        libraryProvider.itemSelected["SelectedLauncher"] != null
+            ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  width: screenSize.width * 0.7 - 23,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      //Empty
+                      const SizedBox(),
+                      //Install DLLs
+                      SizedBox(
+                        width: screenSize.width * 0.15 < 56 ? 56 : screenSize.width * 0.15,
+                        height: screenSize.height * 0.07,
+                        child: ElevatedButton(
+                          onPressed: () => LibraryModel.runWinetricksIntoPrefix(context, libraryProvider.itemIndex),
+                          child: const FittedBox(
+                            child: Text(
+                              "Winetricks",
                               style: TextStyle(fontSize: 999),
                             ),
                           ),
@@ -164,7 +194,7 @@ class SelectedItem extends StatelessWidget {
                         if (previousQuantity > items.length) {
                           DebugLogs.print("[Library] Item removed: ${libraryProvider.itemIndex}");
                           libraryProvider.clearItemSelection();
-                          libraryProvider.updateScreen();                          
+                          libraryProvider.updateScreen();
                         }
                       });
                     },

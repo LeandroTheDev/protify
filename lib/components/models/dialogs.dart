@@ -137,7 +137,7 @@ class DialogsModel {
   static bool isLoading = false;
 
   /// Simple show a loading dialog to the user, if no buttonTitle
-  /// is provided the dialog will not return in case of manually clicked
+  /// is provided the dialog will not have a cancel button
   static Future showLoading(
     BuildContext context, {
     String title = "Loading",
@@ -147,7 +147,7 @@ class DialogsModel {
     isLoading = true;
     Completer<void> completer = Completer<void>();
     showDialog(
-      context: context, 
+      context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return Center(
