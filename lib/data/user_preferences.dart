@@ -11,6 +11,8 @@ import 'package:protify/debug/logs.dart';
 import 'package:provider/provider.dart';
 
 class UserPreferences with ChangeNotifier {
+  static bool protifyExecutableExist = false;
+
   /// Returns a list of all games saved in device
   static Future<List> getItems() async {
     final items = jsonDecode(await SaveDatas.readData("items", "user") ?? "[]");
@@ -82,6 +84,7 @@ class UserPreferences with ChangeNotifier {
       "EACRuntimeDirectory": join(protifyDirectory, "runtimes", "Proton EasyAntiCheat Runtime"),
       "DefaultShaderCompileDirectory": join(protifyDirectory, "shaders"),
       "DefaultCategory": "Uncategorized",
+      "IgnoreProtifyExecutable": false,
     };
 
     DebugLogs.print("[Protify] Reading stored preferences...");
@@ -91,21 +94,22 @@ class UserPreferences with ChangeNotifier {
 
     DebugLogs.print("[Protify] Preferences has been read, starting to create preferences from default or reading into memory");
     // Updating Providers
-    await userPreference.changeLanguage(storedPreference["Language"] ?? defaultData["Language"]);
-    await connection.changeHttpAddress(storedPreference["HttpAddress"] ?? defaultData["HttpAddress"]);
-    await connection.changeSocketAddress(storedPreference["SocketAddress"] ?? defaultData["SocketAddress"]);
-    await userPreference.changeUsername(storedPreference["Username"] ?? defaultData["Username"]);
-    await userPreference.changeProtifyDirectory(storedPreference["ProtifyDirectory"] ?? defaultData["ProtifyDirectory"]);
-    await userPreference.changeDefaultGameInstallDirectory(storedPreference["DefaultGameInstallDirectory"] ?? defaultData["DefaultGameInstallDirectory"]);
-    await userPreference.changeDefaultGameDirectory(storedPreference["DefaultGameDirectory"] ?? defaultData["DefaultGameDirectory"]);
-    await userPreference.changeDefaultPrefixDirectory(storedPreference["DefaultPrefixDirectory"] ?? defaultData["DefaultPrefixDirectory"]);
-    await userPreference.changeDefaultRuntimeDirectory(storedPreference["DefaultRuntimeDirectory"] ?? defaultData["DefaultRuntimeDirectory"]);
-    await userPreference.changeDefaultWineprefixDirectory(storedPreference["DefaultWinePrefixDirectory"] ?? defaultData["DefaultWinePrefixDirectory"]);
-    await userPreference.changeDefaultProtonDirectory(storedPreference["DefaultProtonDirectory"] ?? defaultData["DefaultProtonDirectory"]);
-    await userPreference.changeSteamCompatibilityDirectory(storedPreference["SteamCompatibilityDirectory"] ?? defaultData["SteamCompatibilityDirectory"]);
-    await userPreference.changeEacRuntimeDefaultDirectory(storedPreference["EACRuntimeDirectory"] ?? defaultData["EACRuntimeDirectory"]);
-    await userPreference.changeShaderCompileDirectory(storedPreference["DefaultShaderCompileDirectory"] ?? defaultData["DefaultShaderCompileDirectory"]);
-    await userPreference.changeDefaultCategory(storedPreference["DefaultCategory"] ?? defaultData["DefaultCategory"]);
+    await userPreference.changeLanguage(storedPreference["Language"] ?? defaultData["Language"], false);
+    await connection.changeHttpAddress(storedPreference["HttpAddress"] ?? defaultData["HttpAddress"], false);
+    await connection.changeSocketAddress(storedPreference["SocketAddress"] ?? defaultData["SocketAddress"], false);
+    await userPreference.changeUsername(storedPreference["Username"] ?? defaultData["Username"], false);
+    await userPreference.changeProtifyDirectory(storedPreference["ProtifyDirectory"] ?? defaultData["ProtifyDirectory"], false);
+    await userPreference.changeDefaultGameInstallDirectory(storedPreference["DefaultGameInstallDirectory"] ?? defaultData["DefaultGameInstallDirectory"], false);
+    await userPreference.changeDefaultGameDirectory(storedPreference["DefaultGameDirectory"] ?? defaultData["DefaultGameDirectory"], false);
+    await userPreference.changeDefaultPrefixDirectory(storedPreference["DefaultPrefixDirectory"] ?? defaultData["DefaultPrefixDirectory"], false);
+    await userPreference.changeDefaultRuntimeDirectory(storedPreference["DefaultRuntimeDirectory"] ?? defaultData["DefaultRuntimeDirectory"], false);
+    await userPreference.changeDefaultWineprefixDirectory(storedPreference["DefaultWinePrefixDirectory"] ?? defaultData["DefaultWinePrefixDirectory"], false);
+    await userPreference.changeDefaultProtonDirectory(storedPreference["DefaultProtonDirectory"] ?? defaultData["DefaultProtonDirectory"], false);
+    await userPreference.changeSteamCompatibilityDirectory(storedPreference["SteamCompatibilityDirectory"] ?? defaultData["SteamCompatibilityDirectory"], false);
+    await userPreference.changeEacRuntimeDefaultDirectory(storedPreference["EACRuntimeDirectory"] ?? defaultData["EACRuntimeDirectory"], false);
+    await userPreference.changeShaderCompileDirectory(storedPreference["DefaultShaderCompileDirectory"] ?? defaultData["DefaultShaderCompileDirectory"], false);
+    await userPreference.changeDefaultCategory(storedPreference["DefaultCategory"] ?? defaultData["DefaultCategory"], false);
+    await userPreference.changeIgnoreProtifyExecutable(storedPreference["IgnoreProtifyExecutable"] ?? defaultData["IgnoreProtifyExecutable"], false);
   }
 
   /// Save a preference option in data storage
@@ -141,115 +145,124 @@ class UserPreferences with ChangeNotifier {
   //Language
   String _language = "english";
   get language => _language;
-  Future changeLanguage(String value) async => {
+  Future changeLanguage(String value, [save = true]) async => {
         DebugLogs.print("[Configuration] Language has been changed to: $value", onlyFile: true),
         _language = value,
-        await savePreferencesInData(option: "Language", value: value),
+        if (save) await savePreferencesInData(option: "Language", value: value),
       };
 
   //Username
   String _username = "";
   get username => _username;
-  Future changeUsername(String value) async => {
+  Future changeUsername(String value, [save = true]) async => {
         DebugLogs.print("[Configuration] Username has been changed to: $value", onlyFile: true),
         _username = value,
-        await savePreferencesInData(option: "Username", value: value),
+        if (save) await savePreferencesInData(option: "Username", value: value),
       };
 
   //Default Game Directory
   String _protifyDirectory = "";
   get protifyDirectory => _protifyDirectory;
-  Future changeProtifyDirectory(String value) async => {
+  Future changeProtifyDirectory(String value, [save = true]) async => {
         DebugLogs.print("[Configuration] Protify Directory has been changed to: $value", onlyFile: true),
         _protifyDirectory = value,
-        await savePreferencesInData(option: "ProtifyDirectory", value: value),
+        if (save) await savePreferencesInData(option: "ProtifyDirectory", value: value),
       };
 
   //Default Game Directory
   String _defaultGameInstallDirectory = "";
   get defaultGameInstallDirectory => _defaultGameInstallDirectory;
-  Future changeDefaultGameInstallDirectory(String value) async => {
+  Future changeDefaultGameInstallDirectory(String value, [save = true]) async => {
         DebugLogs.print("[Configuration] Default Game Install Directory has been changed to: $value", onlyFile: true),
         _defaultGameInstallDirectory = value,
-        await savePreferencesInData(option: "DefaultGameInstallDirectory", value: value),
+        if (save) await savePreferencesInData(option: "DefaultGameInstallDirectory", value: value),
       };
 
   //Default Game Directory
   String _defaultGameDirectory = "";
   get defaultGameDirectory => _defaultGameDirectory;
-  Future changeDefaultGameDirectory(String value) async => {
+  Future changeDefaultGameDirectory(String value, [save = true]) async => {
         DebugLogs.print("[Configuration] Default Game Directory has been changed to: $value", onlyFile: true),
         _defaultGameDirectory = value,
-        await savePreferencesInData(option: "DefaultGameDirectory", value: value),
+        if (save) await savePreferencesInData(option: "DefaultGameDirectory", value: value),
       };
 
   //Default Proton Directory
   String _defaultProtonDirectory = "";
   get defaultProtonDirectory => _defaultProtonDirectory;
-  Future changeDefaultProtonDirectory(String value) async => {
+  Future changeDefaultProtonDirectory(String value, [save = true]) async => {
         DebugLogs.print("[Configuration] Default Proton Directory has been changed to: $value", onlyFile: true),
         _defaultProtonDirectory = value,
-        await savePreferencesInData(option: "DefaultProtonDirectory", value: value),
+        if (save) await savePreferencesInData(option: "DefaultProtonDirectory", value: value),
       };
   //Default Prefix Directory
   String _defaultPrefixDirectory = "";
   get defaultPrefixDirectory => _defaultPrefixDirectory;
-  Future changeDefaultPrefixDirectory(String value) async => {
+  Future changeDefaultPrefixDirectory(String value, [save = true]) async => {
         DebugLogs.print("[Configuration] Default Prefix Directory has been changed to: $value", onlyFile: true),
         _defaultPrefixDirectory = value,
-        await savePreferencesInData(option: "DefaultPrefixDirectory", value: value),
+        if (save) await savePreferencesInData(option: "DefaultPrefixDirectory", value: value),
       };
   //Default Prefix Directory
   String _defaultRuntimeDirectory = "";
   get defaultRuntimeDirectory => _defaultRuntimeDirectory;
-  Future changeDefaultRuntimeDirectory(String value) async => {
+  Future changeDefaultRuntimeDirectory(String value, [save = true]) async => {
         DebugLogs.print("[Configuration] Default Runtime Directory has been changed to: $value", onlyFile: true),
         _defaultRuntimeDirectory = value,
-        await savePreferencesInData(option: "DefaultRuntimeDirectory", value: value),
+        if (save) await savePreferencesInData(option: "DefaultRuntimeDirectory", value: value),
       };
   //Default Wine Prefix Directory
   String _defaultWineprefixDirectory = "";
   get defaultWineprefixDirectory => _defaultWineprefixDirectory;
-  Future changeDefaultWineprefixDirectory(String value) async => {
+  Future changeDefaultWineprefixDirectory(String value, [save = true]) async => {
         DebugLogs.print("[Configuration] Default Wine Prefix Directory has been changed to: $value", onlyFile: true),
         _defaultWineprefixDirectory = value,
-        await savePreferencesInData(option: "DefaultWineprefixDirectory", value: value),
+        if (save) await savePreferencesInData(option: "DefaultWineprefixDirectory", value: value),
       };
 
   //Default Steam Compatibility Directory
   String _steamCompatibilityDirectory = "";
   get steamCompatibilityDirectory => _steamCompatibilityDirectory;
-  Future changeSteamCompatibilityDirectory(String value) async => {
+  Future changeSteamCompatibilityDirectory(String value, [save = true]) async => {
         DebugLogs.print("[Configuration] Steam Compatibility Directory has been changed to: $value", onlyFile: true),
         _steamCompatibilityDirectory = value,
-        await savePreferencesInData(option: "SteamCompatibilityDirectory", value: value),
+        if (save) await savePreferencesInData(option: "SteamCompatibilityDirectory", value: value),
       };
 
   //Default Steam Compatibility Directory
   String _eacRuntimeDefaultDirectory = "";
   get eacRuntimeDefaultDirectory => _eacRuntimeDefaultDirectory;
-  Future changeEacRuntimeDefaultDirectory(String value) async => {
+  Future changeEacRuntimeDefaultDirectory(String value, [save = true]) async => {
         DebugLogs.print("[Configuration] EAC Runtime Default Directory has been changed to: $value", onlyFile: true),
         _eacRuntimeDefaultDirectory = value,
-        await savePreferencesInData(option: "EacRuntimeDefaultDirectory", value: value),
+        if (save) await savePreferencesInData(option: "EacRuntimeDefaultDirectory", value: value),
       };
 
   //Default Shader Compile Directory
   String _shaderCompileDirectory = "";
   get defaultShaderCompileDirectory => _shaderCompileDirectory;
-  Future changeShaderCompileDirectory(String value) async => {
+  Future changeShaderCompileDirectory(String value, [save = true]) async => {
         DebugLogs.print("[Configuration] Shader Compile Directory has been changed to: $value", onlyFile: true),
         _shaderCompileDirectory = value,
-        await savePreferencesInData(option: "DefaultShaderCompileDirectory", value: value),
+        if (save) await savePreferencesInData(option: "DefaultShaderCompileDirectory", value: value),
       };
 
   //Default Category when load
   String _defaultCategory = "";
   get defaultCategory => _defaultCategory;
-  Future changeDefaultCategory(String value) async => {
+  Future changeDefaultCategory(String value, [save = true]) async => {
         DebugLogs.print("[Configuration] Default Category has been changed to: $value", onlyFile: true),
         _defaultCategory = value,
-        await savePreferencesInData(option: "DefaultCategory", value: value),
+        if (save) await savePreferencesInData(option: "DefaultCategory", value: value),
+      };
+
+  //Default Category when load
+  bool _ignoreProtifyExecutable = false;
+  get ignoreProtifyExecutable => _ignoreProtifyExecutable;
+  Future changeIgnoreProtifyExecutable(bool value, [save = true]) async => {
+        DebugLogs.print("[Configuration] Default Category has been changed to: $value", onlyFile: true),
+        _ignoreProtifyExecutable = value,
+        if (save) await savePreferencesInData(option: "IgnoreProtifyExecutable", value: value),
       };
 
   static UserPreferences getProvider(BuildContext context) {

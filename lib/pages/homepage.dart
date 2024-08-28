@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:protify/components/models/dialogs.dart';
 import 'package:protify/components/models/library.dart';
 import 'package:protify/components/screens/preferences.dart';
+import 'package:protify/components/system/directory.dart';
 import 'package:protify/components/widgets/library/category_list.dart';
 import 'package:protify/components/widgets/library/empty_widget.dart';
 import 'package:protify/components/widgets/library/grid_game.dart';
@@ -53,6 +54,24 @@ class _HomePageState extends State<HomePage> {
       Navigator.pop(context);
       // Indicating that the screen needs update
       libraryProvider.changeScreenUpdate(true);
+
+      // Protify Executable Validation
+      if (!UserPreferences.protifyExecutableExist && !preferences.ignoreProtifyExecutable) {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => DialogsModel.showQuestion(
+            context,
+            title: "Protify Executable",
+            content: "Cannot find the global variable PROTIFY_EXECUTABLE, this helps the protify to find the software directory, do you wish to add it to the .bashrc in your profile?",
+            buttonTitle: "Don't show again",
+            buttonTitle2: "Yes",
+          ).then((result) {
+            if (!result)
+              SystemDirectory.SetProtifyExecutable();
+            else
+              preferences.changeIgnoreProtifyExecutable(true);
+          }),
+        );
+      }
     }
 
     // Checking if the screen needs to be updated

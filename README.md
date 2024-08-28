@@ -29,14 +29,19 @@ The generated command can be found in protify/data/log or you can click on the c
 
 ### Dependencies
 You don't need all dependencies, only what you will use.
-- Open protify: whoami
-- Install games from .iso: sudo, mount 
+- Open protify: whoami, echo (Kernel)
+- Install games from .iso: sudo, mount (Kernel)
 - Run games with sniper runtime: openssl-1.1
 - Run/Install windows games: proton or wine
 - Select files/folders: Any File Manager
-- Kill instance: ps
+- Kill instance: ps (Kernel)
 
 ### [First steps](https://github.com/LeandroTheDev/protify/wiki/First-Steps)
+
+### Issues and Security
+If your issue is related to a software bug or you want to request and give any idea to a feature for the software, you can view the [Issues](https://github.com/LeandroTheDev/level_up/issues/new/choose) section
+
+If you find any security issue that can leak to a malware or something, you can go to [Security Police](https://github.com/LeandroTheDev/protify/security/policy)
 
 ### FAQ
 > Editing the game name will change the prefix folder?
@@ -66,6 +71,8 @@ You don't need all dependencies, only what you will use.
 - Yes
 > Why there is http requests in the code?
 - This is a future feature planned for downloading games/softwares, you can view the entire code in [connection.dart](https://github.com/LeandroTheDev/protify/blob/main/lib/components/models/connection.dart) and [download.dart](https://github.com/LeandroTheDev/protify/blob/main/lib/components/models/download.dart), actually this does nothing, and is easily removable.
+> What protify really does?
+- Protify is basically a command saver, is a gui to help you organize the softwares that you open, especially the protons one, the only thing that protons does actually is generate command for opening your softwares and create folder for the prefix/shaders that proton creates.
 
 ### Contributing
 This project accept contributions and pull requests, feel free to check the [Contribution](https://github.com/LeandroTheDev/protify/blob/main/CONTRIBUTING.md)
@@ -74,8 +81,14 @@ file for this project, this file will help you to contribute.
 ### Building
 To build this project is very simple, all you need is to download the [flutter](https://docs.flutter.dev/get-started/install) framework and his dependencies to build, then create a project using ``flutter create protify``, paste all the files from this project in there, build using the ``flutter build linux --release``, the release will be stored in ``build/linux/x64/release/bundle/``.
 
-If you are trying to debug the application AND you don't have the protify installed in your user don't forget to add the lib/protify_finder.txt in project folder or the application will not work propertly, if you have the protify installed in your computer the debug will consider the protify installed folder has a data storage, this is not a problem for the program.
+### Debugging
+If you don't have protify set in your user home directory, in your building folder where the ``pubspec.yaml`` is located, create a new file inside the lib folder with the name protify_finder.txt, now you can run the command ``flutter run``.
 
+If you have the protify set in your user home directory, just run the command ``flutter run``.
+
+If you are on windows you just need to use ``flutter run``.
+
+### Final Considerations
 Take a look in [Protify Server](https://github.com/LeandroTheDev/protify_server) to view more information about the store/friends features to make your own customizations.
 
 FTM License.

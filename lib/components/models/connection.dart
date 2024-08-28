@@ -11,16 +11,16 @@ import 'package:provider/provider.dart';
 class ConnectionModel with ChangeNotifier {
   String _httpAddress = "localhost:6161";
   String get httpAddress => _httpAddress;
-  Future changeHttpAddress(String value) async {
+  Future changeHttpAddress(String value, [save = false]) async {
     _httpAddress = value;
-    await UserPreferences.savePreferencesInData(option: "HttpAddress", value: value);
+    if (save) await UserPreferences.savePreferencesInData(option: "HttpAddress", value: value);
   }
 
   String _socketAddress = "localhost:6262";
   String get socketAddress => _socketAddress;
-  Future changeSocketAddress(String value) async {
+  Future changeSocketAddress(String value, [save = false]) async {
     _socketAddress = value;
-    await UserPreferences.savePreferencesInData(option: "SocketAddress", value: value);
+    if (save) await UserPreferences.savePreferencesInData(option: "SocketAddress", value: value);
   }
 
   int _accountId = 1;
