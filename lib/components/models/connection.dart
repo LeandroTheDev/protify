@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:protify/components/models/dialogs.dart';
-import 'package:protify/components/models/download.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
 
@@ -14,13 +13,6 @@ class ConnectionModel with ChangeNotifier {
   Future changeHttpAddress(String value, [save = false]) async {
     _httpAddress = value;
     if (save) await UserPreferences.savePreferencesInData(option: "HttpAddress", value: value);
-  }
-
-  String _socketAddress = "localhost:6262";
-  String get socketAddress => _socketAddress;
-  Future changeSocketAddress(String value, [save = false]) async {
-    _socketAddress = value;
-    if (save) await UserPreferences.savePreferencesInData(option: "SocketAddress", value: value);
   }
 
   int _accountId = 1;
@@ -196,9 +188,8 @@ class ConnectionModel with ChangeNotifier {
   static void downloadItem(
     BuildContext context,
     int itemId,
-  ) {
-    final DownloadModel downloadModel = Provider.of<DownloadModel>(context, listen: false);
-    // Initializes the download system
-    downloadModel.startDownload(context, itemId);
+  ) async {
+    Response response = await ConnectionModel.sendMessage(context, address: "/download_item&ITEM_ID=$itemId", requestType: "GET");
+    print(response);
   }
 }

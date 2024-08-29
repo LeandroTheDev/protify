@@ -14,7 +14,6 @@ dependencies:
   flutter_hooks: ^0.20.4 # Mouse Events
   provider: ^6.1.1 # Variables Control
   http: ^1.2.0 # Http requests
-  web_socket_channel: ^2.4.4 # Websockets requests
   cupertino_icons: ^1.0.2
 
 dev_dependencies:

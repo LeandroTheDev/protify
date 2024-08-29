@@ -71,7 +71,6 @@ class UserPreferences with ChangeNotifier {
     final Map defaultData = {
       "Language": "english",
       "HttpAddress": "localhost:6161",
-      "SocketAddress": "localhost:6262",
       "Username": username,
       "ProtifyDirectory": protifyDirectory,
       "DefaultGameInstallDirectory": userDirectory,
@@ -96,7 +95,6 @@ class UserPreferences with ChangeNotifier {
     // Updating Providers
     await userPreference.changeLanguage(storedPreference["Language"] ?? defaultData["Language"], false);
     await connection.changeHttpAddress(storedPreference["HttpAddress"] ?? defaultData["HttpAddress"], false);
-    await connection.changeSocketAddress(storedPreference["SocketAddress"] ?? defaultData["SocketAddress"], false);
     await userPreference.changeUsername(storedPreference["Username"] ?? defaultData["Username"], false);
     await userPreference.changeProtifyDirectory(storedPreference["ProtifyDirectory"] ?? defaultData["ProtifyDirectory"], false);
     await userPreference.changeDefaultGameInstallDirectory(storedPreference["DefaultGameInstallDirectory"] ?? defaultData["DefaultGameInstallDirectory"], false);

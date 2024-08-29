@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:protify/components/models/connection.dart';
-import 'package:protify/components/models/download.dart';
 import 'package:protify/components/widgets/library/library_provider.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
-import 'package:protify/data/system.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:protify/pages/homepage.dart';
 import 'package:protify/pages/store.dart';
@@ -14,11 +12,9 @@ void main() async {
   runApp(MultiProvider(providers: [
     //Declaring the Provider
     ChangeNotifierProvider(create: (_) => UserPreferences()),
-    ChangeNotifierProvider(create: (_) => ProtifySystem()),
     ChangeNotifierProvider(create: (_) => ConnectionModel()),
     ChangeNotifierProvider(create: (_) => ScreenBuilderProvider()),
     ChangeNotifierProvider(create: (_) => LibraryProvider()),
-    ChangeNotifierProvider(create: (_) => DownloadModel()),
   ], child: const Protify()));
 }
 
