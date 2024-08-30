@@ -79,25 +79,7 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
     running = true;
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
 
-    final String command;
-    //Check if we are running a proton game
-
-    // Winetricks Command
-    if (widget.item["SelectedLauncher"] == "Winetricks") {
-      command = LauncherModel.generateWinetricksCommand(context, widget.item);
-    }
-    // Wine Command
-    else if (widget.item["SelectedLauncher"] == "Wine") {
-      command = LauncherModel.generateWineStartCommand(context, widget.item);
-    }
-    // Proton Command
-    else if (widget.item["SelectedLauncher"] != null) {
-      command = LauncherModel.generateProtonStartCommand(context, widget.item);
-    }
-    // Shell Command
-    else {
-      command = LauncherModel.generateShellStartCommand(context, widget.item);
-    }
+    final String command = LauncherModel.generateCommandBasedOnLauncher(context, widget.item);
 
     try {
       addLog('[Protify]: command: $command');

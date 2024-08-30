@@ -173,6 +173,34 @@ class SelectedItem extends StatelessWidget {
                 ),
               )
             : const SizedBox(),
+        // Create shortcut
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            width: screenSize.width * 0.7 - 23,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                //Empty
+                const SizedBox(),
+                //Install DLLs
+                SizedBox(
+                  width: screenSize.width * 0.15 < 56 ? 56 : screenSize.width * 0.15,
+                  height: screenSize.height * 0.07,
+                  child: ElevatedButton(
+                    onPressed: () => LibraryModel.createShortcutForTheUser(context, libraryProvider.itemIndex),
+                    child: const FittedBox(
+                      child: Text(
+                        "Shortcut",
+                        style: TextStyle(fontSize: 999),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
         const Spacer(),
         // Remove item
         Padding(

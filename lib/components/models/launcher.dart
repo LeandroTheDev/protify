@@ -10,6 +10,25 @@ import 'package:protify/debug/logs.dart';
 import 'package:provider/provider.dart';
 
 class LauncherModel {
+  static String generateCommandBasedOnLauncher(BuildContext context, Map item) {
+    // Winetricks Command
+    if (item["SelectedLauncher"] == "Winetricks") {
+      return LauncherModel.generateWinetricksCommand(context, item);
+    }
+    // Wine Command
+    else if (item["SelectedLauncher"] == "Wine") {
+      return LauncherModel.generateWineStartCommand(context, item);
+    }
+    // Proton Command
+    else if (item["SelectedLauncher"] != null) {
+      return LauncherModel.generateProtonStartCommand(context, item);
+    }
+    // Shell Command
+    else {
+      return LauncherModel.generateShellStartCommand(context, item);
+    }
+  }
+
   /// Generates the starting commands for running a game or program with Proton
   static String generateProtonStartCommand(BuildContext context, Map item) {
     DebugLogs.print("[Launcher] Generating Proton");

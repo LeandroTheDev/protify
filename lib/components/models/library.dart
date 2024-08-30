@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:protify/components/models/launcher.dart';
 import 'package:protify/components/screens/add_item.dart';
 import 'package:protify/components/screens/edit_item.dart';
@@ -10,6 +11,7 @@ import 'package:protify/components/models/dialogs.dart';
 import 'package:protify/components/screens/install_dll_item.dart';
 import 'package:protify/components/screens/install_item.dart';
 import 'package:protify/components/screens/install_libs_item.dart';
+import 'package:protify/components/system/directory.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
 import 'package:protify/data/save_datas.dart';
 import 'package:protify/data/user_preferences.dart';
@@ -122,6 +124,7 @@ class LibraryModel {
     );
   }
 
+  /// Run winetricks inside the prefix
   static void runWinetricksIntoPrefix(BuildContext context, int? index) {
     if (index == null) {
       DialogsModel.showAlert(
@@ -161,6 +164,77 @@ class LibraryModel {
 
       LauncherModel.launchItem(context, items[index]);
     });
+  }
+
+  /// Create a shortcut folder for the user
+  static void createShortcutForTheUser(BuildContext context, int? index) async {
+    if (index == null) {
+      DialogsModel.showAlert(
+        context,
+        title: "Error creating Shortcut",
+        content: "Cannot load the item, index is bugged",
+      );
+      return;
+    }
+
+    String pathToCreateTheShortcut = join(await SystemDirectory.GetDefaultSystemDirectory(), ".local", "share", "applications");
+
+    DialogsModel.showQuestion(
+      context,
+      title: "Shortcut",
+      content: "Do you wish to create a .desktop shortcut to your OS enviroment in $pathToCreateTheShortcut?",
+    ).then(
+      (value) async {
+        if (!value) return;
+
+        // Showing loading
+        DialogsModel.showLoading(context, title: "Loading Item");
+        // Loading items
+        final List items = jsonDecode(await SaveDatas.readData("items", "user") ?? "[]");
+        // Closing loading dialog
+        Navigator.pop(context);
+
+        // Invalid Index treatment
+        if (items[index] == null) {
+          DialogsModel.showAlert(
+            context,
+            title: "Error Loading Item",
+            content: "Cannot load the item, the data is corrupted",
+          );
+          return null;
+        }
+
+        final item = items[index];
+
+        UserPreferences preferences = UserPreferences.getProvider(context);
+
+        final String fileContent = ''''
+[Desktop Entry]
+Name=${item["ItemName"]}
+Comment=
+Exec=${LauncherModel.generateCommandBasedOnLauncher(context, item)}
+Path=${dirname(item["SelectedItem"])}
+Icon=${join(preferences.protifyDirectory, "protify_icon.png")}
+Terminal=false
+Type=Application
+Categories=Game;
+''';
+        try {
+          // Getting the directory
+          final directory = Directory(pathToCreateTheShortcut);
+          // Create the directory if not exist
+          if (!await directory.exists()) {
+            await directory.create(recursive: true);
+          }
+
+          // Creating the file
+          final file = File(join(pathToCreateTheShortcut, "${item["ItemName"]}.desktop"));
+          await file.writeAsString(fileContent);
+        } catch (e) {
+          DialogsModel.showAlert(context, title: "Error", content: "Cannot create the shortcut, reason: $e");
+        }
+      },
+    );
   }
 
   /// Create a modal for installing a new item
