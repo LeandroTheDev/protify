@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:protify/components/models/connection.dart';
 import 'package:protify/components/models/dialogs.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:provider/provider.dart';
@@ -92,7 +91,7 @@ class ItemPage extends StatelessWidget {
                   const SizedBox(),
                   // Install Button
                   ElevatedButton(
-                    onPressed: () => ConnectionModel.downloadItem(context, item["ID"]),
+                    onPressed: () => {}, //() => ConnectionModel.downloadItem(context, item["ID"]),
                     child: const Text("Install"),
                   ),
                 ],

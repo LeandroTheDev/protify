@@ -29,7 +29,7 @@ class _StorePageState extends State<StorePage> {
     //Check for errors
     if (ConnectionModel.errorTreatment(context, responseShowcase)) {
       //Swipe every games and add to the main games variable
-      final List body = jsonDecode(responseShowcase.body)["CONTENT"];
+      final List body = jsonDecode(responseShowcase.body);
       for (int i = 0; i < body.length; i++) setState(() => showcase[body[i]] = null);
 
       DebugLogs.print("[Store] Showcases received quantity: ${showcase.length}");
@@ -39,10 +39,10 @@ class _StorePageState extends State<StorePage> {
       //Getting the items info
       for (int i = 0; i < showcase.length; i++) {
         //Getting the item info
-        ConnectionModel.sendMessage(context, address: "/get_item_info&item=1", requestType: "GET").then((response) {
+        ConnectionModel.sendMessage(context, address: "/get_item_info&item=${showcase.keys.elementAt(i)}", requestType: "GET").then((response) {
           if (ConnectionModel.errorTreatment(context, response, ignoreDialog: true)) {
             //Updating the info
-            final body = jsonDecode(response.body)["CONTENT"];
+            final Map body = jsonDecode(response.body);
             setState(() => showcase[body["ID"]] = body);
 
             DebugLogs.print("[Store] Item updated: $i");

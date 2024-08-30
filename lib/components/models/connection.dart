@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -13,6 +14,13 @@ class ConnectionModel with ChangeNotifier {
   Future changeHttpAddress(String value, [save = false]) async {
     _httpAddress = value;
     if (save) await UserPreferences.savePreferencesInData(option: "HttpAddress", value: value);
+  }
+
+  String _streamAddress = "localhost:6262";
+  String get streamAddress => _streamAddress;
+  Future changeStreamAddress(String value, [save = false]) async {
+    _streamAddress = value;
+    if (save) await UserPreferences.savePreferencesInData(option: "StreamAddress", value: value);
   }
 
   int _accountId = 1;
@@ -142,6 +150,30 @@ class ConnectionModel with ChangeNotifier {
     }
   }
 
+  /// Starts a stream on desired address, returns the streamed response to handle it
+  static Future<StreamedResponse> startStream(
+    BuildContext context, {
+    required String address,
+    required String requestType,
+    Map<String, dynamic>? body,
+  }) {
+    final ConnectionModel connection = Provider.of<ConnectionModel>(context, listen: false);
+
+    // Creating the uri
+    String uri = 'http://${connection._streamAddress}$address';
+    body ??= {};
+    if (requestType == "GET") {
+      // Adding the queries
+      body.forEach((key, value) => uri = '$uri&$key=$value');
+    }
+
+    Request stream = Request(requestType, Uri.parse(uri));
+
+    if (requestType != "GET") stream.body = jsonEncode(body);
+
+    return stream.send();
+  }
+
   ///Returns true if no error occurs, fatal erros return to home screen
   static bool errorTreatment(BuildContext context, Response response, {bool ignoreDialog = false}) {
     late final String message;
@@ -181,15 +213,5 @@ class ConnectionModel with ChangeNotifier {
         return false;
     }
     return true;
-  }
-
-  ///Start downloading the item,
-  ///can automatically continue downloading the item if stopped sundently
-  static void downloadItem(
-    BuildContext context,
-    int itemId,
-  ) async {
-    Response response = await ConnectionModel.sendMessage(context, address: "/download_item&ITEM_ID=$itemId", requestType: "GET");
-    print(response);
   }
 }
