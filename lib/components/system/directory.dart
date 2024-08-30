@@ -29,8 +29,8 @@ class SystemDirectory {
     // Linux
     if (Platform.isLinux) {
       // Getting the protify executable
-      Process process = await Process.start('/bin/bash', ['-c', 'echo PROTIFY_EXECUTABLE']);
-      String? protifyExecutable = process.stdout.transform(utf8.decoder).toString();
+      Process process = await Process.start('/bin/bash', ['-c', 'echo \$PROTIFY_EXECUTABLE']);
+      String? protifyExecutable = await process.stdout.transform(utf8.decoder).transform(const LineSplitter()).first;
       if (protifyExecutable.isEmpty)
         protifyExecutable = null;
       else
@@ -80,14 +80,16 @@ class SystemDirectory {
 
   /// Set the protify executable based on StorageInstance.instanceDirectory
   static Future SetProtifyExecutable() {
-    return Process.start('/bin/bash', ['-c', 'echo "export "${join(StorageInstance.instanceDirectory!, "lib")}"" >> ~/.bashrc'])
-        // Success
-        .then(
-          (_) => DebugLogs.print("[Protify] Successfully set the PROTIFY_EXECUTABLE"),
-        )
-        // Error
-        .catchError(
-          (error) => DebugLogs.print("[Protify] ERROR: Cannot set the PROTIFY_EXECUTABLE, reason: $error"),
-        );
+    return Process.start('/bin/bash', ['-c', 'echo "export PROTIFY_EXECUTABLE="${join(StorageInstance.instanceDirectory!, "lib")}"" >> ~/.bashrc']).then(
+      (_) {
+        DebugLogs.print("[Protify] Successfully set the PROTIFY_EXECUTABLE");
+        Process.start('/bin/bash', ['-c', 'source ~/.bashrc']);
+        DebugLogs.print("[Protify] Command executed to refresh .bashrc: source ~/.bashrc");
+      },
+    ).catchError(
+      (error) {
+        DebugLogs.print("[Protify] ERROR: Cannot set the PROTIFY_EXECUTABLE, reason: $error");
+      },
+    );
   }
 }

@@ -61,7 +61,7 @@ class _HomePageState extends State<HomePage> {
           (_) => DialogsModel.showQuestion(
             context,
             title: "Protify Executable",
-            content: "Cannot find the global variable PROTIFY_EXECUTABLE, this helps the protify to find the software directory, do you wish to add it to the .bashrc in your profile?",
+            content: "Cannot find the global variable PROTIFY_EXECUTABLE, this helps the protify to find the software directory, after pressing yes you maybe need a refresh desktop environment restart, do you wish to add it to the .bashrc in your profile?",
             buttonTitle: "Don't show again",
             buttonTitle2: "Yes",
           ).then((result) {

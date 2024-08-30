@@ -1,7 +1,7 @@
 name: protify
 description: GUI Friendly for opening games in Linux
 publish_to: 'none'
-version: 0.2.5
+version: 0.2.5+1
 
 environment:
   sdk: '>=3.1.4 <4.0.0'
