@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:protify/components/models/connection.dart';
 import 'package:protify/components/widgets/library/library_provider.dart';
 import 'package:protify/components/widgets/screen_builder/screen_builder_provider.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:protify/pages/homepage.dart';
-import 'package:protify/pages/store.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -12,7 +10,6 @@ void main() async {
   runApp(MultiProvider(providers: [
     //Declaring the Provider
     ChangeNotifierProvider(create: (_) => UserPreferences()),
-    ChangeNotifierProvider(create: (_) => ConnectionModel()),
     ChangeNotifierProvider(create: (_) => ScreenBuilderProvider()),
     ChangeNotifierProvider(create: (_) => LibraryProvider()),
   ], child: const Protify()));
@@ -46,7 +43,6 @@ class Protify extends StatelessWidget {
       ),
       routes: {
         "home": (context) => const HomePage(),
-        "store": (context) => const StorePage(),
       },
       home: const HomePage(),
     );

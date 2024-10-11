@@ -1,7 +1,7 @@
 name: protify
 description: GUI Friendly for opening games in Linux
 publish_to: 'none'
-version: 0.2.5+1
+version: 0.2.6
 
 environment:
   sdk: '>=3.1.4 <4.0.0'
@@ -13,7 +13,6 @@ dependencies:
   file_picker: ^8.0.3 # Folder Picker
   flutter_hooks: ^0.20.4 # Mouse Events
   provider: ^6.1.1 # Variables Control
-  http: ^1.2.0 # Http requests
   cupertino_icons: ^1.0.2
 
 dev_dependencies:

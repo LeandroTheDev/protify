@@ -48,11 +48,11 @@ class LauncherModel {
     final String protonExecutable = join(protonDirectory, "proton");
     final String itemPrefix = item["SelectedPrefix"] ?? join(preferences.defaultPrefixDirectory, item["ItemName"]);
     final String itemDirectory = item["SelectedItem"] ?? "";
-    final String launchCommand = item["LaunchCommand"] ?? "";
+    String launchCommand = item["LaunchCommand"] ?? " ";
+    if (launchCommand.isNotEmpty) launchCommand += " "; // Add spaces to the end of launch command
     final String posLaunchCommand = item["PosLaunchCommand"] ?? "";
     final String argumentsCommand = item["ArgumentsCommand"] ?? "";
-    String checkEnviroments = "";
-    checkEnviroments += 'cd "${dirname(itemDirectory)}" && ';
+    String checkEnviroments = 'cd "${dirname(itemDirectory)}" && ';
     checkEnviroments += 'STEAM_RUNTIME=3 STEAM_COMPAT_DATA_PATH="$itemPrefix" ';
 
     // Check Wine Compatibility
@@ -112,7 +112,7 @@ class LauncherModel {
     }
 
     //Proton full command
-    DebugLogs.print("[Launcher] Proton full command: ${'$launchCommand $checkEnviroments "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$itemDirectory" $argumentsCommand'}");
+    DebugLogs.print("[Launcher] Proton full command: ${'$launchCommand$checkEnviroments "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$itemDirectory" $argumentsCommand'}");
     return '$launchCommand $checkEnviroments "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$itemDirectory" $argumentsCommand';
   }
 
@@ -122,14 +122,14 @@ class LauncherModel {
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
     final String itemPrefix = item["SelectedPrefix"] ?? join(preferences.defaultPrefixDirectory, item["ItemName"]);
     final String launchCommand = 'WINEPREFIX="$itemPrefix" wine';
-    final String posLaunchCommand = item["PosLaunchCommand"] ?? "";
+      String posLaunchCommand = item["PosLaunchCommand"] ?? "";
+    if (posLaunchCommand.isNotEmpty) posLaunchCommand += " ";
     final String argumentsCommand = item["ArgumentsCommand"] ?? "";
-    final String itemDirectory = item["LaunchDirectory"] ?? "";
+    final String itemDirectory = item["SelectedItem"] ?? "";
     // Check Steam Compatibility
     String checkEnviroments = "";
-    checkEnviroments += 'cd "${dirname(itemDirectory)}" && ';
     // Check Shaders Compile NVIDIA
-    if (item["EnableShadersCompileNVIDIA"]) {
+    if (item["EnableShadersCompileNVIDIA"] ?? false) {
       // Custom Shader Directory
       if (item["ShaderCompileDirectory"] != null)
         checkEnviroments += '__GL_SHADER_DISK_CACHE_PATH="${item["ShaderCompileDirectory"]} __GL_SHADER_DISK_CACHE=1 __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1 ';
@@ -137,8 +137,15 @@ class LauncherModel {
       else
         checkEnviroments += '__GL_SHADER_DISK_CACHE_PATH="${join(preferences.defaultShaderCompileDirectory, item["ItemName"])} __GL_SHADER_DISK_CACHE=1 __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1 ';
     }
-    DebugLogs.print("[Launcher] Wine full command: ${'$launchCommand $checkEnviroments $posLaunchCommand $itemDirectory $argumentsCommand'}");
-    return '$launchCommand $checkEnviroments $posLaunchCommand $itemDirectory $argumentsCommand';
+    // Pos Launch Commands
+    checkEnviroments += posLaunchCommand;
+    // Check Prime Run
+    if (item["EnablePrimeRunNvidia"] ?? false) {
+      checkEnviroments += 'prime-run ';
+    }
+
+    DebugLogs.print("[Launcher] Wine full command: ${'cd "${dirname(itemDirectory)}" && $launchCommand $checkEnviroments"$itemDirectory" $argumentsCommand'}");
+    return 'cd "${dirname(itemDirectory)}" && $launchCommand $checkEnviroments"$itemDirectory" $argumentsCommand';
   }
 
   /// Generates the starting commands for running a game or program with Shell

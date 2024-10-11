@@ -12,12 +12,6 @@ This software is builded thinking in easily open your games and configure prefix
 - Preferences page
 - Category system to organize your library
 
-### Future Features
-- Playtime
-- Add game images
-- Friends List
-- Download Games
-
 ### Considerations
 In some cases running a game using the steam works but using the protify maybe not work, i don't know why this happens, feel free to [suggest](https://github.com/LeandroTheDev/protify/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.md&title=) new configurations and commands to improve the protify.
 
@@ -69,10 +63,14 @@ If you find any security issue that can leak to a malware or something, you can 
 - Since steam deck is based on arch linux probably yes
 > Can i play DRM-Free modified games in this software?
 - Yes
-> Why there is http requests in the code?
-- This is a future feature planned for downloading games/softwares, you can view the entire code in [connection.dart](https://github.com/LeandroTheDev/protify/blob/main/lib/components/models/connection.dart) and [download.dart](https://github.com/LeandroTheDev/protify/blob/main/lib/components/models/download.dart), actually this does nothing, and is easily removable.
 > What protify really does?
 - Protify is basically a command saver, is a gui to help you organize the softwares that you open, especially the protons one, the only thing that protons does actually is generate command for opening your softwares and create folder for the prefix/shaders that proton creates.
+> How can i speed up my protify launch (it taking too much time to load the preferences)
+- You can add the command ``PROTIFY_EXECUTABLE=/path/to/protify/data/lib`` to your desktop file or you can create a shell script:
+```sh
+#!/bin/sh
+PROTIFY_EXECUTABLE=/path/to/protify/data/lib /path/to/protify/protify
+```
 
 ### Contributing
 This project accept contributions and pull requests, feel free to check the [Contribution](https://github.com/LeandroTheDev/protify/blob/main/CONTRIBUTING.md)
@@ -86,9 +84,6 @@ If you don't have protify set in your user home directory, in your building fold
 
 If you have the protify set in your user home directory, just run the command ``flutter run``.
 
-If you are on windows you just need to use ``flutter run``.
-
-### Final Considerations
-Take a look in [Protify Server](https://github.com/LeandroTheDev/protify_server) to view more information about the store/friends features to make your own customizations.
+If you are on windows you just need to use ``flutter run``. (I don't know why you should try to run this on windows but okay...)
 
 FTM License.

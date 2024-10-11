@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:protify/components/models/connection.dart';
 import 'package:protify/components/models/dialogs.dart';
 import 'package:protify/components/system/directory.dart';
 import 'package:protify/components/system/user.dart';
@@ -39,7 +38,6 @@ class UserPreferences with ChangeNotifier {
 
     // Provider Declarations
     final UserPreferences userPreference = Provider.of<UserPreferences>(context, listen: false);
-    final ConnectionModel connection = Provider.of<ConnectionModel>(context, listen: false);
 
     // Default variables
     final String userDirectory = await SystemUser.GetUserDefaultDirectory().catchError((error) {
@@ -94,7 +92,6 @@ class UserPreferences with ChangeNotifier {
     DebugLogs.print("[Protify] Preferences has been read, starting to create preferences from default or reading into memory");
     // Updating Providers
     await userPreference.changeLanguage(storedPreference["Language"] ?? defaultData["Language"], false);
-    await connection.changeHttpAddress(storedPreference["HttpAddress"] ?? defaultData["HttpAddress"], false);
     await userPreference.changeUsername(storedPreference["Username"] ?? defaultData["Username"], false);
     await userPreference.changeProtifyDirectory(storedPreference["ProtifyDirectory"] ?? defaultData["ProtifyDirectory"], false);
     await userPreference.changeDefaultGameInstallDirectory(storedPreference["DefaultGameInstallDirectory"] ?? defaultData["DefaultGameInstallDirectory"], false);

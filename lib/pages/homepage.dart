@@ -12,7 +12,6 @@ import 'package:protify/components/widgets/screen_builder/screen_builder_provide
 import 'package:protify/data/save_datas.dart';
 import 'package:protify/data/user_preferences.dart';
 import 'package:protify/debug/logs.dart';
-import 'package:protify/pages/store.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
@@ -171,40 +170,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   //Top Buttons
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    height: screenSize.height * 0.1,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        FittedBox(
-                          child: IconButton(
-                            onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const StorePage()));
-                            },
-                            icon: Icon(
-                              Icons.library_books,
-                              color: Theme.of(context).secondaryHeaderColor,
-                            ),
-                          ),
-                        ),
-                        FittedBox(
-                            child: IconButton(
-                          onPressed: () {
-                            DialogsModel.showAlert(
-                              context,
-                              title: "Not Implemented",
-                              content: "This features is not implemented yet",
-                            );
-                          },
-                          icon: Icon(
-                            Icons.person,
-                            color: Theme.of(context).secondaryHeaderColor,
-                          ),
-                        )),
-                      ],
-                    ),
-                  ),
+                  const SizedBox(),
                   //Category List
                   const CategoryList(),
                   //Bottom Buttons

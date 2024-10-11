@@ -78,7 +78,7 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
         final Directory mountDirectory = Directory(join(preferences.protifyDirectory, "data", "temp_mount"));
         // Checking if prefix folder exist
         if (!mountDirectory.existsSync()) {
-          // Se o diretório de montagem não existir, crie-o
+          // If the mount directory does not exist create it
           mountDirectory.createSync(recursive: true);
         }
         //If exist then umount previous iso iso
@@ -99,7 +99,7 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
           }
         }
         //Mount iso
-        final mount = await Process.start('/bin/bash', ['-c', 'sudo -S mount -o loop "$item["SelectedItem"]" "${mountDirectory.path}"']);
+        final mount = await Process.start('/bin/bash', ['-c', 'sudo -S mount -o loop "${item["SelectedItem"]}" "${mountDirectory.path}"']);
         mount.stderr.transform(utf8.decoder).listen((data) async {
           if (data.contains("[sudo] password for ")) {
             final password = await DialogsModel.typeInput(context, title: "Sudo Password for mount iso");
@@ -116,12 +116,18 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
         //Inform the user what he need to do
         await DialogsModel.showAlert(context, title: "Select Installer", content: "The iso sucessfully mounted, select the .exe installer now");
         //Get installer directory
-        item["SelectedItem"] = await FilePicker.platform.pickFiles(allowMultiple: false, dialogTitle: "Select the Game").then((file) {
+        item["SelectedItem"] = await FilePicker.platform
+            .pickFiles(
+          allowMultiple: false,
+          dialogTitle: "Select the Game",
+          initialDirectory: "${mountDirectory.path}/", // The "/" is necessary so the user enter directly in the folder and not only select it
+        )
+            .then((file) {
           if (file == null) {
-            DebugLogs.print("Canceled");
+            DebugLogs.print("[Protify] Installation Canceled");
             return null;
           } else if (file.files.isEmpty) {
-            DebugLogs.print("Empty files");
+            DebugLogs.print("[Protify] Installation error: Empty files");
             return null;
           }
           return file.files[0].path;
