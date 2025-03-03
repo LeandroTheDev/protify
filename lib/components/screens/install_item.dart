@@ -8,6 +8,7 @@ import 'package:protify/components/models/dialogs.dart';
 import 'package:protify/components/models/launcher.dart';
 import 'package:protify/components/widgets/screen_builder/arguments_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/launch_command_input.dart';
+import 'package:protify/components/widgets/screen_builder/legacy_wineproton_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/pos_launch_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/select_installation_game_button.dart';
 import 'package:protify/components/widgets/screen_builder/select_launcher_button.dart';
@@ -239,6 +240,10 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
                     const SizedBox(height: 15),
                     //Select Prefix
                     const SelectPrefixButton(),
+                    //Spacer
+                    const SizedBox(height: 15),
+                    //Steam Compatibility
+                    const LegacyWineProtonCheckbox(),
                     //Spacer
                     const SizedBox(height: 15),
                     //Steam Compatibility
