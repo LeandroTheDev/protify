@@ -6,6 +6,7 @@ import 'package:protify/components/widgets/screen_builder/arguments_command_inpu
 import 'package:protify/components/widgets/screen_builder/eac_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/game_name_input.dart';
 import 'package:protify/components/widgets/screen_builder/launch_command_input.dart';
+import 'package:protify/components/widgets/screen_builder/legacy_wineproton_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/nvidia_shader_compile_checkbox.dart';
 import 'package:protify/components/widgets/screen_builder/pos_launch_command_input.dart';
 import 'package:protify/components/widgets/screen_builder/prime_run_checkbox.dart';
@@ -129,6 +130,10 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     ScreenBuilderProvider.getListenProvider(context).datas["EnableEACRuntime"] != false ? const SizedBox(height: 15) : const SizedBox(),
                     //Select Runtime
                     const SelectEACRuntimeButton(),
+                    // Spacer
+                    const SizedBox(height: 15),
+                    // Easy Anti Cheat
+                    const LegacyWineProtonCheckbox(),
                     // Spacer
                     const SizedBox(height: 15),
                     //Select Runtime

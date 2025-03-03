@@ -39,10 +39,14 @@ class LauncherModel {
     final String protonWineDirectory;
 
     //Check Compatibility for olders protons
-    if (Directory(join(protonDirectory, "dist")).existsSync()) {
-      protonWineDirectory = join(protonDirectory, "dist", "bin", "wine64");
+    if (item["EnableLegacyWineProton"] ?? false) {
+      if (Directory(join(protonDirectory, "dist")).existsSync()) {
+        protonWineDirectory = '"${join(protonDirectory, "dist", "bin", "wine64")}"';
+      } else {
+        protonWineDirectory = '"${join(protonDirectory, "files", "bin", "wine64")}"';
+      }
     } else {
-      protonWineDirectory = join(protonDirectory, "files", "bin", "wine64");
+      protonWineDirectory = "";
     }
 
     final String protonExecutable = join(protonDirectory, "proton");
@@ -112,8 +116,8 @@ class LauncherModel {
     }
 
     //Proton full command
-    DebugLogs.print("[Launcher] Proton full command: ${'$launchCommand$checkEnviroments "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$itemDirectory" $argumentsCommand'}");
-    return '$launchCommand $checkEnviroments "$protonWineDirectory" "$protonExecutable" waitforexitandrun "$itemDirectory" $argumentsCommand';
+    DebugLogs.print("[Launcher] Proton full command: ${'$launchCommand $checkEnviroments $protonWineDirectory "$protonExecutable" waitforexitandrun "$itemDirectory" $argumentsCommand'}");
+    return '$launchCommand $checkEnviroments $protonWineDirectory "$protonExecutable" waitforexitandrun "$itemDirectory" $argumentsCommand';
   }
 
   /// Generates the starting commands for running a game or program with Wine
@@ -122,7 +126,7 @@ class LauncherModel {
     final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
     final String itemPrefix = item["SelectedPrefix"] ?? join(preferences.defaultPrefixDirectory, item["ItemName"]);
     final String launchCommand = 'WINEPREFIX="$itemPrefix" wine';
-      String posLaunchCommand = item["PosLaunchCommand"] ?? "";
+    String posLaunchCommand = item["PosLaunchCommand"] ?? "";
     if (posLaunchCommand.isNotEmpty) posLaunchCommand += " ";
     final String argumentsCommand = item["ArgumentsCommand"] ?? "";
     final String itemDirectory = item["SelectedItem"] ?? "";
