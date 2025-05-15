@@ -1,3 +1,7 @@
+# Legacy
+This branch contains http connections directly to (Protify Server)[https://github.com/LeandroTheDev/protify_server], to handle friends and online shopping, 
+discontinued because it was not a priority or a necessity
+
 # Protify
 Tired of using Steam to open your favorite games? your cpu is too old and steam consumes a lot of cpu process? you hate the numbers in compatdata and getting lost everytime you need to change something in the prefix? heres the solution protify is a simply and light-weight software builded in flutter to make a minimalist launcher for opening your favorite games in linux using proton.
 
