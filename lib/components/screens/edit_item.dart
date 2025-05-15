@@ -127,7 +127,7 @@ class _EditItemScreenState extends State<EditItemScreen> {
                     // Easy Anti Cheat
                     const EacCheckbox(),
                     // Spacer
-                    ScreenBuilderProvider.getListenProvider(context).datas["EnableEACRuntime"] != false ? const SizedBox(height: 15) : const SizedBox(),
+                    ScreenBuilderProvider.getListenProvider(context).datas["EnableEACRuntime"] == true ? const SizedBox(height: 15) : const SizedBox(),
                     //Select Runtime
                     const SelectEACRuntimeButton(),
                     // Spacer
