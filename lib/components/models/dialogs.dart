@@ -38,7 +38,8 @@ class DialogsModel {
     return completer.future;
   }
 
-  /// Simple show a alert dialog to the user
+  /// Simple show a alert dialog to the user, on click buttonTitle returns true clicking buttonTitle2 or closing the dialog by clicking
+  /// outside the box will return false
   static Future<bool> showQuestion(
     BuildContext context, {
     String title = "",
@@ -79,6 +80,12 @@ class DialogsModel {
             ),
           ),
         );
+      },
+    ).then(
+      (_) {
+        if (!completer.isCompleted) {
+          completer.complete(false);
+        }
       },
     );
 
@@ -127,7 +134,13 @@ class DialogsModel {
               ),
             ),
           );
-        });
+        }).then(
+      (_) {
+        if (!completer.isCompleted) {
+          completer.complete("");
+        }
+      },
+    );
     return completer.future;
   }
 

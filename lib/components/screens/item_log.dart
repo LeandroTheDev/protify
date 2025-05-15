@@ -134,6 +134,9 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final UserPreferences preferences = Provider.of<UserPreferences>(context, listen: false);
+    final String temporaryPrefixDirectoryString = join(preferences.protifyDirectory, "data", "temp_prefix");
+
     if (!running) {
       startCommand(context);
     }
@@ -180,6 +183,48 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
                     ),
                   ),
                 ),
+                // Convert temp prefix | Check if the prefix is from temp directory
+                widget.item["SelectedPrefix"] == temporaryPrefixDirectoryString
+                    ? SizedBox(
+                        width: MediaQuery.of(context).size.width / 4 > 200 ? 200 : MediaQuery.of(context).size.width / 4,
+                        height: 30,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final result = await DialogsModel.showQuestion(
+                              context,
+                              title: "Move Temp Prefix",
+                              content: "To move the prefix before make sure the installation is finished and all the softwares is closed.",
+                              buttonTitle: "Confirm",
+                              buttonTitle2: "Cancel",
+                            );
+                            if (!result) return;
+
+                            final folderName = await DialogsModel.typeInput(context, title: "Prefix Name");
+                            if (folderName.isEmpty) return;
+
+                            DialogsModel.showLoading(context);
+
+                            try {
+                              final Directory destinationDirectory = Directory(join(preferences.defaultPrefixDirectory, folderName));
+                              destinationDirectory.create(recursive: true);
+
+                              final Directory temporaryPrefixDirectory = Directory(temporaryPrefixDirectoryString);
+
+                              await temporaryPrefixDirectory.rename(destinationDirectory.path);
+
+                              if (DialogsModel.isLoading) Navigator.pop(context);
+                              DialogsModel.showAlert(context, title: "Success", content: "Temporary prefix was moved to ${destinationDirectory.path}");
+                            } catch (error) {
+                              if (DialogsModel.isLoading) Navigator.pop(context);
+                              DialogsModel.showAlert(context, title: "Error", content: "Any error occurs while moving temporary prefix to default prefix directory: $error");
+                            }
+                          },
+                          child: const Text(
+                            "Convert Temp Prefix",
+                          ),
+                        ),
+                      )
+                    : const SizedBox(),
                 // Kill Process
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 4 > 200 ? 200 : MediaQuery.of(context).size.width / 4,

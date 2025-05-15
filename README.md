@@ -64,7 +64,7 @@ If you find any security issue that can leak to a malware or something, you can 
 > Can i play DRM-Free modified games in this software?
 - Yes
 > What protify really does?
-- Protify is basically a command saver, is a gui to help you organize the softwares that you open, especially the protons one, the only thing that protons does actually is generate command for opening your softwares and create folder for the prefix/shaders that proton creates.
+- Protify is basically a command saver, is a gui to help you organize the softwares that you open, especially the protons one, the only thing that protify does actually is generate command for opening your softwares and create folder for the prefix/shaders that proton creates.
 > How can i speed up my protify launch (it taking too much time to load the preferences)
 - You can add the command ``PROTIFY_EXECUTABLE=/path/to/protify/data/lib`` to your desktop file or you can create a shell script:
 ```sh

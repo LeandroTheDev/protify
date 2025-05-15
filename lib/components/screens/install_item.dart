@@ -71,7 +71,7 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
         if (isTemporaryDirectory) {
           try {
             //Remove old prefix
-            prefixDirectory.deleteSync(recursive: true);
+            await prefixDirectory.delete(recursive: true);
           } catch (_) {}
         }
         //Create new prefix
@@ -151,7 +151,7 @@ class _InstallGameScreenState extends State<InstallItemScreen> {
         if (isTemporaryDirectory) {
           try {
             //Remove old prefix
-            prefixDirectory.deleteSync(recursive: true);
+            await prefixDirectory.delete(recursive: true);
           } catch (_) {}
         }
         //Create new prefix
