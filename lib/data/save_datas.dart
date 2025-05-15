@@ -27,33 +27,37 @@ class StorageInstance {
   static String? instanceDirectory;
 
   /// Based on name get the file or create a new, in instanceDirectory
-  File _getFileOrCreate(String fileName) {
+  Future<File> _getFileOrCreate(String fileName) async {
     // Check if directory is null
     if (instanceDirectory == null) {
       throw "Instance Directory is null";
     }
-    // File creation
+
     final file = File(join(instanceDirectory!, fileName));
-    if (!file.existsSync()) {
-      file.createSync(recursive: true);
-      file.writeAsStringSync("{}");
+
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+      await file.writeAsString('{}');
     }
+
     return file;
   }
 
   /// Get the file and save it to the storage or create one and save with the value
-  setValue(String fileName, String dataName, dynamic dataValue) {
-    File dataFile = _getFileOrCreate(fileName);
-    Map datas = jsonDecode(dataFile.readAsStringSync());
+  Future<void> setValue(String fileName, String dataName, dynamic dataValue) async {
+    File dataFile = await _getFileOrCreate(fileName);
+    String content = await dataFile.readAsString();
+    Map<String, dynamic> datas = jsonDecode(content);
     datas[dataName] = dataValue;
-    dataFile.writeAsStringSync(jsonEncode(datas));
+    await dataFile.writeAsString(jsonEncode(datas));
   }
 
   /// Reads the value based on file name and data name, returns nulls if not exist
-  readValue(String fileName, String dataName) {
+  Future<dynamic> readValue(String fileName, String dataName) async {
     try {
-      File dataFile = _getFileOrCreate(fileName);
-      Map datas = jsonDecode(dataFile.readAsStringSync());
+      File dataFile = await _getFileOrCreate(fileName);
+      String content = await dataFile.readAsString();
+      Map<String, dynamic> datas = jsonDecode(content);
       return datas[dataName];
     } catch (_) {
       return null;

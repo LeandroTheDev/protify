@@ -40,6 +40,11 @@ class Protify extends StatelessWidget {
           seedColor: const Color.fromARGB(255, 209, 209, 209),
         ),
         scaffoldBackgroundColor: const Color.fromARGB(255, 95, 95, 95),
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: Color.fromARGB(255, 209, 209, 209),
+          selectionColor: Color.fromARGB(100, 209, 209, 209),
+          selectionHandleColor: Color.fromARGB(255, 209, 209, 209),
+        ),
       ),
       routes: {
         "home": (context) => const HomePage(),
