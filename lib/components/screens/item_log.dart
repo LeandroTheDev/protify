@@ -183,10 +183,11 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
                     ),
                   ),
                 ),
+                
                 // Convert temp prefix | Check if the prefix is from temp directory
                 widget.item["SelectedPrefix"] == temporaryPrefixDirectoryString
                     ? SizedBox(
-                        width: MediaQuery.of(context).size.width / 4 > 200 ? 200 : MediaQuery.of(context).size.width / 4,
+                        width: MediaQuery.of(context).size.width / 4 > 200 ? 150 : MediaQuery.of(context).size.width / 6,
                         height: 30,
                         child: ElevatedButton(
                           onPressed: () async {
@@ -220,11 +221,12 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
                             }
                           },
                           child: const Text(
-                            "Convert Temp Prefix",
+                            "Convert Prefix",
                           ),
                         ),
                       )
                     : const SizedBox(),
+                
                 // Kill Process
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 4 > 200 ? 200 : MediaQuery.of(context).size.width / 4,
