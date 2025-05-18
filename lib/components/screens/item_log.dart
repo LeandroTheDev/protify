@@ -29,7 +29,7 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
   StreamSubscription? stdOut;
   StreamSubscription? stdErr;
 
-  int symbolicLinkChances = 10;
+  int symbolicLinkChances = 20;
 
   Timer? symbolicLinkTimer;
 
@@ -93,35 +93,36 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
       //Receive Errors
       stdErr = process!.stderr.transform(utf8.decoder).listen((data) => addLog('[Error]: $data'));
 
+      //Check for creation symbolic links
+      if (widget.item["CreateItemShortcut"] != null) {
+        //Timer repeat if symbolic cannot be create
+        symbolicLinkTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+          //Check if exist
+          if (Directory(preferences.defaultGameDirectory).existsSync()) {
+            process = await Process.start('/bin/bash', ['-c', 'ln -s "${preferences.defaultGameDirectory}" "${widget.item["CreateItemShortcut"]}"']);
+            addLog('[Protify] Successfully created symbolic in prefix to ${preferences.defaultGameDirectory}');
+            timer.cancel();
+          }
+          //If not exist
+          else {
+            //Check chances
+            if (symbolicLinkChances <= 0) {
+              addLog('[Protify Error] Cannot create the symbolic link after 10 tries, giving up...');
+              timer.cancel();
+              return;
+            }
+            //Log the error
+            symbolicLinkChances--;
+            addLog('[Protify Error] Trying to create symbolic in prefix but the directory doesn\'t exist...');
+          }
+        });
+      }
+
       //Waiting for process
       final exitCode = await process!.exitCode;
       //Process Finished
       if (checkSuccessCodes(exitCode)) {
         addLog('[Protify] Success Launching Process');
-        //Check for creation symbolic links
-        if (widget.item["CreateItemShortcut"] != null) {
-          //Timer repeat if symbolic cannot be create
-          symbolicLinkTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-            //Check if exist
-            if (Directory(preferences.defaultGameDirectory).existsSync()) {
-              process = await Process.start('/bin/bash', ['-c', 'ln -s "${preferences.defaultGameDirectory}" "${widget.item["CreateItemShortcut"]}"']);
-              addLog('[Protify] Successfully created symbolic in prefix to ${preferences.defaultGameDirectory}');
-              timer.cancel();
-            }
-            //If not exist
-            else {
-              //Check chances
-              if (symbolicLinkChances <= 0) {
-                addLog('[Protify Error] Cannot create the symbolic link after 10 tries, giving up...');
-                timer.cancel();
-                return;
-              }
-              //Log the error
-              symbolicLinkChances--;
-              addLog('[Protify Error] Trying to create symbolic in prefix but the directory doesn\'t exist...');
-            }
-          });
-        }
       } else {
         addLog('[Alert] Process Finished: $exitCode');
       }
@@ -183,7 +184,7 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
                     ),
                   ),
                 ),
-                
+
                 // Convert temp prefix | Check if the prefix is from temp directory
                 widget.item["SelectedPrefix"] == temporaryPrefixDirectoryString
                     ? SizedBox(
@@ -226,7 +227,7 @@ class LaunchLogScreenState extends State<ItemLogScreen> {
                         ),
                       )
                     : const SizedBox(),
-                
+
                 // Kill Process
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 4 > 200 ? 200 : MediaQuery.of(context).size.width / 4,
